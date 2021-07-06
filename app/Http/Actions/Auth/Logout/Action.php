@@ -2,24 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Actions\Auth\Login;
+namespace App\Http\Actions\Auth\Logout;
 
-use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Auth;
 
 class Action
 {
-    public function __invoke(Request $request, Guard $guard)
+    public function __invoke()
     {
-        if ($guard->attempt($request->only(['login', 'password']), true)) {
-            return response()->noContent();
-        }
-
-        return response()->json([
-            'errors' => [
-                'login' => [
-                    'Неверное имя пользователя или пароль',
-                ],
-            ],
-        ], 401);
+        Auth::guard('web')->logout();
     }
 }
