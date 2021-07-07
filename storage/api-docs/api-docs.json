@@ -1,0 +1,91 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "KB API",
+        "description": "HTTP JSON API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/user": {
+            "get": {
+                "description": "Получение данных текущего пользователя",
+                "responses": {
+                    "200": {
+                        "description": "Данные текущего пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "session": {}
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UserResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "123"
+                    },
+                    "name": {
+                        "nullable": true,
+                        "type": "string",
+                        "example": "Ульянов Владимир Ильич"
+                    },
+                    "avatar": {
+                        "nullable": true,
+                        "type": "string",
+                        "example": "absolute/path/to/image.jpg"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "moderator",
+                            "user"
+                        ]
+                    },
+                    "login": {
+                        "type": "string",
+                        "example": "john15"
+                    },
+                    "email": {
+                        "nullable": true,
+                        "type": "string",
+                        "example": "user@mail.com"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "session": {
+                "type": "apiKey",
+                "description": "A short description for security scheme",
+                "name": "laravel_session",
+                "in": "cookie"
+            }
+        }
+    },
+    "security": [
+        {
+            "session": []
+        }
+    ]
+}
