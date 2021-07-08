@@ -8,7 +8,7 @@
 
 ## Скаляры (Scalar)
 
-### string
+### String
 
 ```js
 { 
@@ -18,7 +18,7 @@
 }
 ```
 
-### integer
+### Integer
 
 ```js
 {
@@ -47,10 +47,10 @@
 ```
 
 
-### text
+### Text
 ```js
 { 
-    name: "text",
+    name: "Text",
     min: ~Integer? = 0, // Байты
     max: ~Integer? = 65535, // Байты
 }
