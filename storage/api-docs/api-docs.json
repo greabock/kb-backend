@@ -115,6 +115,182 @@
                     "apiKey": {}
                 }
             }
+        },
+        "enums": {
+            "get": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Получение списка перечислений",
+                "responses": {
+                    "200": {
+                        "description": "Список перечислений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/EnumResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Создание перечисления",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnumCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "enums/{enum}": {
+            "get": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Получение перечисления с его значениями",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Конкретное перечисление с его значениями",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Удаление перечисления",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Обновление перечисления",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnumUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
         }
     },
     "components": {
@@ -128,6 +304,69 @@
                     "password": {
                         "type": "string",
                         "example": "123123"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumCreateRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "title"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "Канада"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "example": "Канада"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EnumUpdateRequest": {
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "title"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "Канада"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "example": "Канада"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"

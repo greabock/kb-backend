@@ -5,7 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Actions\Api\Enums\Create;
 
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(schema="EnumCreateRequest", required={"title"},
+ *     @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
+ *     @OA\Property(property="title", type="string", example="Страны"),
+ *     @OA\Property(property="values", type="array",
+ *         @OA\Items(type="object", required={"title"},
+ *            @OA\Property(property="id", type="string", example="Канада"),
+ *            @OA\Property(property="title", type="string", example="Канада"),
+ *         )
+ *     ),
+ * )
+ */
 class Request extends FormRequest
 {
     public function rules(): array

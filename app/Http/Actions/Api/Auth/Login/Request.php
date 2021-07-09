@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Actions\Api\Auth\Login;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(schema="LoginRequest",
