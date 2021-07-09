@@ -11,9 +11,91 @@
         }
     ],
     "paths": {
-        "/user": {
+        "auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение токена по логину и паролю",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Токен аутентификации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiTokenResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": []
+            }
+        },
+        "auth/azure/redirect": {
             "get": {
-                "description": "Получение данных текущего пользователя",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение редиректа для перенаправления",
+                "responses": {
+                    "200": {
+                        "description": "Адрес перенаправления для внешней утентификации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RedirectResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "auth/azure/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение токена после перенаправления",
+                "description": "Нужно пробросить в тело все параметры с query string редиректа 'как есть'",
+                "responses": {
+                    "200": {
+                        "description": "Токен аутентификации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiTokenResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": []
+            }
+        },
+        "auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение данных текущего пользователя",
                 "responses": {
                     "200": {
                         "description": "Данные текущего пользователя",
@@ -30,13 +112,89 @@
                     }
                 },
                 "security": {
-                    "session": {}
+                    "apiKey": {}
                 }
             }
         }
     },
     "components": {
         "schemas": {
+            "LoginRequest": {
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "user@some.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "123123"
+                    }
+                },
+                "type": "object"
+            },
+            "ApiTokenResource": {
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "access_token"
+                    }
+                },
+                "type": "object"
+            },
+            "RedirectResource": {
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "https://account.microsoft.com"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumValueResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Канада"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumWithValuesResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EnumValueResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "UserResource": {
                 "properties": {
                     "id": {
@@ -75,17 +233,17 @@
             }
         },
         "securitySchemes": {
-            "session": {
+            "apiKey": {
                 "type": "apiKey",
-                "description": "A short description for security scheme",
-                "name": "laravel_session",
-                "in": "cookie"
+                "description": "Api key",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     },
     "security": [
         {
-            "session": []
+            "apiKey": []
         }
     ]
 }

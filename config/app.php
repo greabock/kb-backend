@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Greabock\Populator\PopulatorServiceProvider::class,
 
         /*
          * Application Service Providers...

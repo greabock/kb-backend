@@ -137,14 +137,11 @@ return [
         */
         'securityDefinitions' => [
             'securitySchemes' => [
-                'session' => [ // Unique name of security
+                'apiKey' => [ // Unique name of security
                     'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
-                    'description' => 'A short description for security scheme',
-                    'name' =>  env(
-                        'SESSION_COOKIE',
-                        Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
-                    ),
-                    'in' => 'cookie', // The location of the API key. Valid values are "query" or "header".
+                    'description' => 'Api key',
+                    'name' => 'Authorization',
+                    'in' => 'header', // The location of the API key. Valid values are "query" or "header".
                 ],
 
                 /*
@@ -195,7 +192,7 @@ return [
 
                     'passport' => []
                     */
-                    'session' => [],
+                    'apiKey' => [],
                 ],
             ],
         ],
