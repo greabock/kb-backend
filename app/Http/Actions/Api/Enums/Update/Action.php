@@ -13,7 +13,7 @@ class Action
 {
     public function __invoke(Enum $enum, Request $request, Populator $populator): EnumResource
     {
-        $populator->populate($enum, $request->only('title', 'values'));
+        $populator->populate($enum, $request->all());
 
         $populator->flush();
 

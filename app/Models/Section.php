@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Http\Actions\Auth\Me\Action;
+use App\Models\Section\Field;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Schema\Blueprint;
+use Ramsey\Collection\Collection;
+use Schema;
+use Str;
 
 /**
  * App\Models\Section
@@ -16,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property bool $is_dictionary
  * @property bool $is_navigation
  * @property int $sort_index
+ * @property string $tableName
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Section newModelQuery()
@@ -35,6 +43,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Section extends Model
 {
+    use HasFactory;
+
     public $incrementing = false;
 
     public $keyType = 'string';
@@ -50,5 +60,22 @@ class Section extends Model
     public function fields(): HasMany
     {
         return $this->hasMany(Section\Field::class, 'section_id');
+    }
+
+    public function getTableNameAttribute()
+    {
+        return 'sections.' . Str::snake($this->id);
+    }
+
+    public function build(): void
+    {
+        Schema::create($this->tableName, function (Blueprint $table) {
+            $table->uuid('id')->primary();
+        });
+    }
+
+    public function drop(): void
+    {
+        Schema::dropIfExists($this->tableName);
     }
 }

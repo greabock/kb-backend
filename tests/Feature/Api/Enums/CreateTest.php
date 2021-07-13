@@ -45,4 +45,7 @@ class CreateTest extends ActionTestCase
         $this->assertDatabaseHas('enums', ['title' => $enumName]);
         $this->assertDatabaseHas('enum_values', ['title' => $valueTitle]);
     }
+
+
+
 }

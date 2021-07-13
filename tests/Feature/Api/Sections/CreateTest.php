@@ -1,0 +1,91 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\Api\Sections;
+
+use App\Models\Enum;
+use App\Models\User;
+use Tests\Feature\Api\ActionTestCase;
+
+class CreateTest extends ActionTestCase
+{
+    public function getRouteName(): string
+    {
+        return 'sections.create';
+    }
+
+    public function testUserCanCreateSection()
+    {
+        /** @var Enum $enum */
+        $enum = Enum::factory()->create();
+
+        $user = User::factory()->create();
+
+        $response = $this->callAuthorizedByUserRouteAction($user, [
+            'title' => 'New section',
+            'is_dictionary' => true,
+            'is_navigation' => true,
+            'sort_index' => 0,
+            'fields' => [
+                [
+                    'title' => 'title',
+                    'required' => false,
+                    'use_in_card' => false,
+                    'sort_index' => 0,
+                    'type' => [
+                        'name' => 'String',
+                        'max' => 55,
+                        'min' => 0,
+                    ]
+                ],
+                [
+                    'title' => 'title',
+                    'required' => false,
+                    'use_in_card' => false,
+                    'sort_index' => 0,
+                    'type' => [
+                        'name' => 'List',
+                        'of' => [
+                            'name' => 'Enum',
+                            'of' => $enum->id,
+                        ]
+                    ]
+                ]
+            ]
+        ])->assertStatus(201);
+
+        $sectionId = $response->json('data.id');
+        $field1Id = $response->json('data.fields.0.id');
+        $field2Id = $response->json('data.fields.1.id');
+
+        $this->assertTrue(\Schema::hasTable('sections.' . $sectionId));
+        $this->assertSame('string', \Schema::getColumnType('sections.' . $sectionId, $field1Id));
+        $this->assertTrue(\Schema::hasTable('pivots.' . $field2Id));
+
+        $response = $this->callRouteAction([
+            'title' => 'New section',
+            'is_dictionary' => true,
+            'is_navigation' => true,
+            'sort_index' => 0,
+            'fields' => [
+                [
+                    'title' => 'title',
+                    'required' => false,
+                    'use_in_card' => false,
+                    'sort_index' => 0,
+                    'type' => [
+                        'name' => 'List',
+                        'of' => [
+                            'name' => 'Dictionary',
+                            'of' => $sectionId,
+                        ]
+                    ]
+                ]
+            ]
+        ])->assertStatus(201);
+
+        $field1Id = $response->json('data.fields.0.id');
+        $this->assertTrue(\Schema::hasTable('pivots.' . $field1Id));
+    }
+}

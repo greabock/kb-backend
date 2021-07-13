@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Ramsey\Uuid\Uuid;
 
 class SectionFactory extends Factory
 {
@@ -22,7 +23,12 @@ class SectionFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'id' => $this->faker->uuid,
+            'title' => 'test',
+            'image' => null,
+            'is_dictionary' => true,
+            'is_navigation' => true,
+            'sort_index' => 1,
         ];
     }
 }
