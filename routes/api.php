@@ -182,7 +182,7 @@ Route::middleware('auth:sanctum')->group(function () {
          * @OA\Patch (
          *     path="sections/{sections}",
          *     security={"apiKey":{}},
-         *     tags={"Enums"},
+         *     tags={"Sections"},
          *     summary="Обновление перечисления",
          *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела"),
          *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/SectionUpdateRequest")),

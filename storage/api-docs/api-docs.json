@@ -253,7 +253,7 @@
         "sections/{sections}": {
             "patch": {
                 "tags": [
-                    "Enums"
+                    "Sections"
                 ],
                 "summary": "Обновление перечисления",
                 "parameters": [
