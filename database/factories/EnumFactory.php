@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Enum;
-use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 

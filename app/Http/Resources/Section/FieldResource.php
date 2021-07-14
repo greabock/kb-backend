@@ -16,7 +16,17 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="sort_index", type="integer"),
  *    @OA\Property(property="required", type="boolean"),
  *    @OA\Property(property="use_in_card", type="boolean"),
- *    @OA\Property(property="type", type="dictionary"),
+ *    @OA\Property(property="type", oneOf={
+ *        @OA\Schema(ref="#components/schemas/TypeString"),
+ *        @OA\Schema(ref="#components/schemas/TypeInteger"),
+ *        @OA\Schema(ref="#components/schemas/TypeText"),
+ *        @OA\Schema(ref="#components/schemas/TypeWiki"),
+ *        @OA\Schema(ref="#components/schemas/TypeFloat"),
+ *        @OA\Schema(ref="#components/schemas/TypeBoolean"),
+ *        @OA\Schema(ref="#components/schemas/TypeEnum"),
+ *        @OA\Schema(ref="#components/schemas/TypeFile"),
+ *        @OA\Schema(ref="#components/schemas/TypeList"),
+ *    }),
  * )
  * @property Field $resource
  */

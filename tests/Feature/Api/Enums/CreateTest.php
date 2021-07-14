@@ -35,7 +35,6 @@ class CreateTest extends ActionTestCase
 
         $valueTitle = 'testValue';
 
-        $this->assertDatabaseCount('enums', 0);
         /** @var User $user */
         $user = User::factory()->create(['role' => 'admin']);
 
@@ -45,7 +44,4 @@ class CreateTest extends ActionTestCase
         $this->assertDatabaseHas('enums', ['title' => $enumName]);
         $this->assertDatabaseHas('enum_values', ['title' => $valueTitle]);
     }
-
-
-
 }

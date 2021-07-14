@@ -32,7 +32,6 @@ class ShowTest extends ActionTestCase
         $this->callAuthorizedRouteAction([], ['enum' => $enum->id])
             ->assertStatus(200)
             ->assertJsonStructure(['data' => ['title', 'id', 'values' => [['id', 'title']]]])
-            ->assertJsonCount(2, 'data.values')
-        ;
+            ->assertJsonCount(2, 'data.values');
     }
 }

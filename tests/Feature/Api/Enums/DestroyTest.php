@@ -18,11 +18,9 @@ class DestroyTest extends ActionTestCase
     {
         $enum = Enum::factory()->create();
 
-        $this->assertDatabaseCount('enums', 1);
-
         $this->callAuthorizedRouteAction([], ['enum' => $enum->id])
             ->assertStatus(204);
 
-        $this->assertDatabaseCount('enums', 0);
+        $this->assertDatabaseMissing('enums', ['id' => $enum->id]);
     }
 }

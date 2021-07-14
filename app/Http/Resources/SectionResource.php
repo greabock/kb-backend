@@ -19,7 +19,7 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="sort_index", type="integer"),
  * )
  *
- * @OA\Schema(schema="SectionResourceWithFields",
+ * @OA\Schema(schema="SectionWithFieldsResource",
  *    @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
  *    @OA\Property(property="title", type="string", example="Страны"),
  *    @OA\Property(property="image", type="string", example="absolute://path.to/image.jpg"),

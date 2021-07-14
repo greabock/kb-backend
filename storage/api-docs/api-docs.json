@@ -116,6 +116,187 @@
                 }
             }
         },
+        "sections": {
+            "get": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Получение списка разделов",
+                "responses": {
+                    "200": {
+                        "description": "Список разделов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/SectionResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Создание раздела",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SectionCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданный раздел",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "sections/{section}": {
+            "get": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Получение раздела с его полями",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Раздел с его значениями",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Удаление раздела",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "sections/{sections}": {
+            "patch": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Обновление перечисления",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SectionUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленный раздел",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
         "enums": {
             "get": {
                 "tags": [
@@ -371,6 +552,189 @@
                 },
                 "type": "object"
             },
+            "SectionCreateRequest": {
+                "required": [
+                    "title",
+                    "is_dictionary",
+                    "is_navigation"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "image": {
+                        "nullable": true,
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "title",
+                                "type",
+                                "required",
+                                "use_in_card"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "sort_index": {
+                                    "type": "integer"
+                                },
+                                "required": {
+                                    "type": "boolean"
+                                },
+                                "use_in_card": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#components/schemas/TypeString"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeInteger"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeText"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeWiki"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFloat"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeBoolean"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeEnum"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFile"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeList"
+                                        }
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SectionUpdateRequest": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "image": {
+                        "nullable": true,
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "sort_index": {
+                                    "type": "integer"
+                                },
+                                "required": {
+                                    "type": "boolean"
+                                },
+                                "use_in_card": {
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#components/schemas/TypeString"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeInteger"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeText"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeWiki"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFloat"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeBoolean"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeEnum"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFile"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeList"
+                                        }
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "ApiTokenResource": {
                 "properties": {
                     "token": {
@@ -434,6 +798,121 @@
                 },
                 "type": "object"
             },
+            "SectionFieldResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Название"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Это пример описания поля..."
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "use_in_card": {
+                        "type": "boolean"
+                    },
+                    "type": {
+                        "oneOf": [
+                            {
+                                "$ref": "#components/schemas/TypeString"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeInteger"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeText"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeWiki"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFloat"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeBoolean"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeEnum"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFile"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeList"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "SectionResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Агенты"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "SectionWithFieldsResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SectionFieldResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "UserResource": {
                 "properties": {
                     "id": {
@@ -466,6 +945,272 @@
                         "nullable": true,
                         "type": "string",
                         "example": "user@mail.com"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeString": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "String"
+                        ],
+                        "example": "String"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "255"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeInteger": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Integer"
+                        ],
+                        "example": "Integer"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeText": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Text"
+                        ],
+                        "example": "Text"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeWiki": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Wiki"
+                        ],
+                        "example": "Wiki"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeFloat": {
+                "required": [
+                    "name",
+                    "step"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Float"
+                        ],
+                        "example": "Float"
+                    },
+                    "min": {
+                        "type": "number",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0.1"
+                    },
+                    "max": {
+                        "type": "number",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "255.5"
+                    },
+                    "step": {
+                        "type": "number",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0.1"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeBoolean": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Boolean"
+                        ],
+                        "example": "Boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeDictionary": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Dictionary"
+                        ],
+                        "example": "Dictionary"
+                    },
+                    "of": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeEnum": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Enum"
+                        ],
+                        "example": "Enum"
+                    },
+                    "of": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeFile": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "File"
+                        ],
+                        "example": "File"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": "1",
+                        "example": "1"
+                    },
+                    "extensions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TypeList": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "List"
+                        ],
+                        "example": "List"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": "1",
+                        "example": "1"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": "1",
+                        "example": "1"
+                    },
+                    "of": {
+                        "oneOf": [
+                            {
+                                "$ref": "#components/schemas/TypeEnum"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeDictionary"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFile"
+                            }
+                        ]
                     }
                 },
                 "type": "object"

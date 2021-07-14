@@ -15,7 +15,7 @@ class CreateTest extends ActionTestCase
         return 'sections.create';
     }
 
-    public function testUserCanCreateSection()
+    public function testUserCanCreateSection(): void
     {
         /** @var Enum $enum */
         $enum = Enum::factory()->create();
@@ -53,7 +53,7 @@ class CreateTest extends ActionTestCase
                     ]
                 ]
             ]
-        ])->assertStatus(201);
+        ])->assertCreated();
 
         $sectionId = $response->json('data.id');
         $field1Id = $response->json('data.fields.0.id');
@@ -81,9 +81,9 @@ class CreateTest extends ActionTestCase
                             'of' => $sectionId,
                         ]
                     ]
-                ]
+                ],
             ]
-        ])->assertStatus(201);
+        ])->assertCreated();
 
         $field1Id = $response->json('data.fields.0.id');
         $this->assertTrue(\Schema::hasTable('pivots.' . $field1Id));

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Section;
 
 use App\Models\Section;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Schema\Blueprint;
@@ -44,6 +45,8 @@ use Schema;
  */
 class Field extends Model
 {
+    use HasFactory;
+
     private const SCALAR_TYPES = [
         'String',
         'Integer',

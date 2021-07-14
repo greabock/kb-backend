@@ -4,9 +4,64 @@ declare(strict_types=1);
 
 namespace App\Validation\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
-use Validator;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(schema="TypeString", required={"name"},
+ *     @OA\Property(property="name", type="string", enum={"String"}, example="String"),
+ *     @OA\Property(property="min", type="integer", example="0", minimum="1", maximum="255"),
+ *     @OA\Property(property="max", type="integer", example="255", minimum="1", maximum="255"),
+ * )
+ * @OA\Schema(schema="TypeInteger", required={"name"},
+ *     @OA\Property(property="name", type="string", enum={"Integer"}, example="Integer"),
+ *     @OA\Property(property="min", type="integer", example="0", minimum="-2147483647", maximum="2147483647"),
+ *     @OA\Property(property="max", type="integer", example="0", minimum="-2147483647", maximum="2147483647"),
+ * )
+ * @OA\Schema(schema="TypeText", required={"name"},
+ *     @OA\Property(property="name", type="string", enum={"Text"}, example="Text"),
+ *     @OA\Property(property="min", type="integer", example="0", minimum="1", maximum="21845"),
+ *     @OA\Property(property="max", type="integer", example="0", minimum="1", maximum="21845"),
+ * )
+ * @OA\Schema(schema="TypeWiki", required={"name"},
+ *     @OA\Property(property="name", type="string", enum={"Wiki"}, example="Wiki"),
+ *     @OA\Property(property="min", type="integer", example="0", minimum="1", maximum="21845"),
+ *     @OA\Property(property="max", type="integer", example="0", minimum="1", maximum="21845"),
+ * )
+ * @OA\Schema(schema="TypeFloat", required={"name", "step"},
+ *     @OA\Property(property="name", type="string", enum={"Float"}, example="Float"),
+ *     @OA\Property(property="min", type="number", example="0.1", minimum="-2147483647", maximum="2147483647"),
+ *     @OA\Property(property="max", type="number", example="255.5", minimum="-2147483647", maximum="2147483647"),
+ *     @OA\Property(property="step", type="number", example="0.1", minimum="-2147483647", maximum="2147483647"),
+ * )
+ * @OA\Schema(schema="TypeBoolean", required={"name"},
+ *     @OA\Property(property="name", type="string", enum={"Boolean"}, example="Boolean"),
+ * )
+ * @OA\Schema(schema="TypeDictionary", required={"name", "of"},
+ *     @OA\Property(property="name", type="string", enum={"Dictionary"}, example="Dictionary"),
+ *     @OA\Property(property="of", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
+ * )
+ * @OA\Schema(schema="TypeEnum", required={"name", "of"},
+ *     @OA\Property(property="name", type="string", enum={"Enum"}, example="Enum"),
+ *     @OA\Property(property="of", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
+ * )
+ * @OA\Schema(schema="TypeFile", required={"name", "of"},
+ *     @OA\Property(property="name", type="string", enum={"File"}, example="File"),
+ *     @OA\Property(property="min", type="integer", example="1", minimum="1", maximum=PHP_INT_MAX),
+ *     @OA\Property(property="extensions", type="array",
+ *          @OA\Items(type="string")
+ *     ),
+ * )
+ * @OA\Schema(schema="TypeList", required={"name", "of"},
+ *     @OA\Property(property="name", type="string", enum={"List"},  example="List"),
+ *     @OA\Property(property="min", type="integer", example="1", minimum="1", maximum=PHP_INT_MAX),
+ *     @OA\Property(property="max", type="integer", example="1", minimum="1", maximum=PHP_INT_MAX),
+ *     @OA\Property(property="of", oneOf={
+ *           @OA\Schema(ref="#components/schemas/TypeEnum"),
+ *           @OA\Schema(ref="#components/schemas/TypeDictionary"),
+ *           @OA\Schema(ref="#components/schemas/TypeFile"),
+ *     }),
+ * )
+ */
 class FieldType
 {
     private const T_STRING = 'String';
