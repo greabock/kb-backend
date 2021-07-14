@@ -183,7 +183,7 @@ Route::middleware('auth:sanctum')->group(function () {
          *     path="sections/{sections}",
          *     security={"apiKey":{}},
          *     tags={"Sections"},
-         *     summary="Обновление перечисления",
+         *     summary="Обновление раздела",
          *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела"),
          *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/SectionUpdateRequest")),
          *     @OA\Response(
