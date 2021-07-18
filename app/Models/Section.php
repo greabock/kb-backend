@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Http\Actions\Auth\Me\Action;
 use App\Models\Section\Field;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Schema\Blueprint;
-use Ramsey\Collection\Collection;
-use Schema;
-use Str;
 
 /**
  * App\Models\Section
@@ -24,6 +20,7 @@ use Str;
  * @property bool $is_navigation
  * @property int $sort_index
  * @property string $tableName
+ * @property string $class_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Section newModelQuery()
@@ -57,6 +54,12 @@ class Section extends Model
         'sort_index',
     ];
 
+    public function setIdAttribute($value)
+    {
+        $this->setAttribute('class_name', 'Section' . \Str::replace('-', '', $value));
+        $this->attributes['id'] = $value;
+    }
+
     public function fields(): HasMany
     {
         return $this->hasMany(Section\Field::class, 'section_id');
@@ -64,18 +67,46 @@ class Section extends Model
 
     public function getTableNameAttribute()
     {
-        return 'sections.' . Str::snake($this->id);
+        return 'sections.' . $this->id;
     }
 
-    public function build(): void
+    public function rules(): array
     {
-        Schema::create($this->tableName, function (Blueprint $table) {
-            $table->uuid('id')->primary();
-        });
+        return $this->fields->map(fn(Section\Field $field) => $field->rules())
+            ->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), []);
     }
 
-    public function drop(): void
+    public function struct(): array
     {
-        Schema::dropIfExists($this->tableName);
+        return $this->fields->map(fn(Section\Field $field) => $field->struct())
+            ->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), ['name']);
+    }
+
+    public function getFQCN(): string
+    {
+        return $this->class_name;
+    }
+
+    public function getRelationFields(): Collection
+    {
+        return $this->fields->filter(fn(Field $field) => $field->isRelationField());
+    }
+
+    public function plainFieldKeys(): array
+    {
+        return $this->plainFields()->pluck('id')->toArray();
+    }
+
+    public function plainFields(): Collection
+    {
+        return $this->fields->filter(fn(Field $field) => !$field->isRelationField());
+    }
+
+    public function relationLoaders(): array
+    {
+        return $this->getRelationFields()
+            ->keyBy('id')
+            ->map(fn(Field $field) => $field->getRelationLoader())
+            ->toArray();
     }
 }

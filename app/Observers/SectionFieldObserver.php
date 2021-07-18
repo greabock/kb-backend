@@ -5,30 +5,36 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Models\Section\Field;
+use App\Services\ColumnBuilder;
 
 class SectionFieldObserver
 {
+    private ColumnBuilder $columnBuilder;
+
+    public function __construct(ColumnBuilder $columnBuilder)
+    {
+        $this->columnBuilder = $columnBuilder;
+    }
+
     public function updating(Field $field)
     {
         if ($field->wasChanged(['type'])) {
-            $field->drop();
+            $this->columnBuilder->drop($field);
         }
     }
 
-    public function created(Field $field)
+    public function created(Field $field): void
     {
-        $field->build();
+        $this->columnBuilder->build($field);
     }
 
-    public function updated(Field $field)
+    public function updated(Field $field): void
     {
-        $field->build();
+        $this->columnBuilder->build($field);
     }
 
-    public function deleting(Field $field): bool
+    public function deleted(Field $field): void
     {
-        $field->drop();
-
-        return true;
+        $this->columnBuilder->drop($field);
     }
 }

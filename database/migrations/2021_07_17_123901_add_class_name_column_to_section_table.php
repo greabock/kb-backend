@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAdditionalSchemas extends Migration
+class AddClassNameColumnToSectionTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class CreateAdditionalSchemas extends Migration
      */
     public function up()
     {
-        DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS sections"));
-        DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS pivots"));
+        Schema::table('sections', function (Blueprint $table) {
+            $table->string('class_name');
+        });
     }
 
     /**
@@ -24,7 +25,8 @@ class CreateAdditionalSchemas extends Migration
      */
     public function down()
     {
-        DB::statement(\DB::raw("DROP SCHEMA IF EXISTS pivots cascade"));
-        DB::statement(\DB::raw("DROP SCHEMA IF EXISTS sections cascade"));
+        Schema::table('sections', function (Blueprint $table) {
+            $table->dropColumn('class_name');
+        });
     }
 }

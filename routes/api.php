@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Actions\Api\Auth;
 use App\Http\Actions\Api\Sections;
 use App\Http\Actions\Api\Enums;
+use App\Http\Actions\Api\Materials;
 use OpenApi\Annotations as OA;
 
 /**
@@ -221,6 +222,11 @@ Route::middleware('auth:sanctum')->group(function () {
          */
         Route::delete('{section}')->name('.destroy')
             ->uses(Sections\Destroy\Action::class);
+
+        Route::prefix('{section}/materials')->name('.materials')->group(function () {
+            Route::post('/')->name('.create')
+                ->uses(Materials\Create\Action::class);
+        });
     });
 
 

@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace App\Models\Section;
 
+use App\Models\Enum;
+use App\Models\File;
+use App\Models\Material;
 use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Str;
+use Mockery\Exception;
+use Nette\PhpGenerator\ClassType;
 use Schema;
 
 /**
@@ -19,7 +25,7 @@ use Schema;
  * @method static \Illuminate\Database\Eloquent\Builder|Field newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Field query()
  * @mixin \Eloquent
- * @property int $id
+ * @property string $id
  * @property string $title
  * @property string $description
  * @property int $sort_index
@@ -46,6 +52,8 @@ use Schema;
 class Field extends Model
 {
     use HasFactory;
+
+    protected $touches = ['section'];
 
     private const SCALAR_TYPES = [
         'String',
@@ -80,129 +88,160 @@ class Field extends Model
         return $this->belongsTo(Section::class, 'section_id');
     }
 
-    public function getColumnNameAttribute(): string
-    {
-        return Str::snake($this->id);
-    }
-
     public function getTableNameAttribute(): string
     {
         return 'pivots.' . Str::snake($this->id);
     }
 
-    public function build(): void
+    public function getForeignKeyAttibute()
     {
         if ($this->type['name'] === 'List') {
-
-            if (Schema::hasTable($this->tableName)) {
-                return;
-            }
-
-            if ($this->type['of']['name'] === 'Enum') {
-
-                Schema::create($this->tableName, function (Blueprint $table) {
-                    $table->uuid($this->section->id);
-                    $table->uuid($this->columnName);
-
-                    $table->foreign($this->section->id)
-                        ->references('id')
-                        ->on($this->section->tableName);
-
-                    $table->foreign($this->columnName)
-                        ->references('id')
-                        ->on('enum_values');
-                });
-            }
-
-            if ($this->type['of']['name'] === 'Dictionary') {
-                Schema::create($this->tableName, function (Blueprint $table) {
-                    $table->uuid($this->section->id);
-                    $table->uuid($this->columnName);
-
-                    $table->foreign($this->section->id)
-                        ->references('id')
-                        ->on($this->section->tableName);
-
-                    $table->foreign($this->columnName)
-                        ->references('id')
-                        ->on(Section::findOrFail($this->type['of']['of'])->tableName);
-                });
-            }
-
-            if ($this->type['of']['name'] === 'File') {
-
-                Schema::create($this->tableName, function (Blueprint $table) {
-                    $table->uuid($this->section->id);
-                    $table->uuid($this->columnName);
-
-                    $table->foreign($this->section->id)
-                        ->references('id')
-                        ->on($this->section->tableName);
-
-                    $table->foreign($this->columnName)
-                        ->references('id')
-                        ->on('files');
-                });
-            }
-
-            return;
+            return $this->type['of']['of'] . '_id';
         }
 
-        if (Schema::hasColumn($this->section->tableName, $this->columnName)) {
-            return;
-        }
-
-        Schema::table($this->section->tableName, function (Blueprint $table) {
-            if ($this->type['name'] === 'String') {
-                $table->string($this->columnName)->nullable();
-            }
-
-            if ($this->type['name'] === 'File') {
-                $table->uuid($this->columnName)->nullable();
-                $table->foreign($this->columnName, $this->id)->references('id')->on('files');
-            }
-
-            if ($this->type['name'] === 'Integer') {
-                $table->integer($this->columnName)->nullable();
-            }
-
-            if ($this->type['name'] === 'Float') {
-                $table->float($this->columnName)->nullable();
-            }
-
-            if ($this->type['name'] === 'Boolean') {
-                $table->boolean($this->columnName)->nullable();
-            }
-
-            if ($this->type['name'] === 'Text') {
-                $table->text($this->columnName)->nullable();
-            }
-
-            if ($this->type['name'] === 'Wiki') {
-                $table->text($this->columnName)->nullable();
-            }
-
-            if ($this->type['name'] === 'Enum') {
-                $table->uuid($this->columnName)->nullable();
-                $table->foreign($this->columnName, $this->id)->references('id')->on('enum_values');
-            }
-
-            if ($this->type['name'] === 'Dictionary') {
-                $table->uuid($this->columnName)->nullable();
-                $table->foreign($this->columnName)->references('id')->on($this->type['of']);
-            }
-        });
+        return $this->type['of'] . '_id';
     }
 
-    public function drop(): void
+    public function getLocalPivotKeyAttribute()
     {
-        if ($this->type['name'] === 'List') {
-            Schema::dropIfExists($this->tableName);
-            return;
+        return $this->section->id . '_id';
+    }
+
+    public function rules(array $type = null, string $field = null, bool $required = null): array
+    {
+        $type = $type ?? $this->type;
+        $field = $field ?? $this->id;
+        $required = $required ?? $this->required;
+
+        return match ($type['name']) {
+            'String' => [$field => [
+                $required ? 'required' : 'sometimes',
+                'string',
+                'min:' . ($type['min'] ?? 0),
+                'max:' . ($type['max'] ?? 255),
+            ]],
+
+            'Integer' => [$field => [
+                $required ? 'required' : 'sometimes',
+                'integer',
+                'min:' . ($type['min'] ?? -2147483647),
+                'max:' . ($type['max'] ?? 2147483647),
+            ]],
+            'Float' => [$field => [
+                $required ? 'required' : 'sometimes',
+                'number',
+                'min:' . ($type['min'] ?? -2147483647),
+                'max:' . ($type['max'] ?? 2147483647),
+            ]],
+            'Boolean' => [$field => [
+                $required ? 'required' : 'sometimes',
+                'boolean',
+            ]],
+
+            'Text', 'Wiki' => [$field => [
+                $required ? 'required' : 'sometimes',
+                'string',
+                'min:' . ($type['min'] ?? 0),
+                'max:' . ($type['max'] ?? 21845),
+            ]],
+            'Enum' => [
+                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field . '.id' => [
+                    $required ? 'required' : 'sometimes',
+                    'uuid',
+                    'exists:enum_values,id',
+                ]
+            ],
+            'File' => [
+                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field . '.id' => [
+                    $required ? 'required' : 'sometimes',
+                    'uuid',
+                    'exists:files,id',
+                ]
+            ],
+            'Dictionary' => [
+                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field . '.id' => [
+                    $required ? 'required' : 'sometimes',
+                    'uuid',
+                    "exists:sections.{$type['of']},id",
+                ]
+            ],
+            'List' => $this->buildSubRules($type, $field, $required),
+            default => throw new \Exception('Unknown type ' . $this->type['name'])
+        };
+    }
+
+    public function struct(): array
+    {
+        return match ($this->type['name']) {
+            'String', 'Integer', 'Float', 'Boolean', 'Text', 'Wiki' => [$this->id],
+            'Enum', 'File', 'Dictionary' => [$this->id => ['id']],
+            'List' => [$this->id => [['id']]],
+            default => throw new \Exception('Unknown type ' . $this->type['name']),
+        };
+    }
+
+    private function buildSubRules($type, $field, $required)
+    {
+        $subRules = $this->rules($type['of'], '*', $required);
+        $rules = [$field => [$required, '']];
+
+        foreach ($subRules as $key => $rule) {
+            $rules[$field . '.' . $key] = $rule;
         }
 
-        Schema::table($this->section->tableName, function (Blueprint $table) {
-            $table->dropColumn($this->columnName);
-        });
+        return $rules;
+    }
+
+    public function isRelationField(): bool
+    {
+        return in_array($this->type['name'], ['Enum', 'Dictionary', 'File', 'List']);
+    }
+
+    public function isBelongsTo(): bool
+    {
+        return in_array($this->type['name'], ['Enum', 'Dictionary', 'File']);
+    }
+
+    public function isBelongsToMany(): bool
+    {
+        return $this->type['name'] === 'List';
+    }
+
+    public function getRelatedClass($type = null): string
+    {
+        $type = $type ?? $this->type;
+
+        return match ($type['name']) {
+            'List' => $this->getRelatedClass($type['of']),
+            'Enum' => Enum\Value::class,
+            'File' => File::class,
+            'Dictionary' => Section::firstOrFail($type['of'])->getClassName(),
+        };
+    }
+
+    public function getRelationLoader(): callable
+    {
+        return function (Material $that): BelongsTo|BelongsToMany {
+            return match (true) {
+                $this->isBelongsTo() => $that->belongsTo($this->getRelatedClass(), $this->getRelationColumnName()),
+                $this->isBelongsToMany() => $that->belongsToMany(
+                    $this->getRelatedClass(),
+                    $this->tableName,
+                    $this->id,
+                    $this->type['of'],
+                    'id',
+                    'id',
+                ),
+                default => throw new Exception('Unknown relation type'),
+            };
+        };
+    }
+
+    public function getRelationColumnName()
+    {
+        return $this->id . '_id';
     }
 }

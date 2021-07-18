@@ -28,57 +28,13 @@ Artisan::command('user:create', function () {
 })->purpose('Создать нового пользователя');
 
 
-Artisan::command('go', function () {
+Artisan::command('testo', function () {
 
-    /** @var \App\Models\Enum $enum */
-    $enum = \App\Models\Enum::factory()->create();
-
-    /** @var Greabock\Populator\Populator $populator */
-    $populator = app(Greabock\Populator\Populator::class);
-    $populator->populate(\App\Models\Section::class, [
-        'title' => 'test section',
-        'is_dictionary' => true,
-        'is_navigation' => true,
-        'sort_index' => 0,
-        'fields' => [
-            [
-                'title' => 'test field',
-                'required' => false,
-                'use_in_card' => false,
-                'sort_index' => 0,
-                'type' => [
-                    'name' => 'String',
-                ],
-            ],
-            [
-                'title' => 'test relations',
-                'required' => false,
-                'use_in_card' => false,
-                'sort_index' => 0,
-                'type' => [
-                    'name' => 'File',
-                ],
-            ],
-            [
-                'title' => 'test relations',
-                'required' => false,
-                'use_in_card' => false,
-                'sort_index' => 0,
-                'type' => [
-                    'name' => 'List',
-                    'of' => [
-                        'name' => 'Enum',
-                        'of' => $enum->id
-                    ]
-                ],
-            ],
-        ],
-    ]);
-
-    $populator->flush();
-});
-
-
-Artisan::command('back', function () {
-    \App\Models\Section::firstOrFail()->delete();
+    /** @var \App\Models\Section $section */
+    $section = \App\Models\Section::factory()->has(
+        \App\Models\Section\Field::factory([
+            'type' => [
+                'name' => 'String',
+            ]
+        ]), 'fields')->create();
 });
