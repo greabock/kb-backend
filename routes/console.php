@@ -29,12 +29,5 @@ Artisan::command('user:create', function () {
 
 
 Artisan::command('testo', function () {
-
-    /** @var \App\Models\Section $section */
-    $section = \App\Models\Section::factory()->has(
-        \App\Models\Section\Field::factory([
-            'type' => [
-                'name' => 'String',
-            ]
-        ]), 'fields')->create();
+    
 });

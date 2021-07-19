@@ -8,6 +8,7 @@ use App\Models\Material;
 use App\Models\Section;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 
@@ -22,22 +23,22 @@ class SectionMaterialModelBuilder
         $this->cache = $cache;
     }
 
-    public function __invoke($className)
+    public function __invoke(string $className)
     {
-        $sections = $this->sections ?? $this->sections = Section::all()->keyBy('class_name');
-
-        if ($section = $sections->get($className)) {
-            $this->load($section);
-        }
+        $this->load($className);
     }
 
-    public function load(Section $section): void
+    public function load(string $section): void
     {
         eval($this->get($section));
     }
 
-    public function remember(Section $section): string
+    public function remember(?Section $section): string
     {
+        if (!$section) {
+            return '';
+        }
+
         $this->cache->forever($section->class_name, $result = $this->build($section));
 
         return $result;
@@ -66,8 +67,10 @@ class SectionMaterialModelBuilder
         return (string)$class;
     }
 
-    private function get(Section $section): string
+    private function get(string $section): string
     {
-        return $this->cache->get($section->class_name, fn() => $this->remember($section));
+        return $this->cache->get($section, fn() => $this->remember(
+            Section::where('class_name', $section)->first()
+        ));
     }
 }

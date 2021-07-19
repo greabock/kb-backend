@@ -8,22 +8,20 @@ use App\Models\Enum;
 use App\Models\File;
 use App\Models\Material;
 use App\Models\Section;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Str;
 use Mockery\Exception;
-use Nette\PhpGenerator\ClassType;
-use Schema;
 
 /**
  * App\Models\SectionField
  *
- * @method static \Illuminate\Database\Eloquent\Builder|Field newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Field newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Field query()
+ * @method static Builder|Field newModelQuery()
+ * @method static Builder|Field newQuery()
+ * @method static Builder|Field query()
  * @mixin \Eloquent
  * @property string $id
  * @property string $title
@@ -34,19 +32,22 @@ use Schema;
  * @property bool $use_in_card
  * @property string $section_id
  * @property string $columnName
- * @property string $tableName
+ * @property string $pivotName
+ * @property string $foreignKey
+ * @property string $localPivotKey
+ * @property string $relatedClass
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereRequired($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereSectionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereSortIndex($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Field whereUseInCard($value)
+ * @method static Builder|Field whereCreatedAt($value)
+ * @method static Builder|Field whereDescription($value)
+ * @method static Builder|Field whereId($value)
+ * @method static Builder|Field whereRequired($value)
+ * @method static Builder|Field whereSectionId($value)
+ * @method static Builder|Field whereSortIndex($value)
+ * @method static Builder|Field whereTitle($value)
+ * @method static Builder|Field whereType($value)
+ * @method static Builder|Field whereUpdatedAt($value)
+ * @method static Builder|Field whereUseInCard($value)
  * @property-read Section $section
  */
 class Field extends Model
@@ -88,21 +89,23 @@ class Field extends Model
         return $this->belongsTo(Section::class, 'section_id');
     }
 
-    public function getTableNameAttribute(): string
+    public function getPivotNameAttribute(): string
     {
         return 'pivots.' . Str::snake($this->id);
     }
 
-    public function getForeignKeyAttibute()
+    public function getForeignKeyAttribute(array $type = null): string
     {
-        if ($this->type['name'] === 'List') {
-            return $this->type['of']['of'] . '_id';
-        }
+        $type = $type ?? $this->type;
 
-        return $this->type['of'] . '_id';
+        return match ($type['name']) {
+            'List' => $this->getForeignKeyAttribute($type['of']),
+            'Enum', 'File', 'Dictionary' => $type['of'] . '_id',
+            default => throw new \Exception(sprintf('unknown type %s', $type['name'])),
+        };
     }
 
-    public function getLocalPivotKeyAttribute()
+    public function getLocalPivotKeyAttribute(): string
     {
         return $this->section->id . '_id';
     }
@@ -112,6 +115,7 @@ class Field extends Model
         $type = $type ?? $this->type;
         $field = $field ?? $this->id;
         $required = $required ?? $this->required;
+
 
         return match ($type['name']) {
             'String' => [$field => [
@@ -165,7 +169,7 @@ class Field extends Model
                 $field . '.id' => [
                     $required ? 'required' : 'sometimes',
                     'uuid',
-                    "exists:sections.{$type['of']},id",
+                    "exists:pgsql.sections.{$type['of']},id",
                 ]
             ],
             'List' => $this->buildSubRules($type, $field, $required),
@@ -186,7 +190,7 @@ class Field extends Model
     private function buildSubRules($type, $field, $required)
     {
         $subRules = $this->rules($type['of'], '*', $required);
-        $rules = [$field => [$required, '']];
+        $rules = [$field => [$required ? 'required' : 'sometimes']];
 
         foreach ($subRules as $key => $rule) {
             $rules[$field . '.' . $key] = $rule;
@@ -210,38 +214,40 @@ class Field extends Model
         return $this->type['name'] === 'List';
     }
 
-    public function getRelatedClass($type = null): string
+    public function getRelatedClassAttribute($type = null): string
     {
         $type = $type ?? $this->type;
 
         return match ($type['name']) {
-            'List' => $this->getRelatedClass($type['of']),
+            'List' => $this->getRelatedClassAttribute($type['of']),
             'Enum' => Enum\Value::class,
             'File' => File::class,
-            'Dictionary' => Section::firstOrFail($type['of'])->getClassName(),
+            'Dictionary' => Section::findOrFail($type['of'])->class_name,
         };
     }
 
     public function getRelationLoader(): callable
     {
         return function (Material $that): BelongsTo|BelongsToMany {
+            $relatedModel = (new ($this->relatedClass));
             return match (true) {
-                $this->isBelongsTo() => $that->belongsTo($this->getRelatedClass(), $this->getRelationColumnName()),
+                $this->isBelongsTo() => $that->belongsTo(
+                    $this->relatedClass,
+                    $this->foreignKey,
+                    $relatedModel->getKeyName(),
+                    $this->id
+                ),
                 $this->isBelongsToMany() => $that->belongsToMany(
-                    $this->getRelatedClass(),
-                    $this->tableName,
+                    $this->relatedClass,
+                    $this->pivotName,
+                    $this->localPivotKey,
+                    $this->foreignKey,
+                    $this->getKeyName(),
+                    $relatedModel->getKeyName(),
                     $this->id,
-                    $this->type['of'],
-                    'id',
-                    'id',
                 ),
                 default => throw new Exception('Unknown relation type'),
             };
         };
-    }
-
-    public function getRelationColumnName()
-    {
-        return $this->id . '_id';
     }
 }

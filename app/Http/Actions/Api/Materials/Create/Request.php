@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Actions\Api\Materials\Create;
 
 use App\Http\Actions\Api\ApiRequest;
+use App\Models\Material;
 use App\Models\Section;
 
 /**
@@ -14,6 +15,8 @@ class Request extends ApiRequest
 {
     public function rules(): array
     {
+        dump($this->resolveSection()->rules());
+
         return array_merge(
             ['name' => 'required|string|max:255'],
             $this->resolveSection()->rules(),

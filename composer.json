@@ -35,8 +35,7 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
-            "VirtualMaterials\\": "storage/framework/materials/"
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {

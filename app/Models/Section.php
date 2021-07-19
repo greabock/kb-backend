@@ -82,11 +82,6 @@ class Section extends Model
             ->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), ['name']);
     }
 
-    public function getFQCN(): string
-    {
-        return $this->class_name;
-    }
-
     public function getRelationFields(): Collection
     {
         return $this->fields->filter(fn(Field $field) => $field->isRelationField());
@@ -109,4 +104,5 @@ class Section extends Model
             ->map(fn(Field $field) => $field->getRelationLoader())
             ->toArray();
     }
+
 }

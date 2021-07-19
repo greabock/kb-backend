@@ -15,36 +15,36 @@ class ColumnBuilder
     {
         if ($field->type['name'] === 'List') {
 
-            if (Schema::hasTable($field->tableName)) {
+            if (Schema::hasTable($field->pivotName)) {
                 return;
             }
 
             if ($field->type['of']['name'] === 'Enum') {
 
-                Schema::create($field->tableName, function (Blueprint $table) use ($field) {
-                    $table->uuid($field->getLocalPivotKeyAttribute());
-                    $table->uuid($field->getForeignKeyAttibute());
+                Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
+                    $table->uuid($field->localPivotKey);
+                    $table->uuid($field->foreignKey);
 
-                    $table->foreign($field->getLocalPivotKeyAttribute())
+                    $table->foreign($field->localPivotKey)
                         ->references('id')
                         ->on($field->section->tableName);
 
-                    $table->foreign($field->getForeignKeyAttibute())
+                    $table->foreign($field->foreignKey)
                         ->references('id')
                         ->on('enum_values');
                 });
             }
 
             if ($field->type['of']['name'] === 'Dictionary') {
-                Schema::create($field->tableName, function (Blueprint $table) use ($field) {
-                    $table->uuid($field->getLocalPivotKeyAttribute());
-                    $table->uuid($field->getForeignKeyAttibute());
+                Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
+                    $table->uuid($field->localPivotKey);
+                    $table->uuid($field->foreignKey);
 
-                    $table->foreign($field->getLocalPivotKeyAttribute())
+                    $table->foreign($field->localPivotKey)
                         ->references('id')
                         ->on($field->section->tableName);
 
-                    $table->foreign($field->getForeignKeyAttibute())
+                    $table->foreign($field->foreignKey)
                         ->references('id')
                         ->on(Section::findOrFail($field->type['of']['of'])->tableName);
                 });
@@ -52,15 +52,15 @@ class ColumnBuilder
 
             if ($field->type['of']['name'] === 'File') {
 
-                Schema::create($field->tableName, function (Blueprint $table) use ($field) {
-                    $table->uuid($field->getLocalPivotKeyAttribute());
-                    $table->uuid($field->getForeignKeyAttibute());
+                Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
+                    $table->uuid($field->localPivotKey);
+                    $table->uuid($field->foreignKey);
 
-                    $table->foreign($field->getLocalPivotKeyAttribute())
+                    $table->foreign($field->localPivotKey)
                         ->references('id')
                         ->on($field->section->tableName);
 
-                    $table->foreign($field->getForeignKeyAttibute())
+                    $table->foreign($field->foreignKey)
                         ->references('id')
                         ->on('files');
                 });
@@ -74,13 +74,9 @@ class ColumnBuilder
         }
 
         Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
+
             if ($field->type['name'] === 'String') {
                 $table->string($field->id)->nullable();
-            }
-
-            if ($field->type['name'] === 'File') {
-                $table->uuid($field->id)->nullable();
-                $table->foreign($field->id, $field->id)->references('id')->on('files');
             }
 
             if ($field->type['name'] === 'Integer') {
@@ -103,14 +99,19 @@ class ColumnBuilder
                 $table->text($field->id)->nullable();
             }
 
+            if ($field->type['name'] === 'File') {
+                $table->uuid($field->foreignKey)->nullable();
+                $table->foreign($field->foreignKey, $field->id)->references('id')->on('files');
+            }
+
             if ($field->type['name'] === 'Enum') {
-                $table->uuid($field->getRelationColumnName())->nullable();
-                $table->foreign($field->getRelationColumnName(), $field->id)->references('id')->on('enum_values');
+                $table->uuid($field->foreignKey)->nullable();
+                $table->foreign($field->foreignKey, $field->id)->references('id')->on('enum_values');
             }
 
             if ($field->type['name'] === 'Dictionary') {
-                $table->uuid($field->id)->nullable();
-                $table->foreign($field->id)->references('id')->on($field->type['of']);
+                $table->uuid($field->foreignKey)->nullable();
+                $table->foreign($field->foreignKey)->references('id')->on($field->type['of']);
             }
         });
     }
@@ -118,7 +119,7 @@ class ColumnBuilder
     public function drop(Field $field): void
     {
         if ($field->type['name'] === 'List') {
-            Schema::dropIfExists($field->tableName);
+            Schema::dropIfExists($field->pivotName);
             return;
         }
 

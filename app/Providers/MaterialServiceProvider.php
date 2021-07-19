@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Services\SectionMaterialModelBuilder;
 use Illuminate\Support\ServiceProvider;
+use Str;
 
 class MaterialServiceProvider extends ServiceProvider
 {
@@ -19,7 +20,7 @@ class MaterialServiceProvider extends ServiceProvider
     public function boot()
     {
         spl_autoload_register(function ($className) {
-            if (str_contains($className, 'Section') && $this->app->has(SectionMaterialModelBuilder::class)) {
+            if (preg_match('#^Section[0-9a-f]{32}$#', $className) && $this->app->has(SectionMaterialModelBuilder::class)) {
                 $this->app[SectionMaterialModelBuilder::class]($className);
             }
         });
