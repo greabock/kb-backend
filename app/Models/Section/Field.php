@@ -94,6 +94,11 @@ class Field extends Model
         return 'pivots.' . Str::snake($this->id);
     }
 
+    public function usingInCard(): bool
+    {
+        return $this->getAttribute('use_in_card');
+    }
+
     public function getForeignKeyAttribute(array $type = null): string
     {
         $type = $type ?? $this->type;
@@ -110,12 +115,11 @@ class Field extends Model
         return $this->section->id . '_id';
     }
 
-    public function rules(array $type = null, string $field = null, bool $required = null): array
+    public function rules(array $type = null, string $field = null, ?bool $required = null): array
     {
         $type = $type ?? $this->type;
         $field = $field ?? $this->id;
         $required = $required ?? $this->required;
-
 
         return match ($type['name']) {
             'String' => [$field => [
@@ -187,7 +191,7 @@ class Field extends Model
         };
     }
 
-    private function buildSubRules($type, $field, $required)
+    private function buildSubRules(array $type, string $field, bool $required): array
     {
         $subRules = $this->rules($type['of'], '*', $required);
         $rules = [$field => [$required ? 'required' : 'sometimes']];

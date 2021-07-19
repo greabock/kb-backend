@@ -132,4 +132,29 @@ class CreateTest extends ActionTestCase
             ->dump()
             ->assertCreated();
     }
+
+    public function testRequiredFields(): void
+    {
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(), 'fields'
+        )->create();
+
+        $section->refresh();
+        $this->callAuthorizedRouteAction([], ['section' => $section->id])
+            ->assertJsonValidationErrors([$section->fields->first()->id, 'name']);
+    }
+
+    public function testNotRequiredFields(): void
+    {
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(['required' => false]), 'fields'
+        )->create();
+
+        $section->refresh();
+        $this->callAuthorizedRouteAction([], ['section' => $section->id])
+            ->assertJsonValidationErrors(['name'])
+            ->assertJsonMissingValidationErrors([$section->fields->first()->id]);
+    }
 }

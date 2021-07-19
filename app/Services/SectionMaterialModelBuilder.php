@@ -60,7 +60,7 @@ class SectionMaterialModelBuilder
             ->setValue(['name', ...$section->plainFieldKeys()]);
 
         $class->addProperty('sectionId')
-            ->setProtected()
+            ->setPublic()
             ->setStatic()
             ->setValue($section->id);
 

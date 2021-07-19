@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api;
 
 use App\Models\User;
+use Greabock\Populator\Populator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Routing\Route;
 use Illuminate\Testing\TestResponse;
@@ -13,6 +14,8 @@ use Tests\TestCase;
 abstract class ActionTestCase extends TestCase
 {
     use DatabaseTransactions;
+
+    private Populator $populator;
 
     /**
      * Имя маршрута для которого пишутся тесты
@@ -117,5 +120,10 @@ abstract class ActionTestCase extends TestCase
         \Auth::login($user);
 
         return $this->callRouteAction($data, $parameters, $headers);
+    }
+
+    public function populator(): Populator
+    {
+        return $this->populator ?? $this->populator = $this->app[Populator::class];
     }
 }

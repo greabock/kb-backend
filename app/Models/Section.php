@@ -70,9 +70,9 @@ class Section extends Model
         return 'sections.' . $this->id;
     }
 
-    public function rules(): array
+    public function rules(?bool $required = null): array
     {
-        return $this->fields->map(fn(Section\Field $field) => $field->rules())
+        return $this->fields->map(fn(Section\Field $field) => $field->rules($field->type, $field->id, $required))
             ->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), []);
     }
 
@@ -103,6 +103,14 @@ class Section extends Model
             ->keyBy('id')
             ->map(fn(Field $field) => $field->getRelationLoader())
             ->toArray();
+    }
+
+    public function cardFields(): array
+    {
+        return $this
+            ->fields
+            ->filter(fn(Section\Field $field) => $field->usingInCard())
+            ->reduce(fn($carry, Field $field) => [...$carry, $field->id], ['name']);
     }
 
 }
