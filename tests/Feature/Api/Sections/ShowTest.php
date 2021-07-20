@@ -35,7 +35,7 @@ class ShowTest extends ActionTestCase
                     'sort_index',
                     'type',
                     'required',
-                    'use_in_card',
+                    'is_present_in_card',
                 ]]
             ]]);
     }

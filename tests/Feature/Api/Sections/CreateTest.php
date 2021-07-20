@@ -31,7 +31,8 @@ class CreateTest extends ActionTestCase
                 [
                     'title' => 'title',
                     'required' => false,
-                    'use_in_card' => false,
+                    'is_present_in_card' => false,
+                    'is_filterable' => false,
                     'sort_index' => 0,
                     'type' => [
                         'name' => 'String',
@@ -42,7 +43,8 @@ class CreateTest extends ActionTestCase
                 [
                     'title' => 'title',
                     'required' => false,
-                    'use_in_card' => false,
+                    'is_present_in_card' => false,
+                    'is_filterable' => false,
                     'sort_index' => 0,
                     'type' => [
                         'name' => 'List',
@@ -72,8 +74,9 @@ class CreateTest extends ActionTestCase
                 [
                     'title' => 'title',
                     'required' => false,
-                    'use_in_card' => false,
+                    'is_present_in_card' => false,
                     'sort_index' => 0,
+                    'is_filterable' => false,
                     'type' => [
                         'name' => 'List',
                         'of' => [

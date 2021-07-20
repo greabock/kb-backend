@@ -22,7 +22,7 @@ use Illuminate\Http\Request as BaseRequest;
  *           @OA\Property(property="description", type="string"),
  *           @OA\Property(property="sort_index", type="integer"),
  *           @OA\Property(property="required", type="boolean"),
- *           @OA\Property(property="use_in_card", type="boolean"),
+ *           @OA\Property(property="is_present_in_card", type="boolean"),
  *           @OA\Property(property="type", oneOf={
  *                 @OA\Schema(ref="#components/schemas/TypeString"),
  *                 @OA\Schema(ref="#components/schemas/TypeInteger"),
@@ -61,7 +61,7 @@ class Request extends ApiRequest
             'fields.*.description' => 'sometimes|string|max:255',
             'fields.*.sort_index' => 'sometimes|integer',
             'fields.*.required' => 'sometimes|boolean',
-            'fields.*.use_in_card' => 'sometimes|boolean',
+            'fields.*.is_present_in_card' => 'sometimes|boolean',
             'fields.*.type' => 'sometimes|array',
         ],
             ...$typeRules
@@ -84,7 +84,7 @@ class Request extends ApiRequest
                 'description',
                 'sort_index',
                 'required',
-                'use_in_card',
+                'is_present_in_card',
                 'type',
             ]]
         ];

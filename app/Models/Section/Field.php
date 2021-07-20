@@ -29,13 +29,14 @@ use Mockery\Exception;
  * @property int $sort_index
  * @property mixed $type
  * @property mixed $required
- * @property bool $use_in_card
+ * @property bool $is_present_in_card
  * @property string $section_id
  * @property string $columnName
  * @property string $pivotName
  * @property string $foreignKey
  * @property string $localPivotKey
  * @property string $relatedClass
+ * @property string $is_filterable
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static Builder|Field whereCreatedAt($value)
@@ -77,7 +78,8 @@ class Field extends Model
         'sort_index',
         'type',
         'required',
-        'use_in_card',
+        'is_present_in_card',
+        'is_filterable',
     ];
 
     protected $casts = [
@@ -96,7 +98,7 @@ class Field extends Model
 
     public function usingInCard(): bool
     {
-        return $this->getAttribute('use_in_card');
+        return $this->getAttribute('is_present_in_card');
     }
 
     public function getForeignKeyAttribute(array $type = null): string

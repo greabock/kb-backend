@@ -20,7 +20,7 @@ class CreateSectionFieldsTable extends Migration
             $table->integer('sort_index');
             $table->json('type');
             $table->json('required');
-            $table->boolean('use_in_card');
+            $table->boolean('is_present_in_card');
             $table->uuid('section_id')->index();
             $table->timestamps();
 

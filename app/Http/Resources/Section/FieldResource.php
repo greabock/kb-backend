@@ -15,7 +15,8 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="description", type="string", example="Это пример описания поля..."),
  *    @OA\Property(property="sort_index", type="integer"),
  *    @OA\Property(property="required", type="boolean"),
- *    @OA\Property(property="use_in_card", type="boolean"),
+ *    @OA\Property(property="is_present_in_card", type="boolean"),
+ *    @OA\Property(property="is_filterable", type="boolean"),
  *    @OA\Property(property="type", oneOf={
  *        @OA\Schema(ref="#components/schemas/TypeString"),
  *        @OA\Schema(ref="#components/schemas/TypeInteger"),
@@ -45,7 +46,7 @@ class FieldResource extends JsonResource
             'description' => $this->resource->description,
             'sort_index' => $this->resource->sort_index,
             'required' => $this->resource->required,
-            'use_in_card' => $this->resource->use_in_card,
+            'is_present_in_card' => $this->resource->is_present_in_card,
             'type' => $this->resource->type,
         ];
     }
