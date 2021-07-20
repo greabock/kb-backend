@@ -479,7 +479,7 @@
                     "Materials"
                 ],
                 "summary": "Получение постранично разбитого списка материалов секции",
-                "description": "> Стоит обратить внимание, что для материала в списке, будут отображаться только те дополнительные поля,\n    для которых установлен флаг `use_in_card: true`. Кроме того, хотя в примере и указаны ключи вида `additionalPropN`,\n    на самом деле это всегда будет uuid свойства, для которого представлено значение. К сожалению, спецификация **OpenApi** не позволяет выразить это явным образом",
+                "description": "> Стоит обратить внимание, что для материала в списке, будут отображаться только те дополнительные поля,\n    для которых установлен флаг `is_present_in_card: true`. Кроме того, хотя в примере и указаны ключи вида `additionalPropN`,\n    на самом деле это всегда будет uuid свойства, для которого представлено значение. К сожалению, спецификация **OpenApi** не позволяет выразить это явным образом",
                 "parameters": [
                     {
                         "name": "section",
@@ -897,7 +897,8 @@
                                 "title",
                                 "type",
                                 "required",
-                                "use_in_card"
+                                "is_present_in_card",
+                                "is_filterable"
                             ],
                             "properties": {
                                 "id": {
@@ -916,7 +917,10 @@
                                 "required": {
                                     "type": "boolean"
                                 },
-                                "use_in_card": {
+                                "is_present_in_card": {
+                                    "type": "boolean"
+                                },
+                                "is_filterable": {
                                     "type": "boolean"
                                 },
                                 "type": {
@@ -1002,7 +1006,7 @@
                                 "required": {
                                     "type": "boolean"
                                 },
-                                "use_in_card": {
+                                "is_present_in_card": {
                                     "type": "boolean"
                                 },
                                 "type": {
@@ -1203,7 +1207,10 @@
                     "required": {
                         "type": "boolean"
                     },
-                    "use_in_card": {
+                    "is_present_in_card": {
+                        "type": "boolean"
+                    },
+                    "is_filterable": {
                         "type": "boolean"
                     },
                     "type": {
