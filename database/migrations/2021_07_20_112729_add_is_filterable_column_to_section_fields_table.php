@@ -28,7 +28,7 @@ class AddIsFilterableColumnToSectionFieldsTable extends Migration
     {
         Schema::table('section_fields', function (Blueprint $table) {
             $table->dropColumn('is_filterable');
-            $table->renameColumn('is_present_in_card', 'use_in_card');
+            $table->renameColumn( 'is_present_in_card', 'use_in_card');
         });
     }
 }
