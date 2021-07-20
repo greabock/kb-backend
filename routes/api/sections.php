@@ -119,5 +119,5 @@ Route::prefix('sections')->name('sections')->group(function () {
     Route::delete('{section}')->name('.destroy')
         ->uses(Sections\Destroy\Action::class);
 
-    require_once __DIR__ . '/sections/materials.php';
+    require  __DIR__ . '/sections/materials.php';
 });

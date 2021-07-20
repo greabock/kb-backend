@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Actions\Api\Materials\Update;
 
+use App\Http\Resources\MaterialResource;
 use App\Models\Section;
 use Greabock\Populator\Populator;
 use Illuminate\Http\JsonResponse;
@@ -18,8 +19,6 @@ class Action
 
         $populator->flush();
 
-        return response()->json([
-            'data' => $material->toArray()
-        ])->setStatusCode(200);
+        return (new MaterialResource($material))->response()->setStatusCode(200);
     }
 }

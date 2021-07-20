@@ -13,7 +13,7 @@ use OpenApi\Annotations as OA;
  *     @OA\Property(property="title", type="string", example="Страны"),
  *     @OA\Property(property="values", type="array",
  *         @OA\Items(type="object", required={"title"},
- *            @OA\Property(property="id", type="string", example="Канада"),
+ *            @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
  *            @OA\Property(property="title", type="string", example="Канада"),
  *         )
  *     ),

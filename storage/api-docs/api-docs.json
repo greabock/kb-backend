@@ -116,6 +116,182 @@
                 }
             }
         },
+        "enums": {
+            "get": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Получение списка перечислений",
+                "responses": {
+                    "200": {
+                        "description": "Список перечислений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/EnumResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Создание перечисления",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnumCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "enums/{enum}": {
+            "get": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Получение перечисления с его значениями",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Конкретное перечисление с его значениями",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Удаление перечисления",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Обновление перечисления",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnumUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
         "sections": {
             "get": {
                 "tags": [
@@ -255,7 +431,7 @@
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Обновление перечисления",
+                "summary": "Обновление раздела",
                 "parameters": [
                     {
                         "name": "section",
@@ -297,27 +473,27 @@
                 }
             }
         },
-        "enums": {
+        "sections/{section}/materials": {
             "get": {
                 "tags": [
-                    "Enums"
+                    "Materials"
                 ],
-                "summary": "Получение списка перечислений",
+                "summary": "Получение постранично разбитого списка материалов секции",
+                "description": "> Стоит обратить внимание, что для материала в списке, будут отображаться только те дополнительные поля,\n    для которых установлен флаг `use_in_card: true`. Кроме того, хотя в примере и указаны ключи вида `additionalPropN`,\n    на самом деле это всегда будет uuid свойства, для которого представлено значение. К сожалению, спецификация **OpenApi** не позволяет выразить это явным образом",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Список перечислений",
+                        "description": "Страница материалов",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#components/schemas/EnumResource"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#components/schemas/PageOfMaterialResources"
                                 }
                             }
                         }
@@ -332,27 +508,34 @@
             },
             "post": {
                 "tags": [
-                    "Enums"
+                    "Materials"
                 ],
-                "summary": "Создание перечисления",
+                "summary": "Создание материала",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EnumCreateRequest"
+                                "$ref": "#/components/schemas/MaterialCreateRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "description": "Созданное перечисление",
+                        "description": "Созданный материал",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                            "$ref": "#components/schemas/MaterialDetailedResource"
                                         }
                                     },
                                     "type": "object"
@@ -369,27 +552,33 @@
                 }
             }
         },
-        "enums/{enum}": {
+        "sections/{section}/materials/{material}": {
             "get": {
                 "tags": [
-                    "Enums"
+                    "Materials"
                 ],
-                "summary": "Получение перечисления с его значениями",
+                "summary": "Получение материала",
                 "parameters": [
                     {
-                        "name": "enum",
-                        "in": "path"
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    },
+                    {
+                        "name": "material",
+                        "in": "path",
+                        "description": "Идентификатор материала"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Конкретное перечисление с его значениями",
+                        "description": "Материал",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                            "$ref": "#components/schemas/MaterialDetailedResource"
                                         }
                                     },
                                     "type": "object"
@@ -407,13 +596,19 @@
             },
             "delete": {
                 "tags": [
-                    "Enums"
+                    "Materials"
                 ],
-                "summary": "Удаление перечисления",
+                "summary": "Удаление материала",
                 "parameters": [
                     {
-                        "name": "enum",
-                        "in": "path"
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    },
+                    {
+                        "name": "material",
+                        "in": "path",
+                        "description": "Идентификатор удаляемого материала"
                     }
                 ],
                 "responses": {
@@ -430,33 +625,39 @@
             },
             "patch": {
                 "tags": [
-                    "Enums"
+                    "Materials"
                 ],
-                "summary": "Обновление перечисления",
+                "summary": "Обновление материала",
                 "parameters": [
                     {
-                        "name": "enum",
-                        "in": "path"
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    },
+                    {
+                        "name": "material",
+                        "in": "path",
+                        "description": "Идентификатор обновляемого материала"
                     }
                 ],
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EnumUpdateRequest"
+                                "$ref": "#/components/schemas/MaterialUpdateRequest"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "Обновленное перечисление",
+                        "description": "Обновленный материал",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                            "$ref": "#components/schemas/MaterialDetailedResource"
                                         }
                                     },
                                     "type": "object"
@@ -511,7 +712,7 @@
                             "properties": {
                                 "id": {
                                     "type": "string",
-                                    "example": "Канада"
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
                                 },
                                 "title": {
                                     "type": "string",
@@ -551,6 +752,113 @@
                     }
                 },
                 "type": "object"
+            },
+            "MaterialCreateRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Название материала"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "anyOf": [
+                        {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "MaterialUpdateRequest": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Название материала"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "anyOf": [
+                        {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ]
+                }
             },
             "SectionCreateRequest": {
                 "required": [
@@ -761,7 +1069,7 @@
                     },
                     "title": {
                         "type": "string",
-                        "example": "Канада"
+                        "example": "Пример названия значения перечисления"
                     }
                 },
                 "type": "object"
@@ -774,12 +1082,12 @@
                     },
                     "title": {
                         "type": "string",
-                        "example": "Страны"
+                        "example": "Пример названия списка перечислений"
                     }
                 },
                 "type": "object"
             },
-            "EnumWithValuesResource": {
+            "EnumDetailedResource": {
                 "properties": {
                     "id": {
                         "type": "string",
@@ -787,7 +1095,7 @@
                     },
                     "title": {
                         "type": "string",
-                        "example": "Страны"
+                        "example": "Пример названия списка перечислений"
                     },
                     "values": {
                         "type": "array",
@@ -797,6 +1105,83 @@
                     }
                 },
                 "type": "object"
+            },
+            "PageOfMaterialResources": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MaterialDetailedResource"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "MaterialResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Пример названия материала"
+                    }
+                },
+                "type": "object"
+            },
+            "MaterialDetailedResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Канада"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "anyOf": [
+                        {
+                            "$ref": "#/components/schemas/EnumValueResource"
+                        },
+                        {
+                            "$ref": "#/components/schemas/MaterialResource"
+                        },
+                        {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/EnumValueResource"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/MaterialResource"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
             },
             "SectionFieldResource": {
                 "properties": {
@@ -1211,6 +1596,32 @@
                                 "$ref": "#components/schemas/TypeFile"
                             }
                         ]
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "path": {
+                        "type": "string"
                     }
                 },
                 "type": "object"

@@ -40,7 +40,7 @@ Route::prefix('enums')->name('enums')->group(function () {
      *          response="201",
      *          description="Созданное перечисление",
      *          @OA\JsonContent(type="object",
-     *             @OA\Property(property="data", ref="#components/schemas/EnumWithValuesResource")
+     *             @OA\Property(property="data", ref="#components/schemas/EnumDetailedResource")
      *          )
      *     ),
      *     @OA\Response(
@@ -63,7 +63,7 @@ Route::prefix('enums')->name('enums')->group(function () {
      *          response="200",
      *          description="Конкретное перечисление с его значениями",
      *          @OA\JsonContent(type="object",
-     *             @OA\Property(property="data", ref="#components/schemas/EnumWithValuesResource")
+     *             @OA\Property(property="data", ref="#components/schemas/EnumDetailedResource")
      *          )
      *     ),
      *     @OA\Response(

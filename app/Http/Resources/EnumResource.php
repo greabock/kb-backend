@@ -13,12 +13,12 @@ use OpenApi\Annotations as OA;
 /**
  * @OA\Schema(schema="EnumResource",
  *    @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
- *    @OA\Property(property="title", type="string", example="Страны"),
+ *    @OA\Property(property="title", type="string", example="Пример названия списка перечислений"),
  * )
  *
- * @OA\Schema(schema="EnumWithValuesResource",
+ * @OA\Schema(schema="EnumDetailedResource",
  *    @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
- *    @OA\Property(property="title", type="string", example="Страны"),
+ *    @OA\Property(property="title", type="string", example="Пример названия списка перечислений"),
  *    @OA\Property(property="values", type="array",
  *      @OA\Items(ref="#/components/schemas/EnumValueResource")
  *    )

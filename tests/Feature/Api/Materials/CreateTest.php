@@ -129,7 +129,6 @@ class CreateTest extends ActionTestCase
             'name' => $materialName,
             $section->fields->first()->id => [['id' => $enum->values->first()->id], ['id' => $enum->values->first()->id]],
         ], ['section' => $section->id])
-            ->dump()
             ->assertCreated();
     }
 

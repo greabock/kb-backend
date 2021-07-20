@@ -4,17 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Actions\Api\Auth;
 use OpenApi\Annotations as OA;
 
-/**
- * @OA\Info(
- *     version="1.0.0",
- *     title="KB API",
- *     description="HTTP JSON API"
- * )
- * @OA\Server(
- *     url="/api"
- * )
- */
-
 Route::prefix('auth')->name('auth')->group(function () {
 
     /**
@@ -103,6 +92,6 @@ Route::prefix('auth')->name('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    require_once __DIR__ . '/api/enums.php';
-    require_once __DIR__ . '/api/sections.php';
+    require  __DIR__ . '/api/enums.php';
+    require   __DIR__ . '/api/sections.php';
 });
