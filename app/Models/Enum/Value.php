@@ -6,6 +6,7 @@ namespace App\Models\Enum;
 
 use Eloquent;
 use App\Models\Enum;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,10 +31,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $enum_id
  * @property-read Enum $of
  * @method static Builder|Value whereEnumId($value)
+ * @property Carbon|null $deleted_at
+ * @method static \Database\Factories\Enum\ValueFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Query\Builder|Value onlyTrashed()
+ * @method static Builder|Value whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Value withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Value withoutTrashed()
  */
 class Value extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'enum_values';
 

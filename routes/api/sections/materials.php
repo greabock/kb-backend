@@ -8,7 +8,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
 
     /**
      * @OA\Get(
-     *     path="sections/{section}/materials",
+     *     path="/sections/{section}/materials",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
      *     description="> Стоит обратить внимание, что для материала в списке, будут отображаться только те дополнительные поля,
@@ -34,7 +34,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
 
     /**
      * @OA\Post(
-     *     path="sections/{section}/materials",
+     *     path="/sections/{section}/materials",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
      *     summary="Создание материала",
@@ -58,7 +58,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
 
     /**
      * @OA\Get(
-     *     path="sections/{section}/materials/{material}",
+     *     path="/sections/{section}/materials/{material}",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
      *     summary="Получение материала",
@@ -82,7 +82,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
 
     /**
      * @OA\Patch(
-     *     path="sections/{section}/materials/{material}",
+     *     path="/sections/{section}/materials/{material}",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
      *     summary="Обновление материала",
@@ -108,7 +108,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
 
     /**
      * @OA\Delete(
-     *     path="sections/{section}/materials/{material}",
+     *     path="/sections/{section}/materials/{material}",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
      *     summary="Удаление материала",

@@ -16,20 +16,20 @@ class DeleteTest extends ActionTestCase
         return 'sections.destroy';
     }
 
-    public function testUserCanDestroySection()
+    public function testUserCanDestroySection(): void
     {
         /** @var Section $section */
         $section = Section::factory()->create();
 
         $this->assertDatabaseHas('sections', ['id' => $section->id]);
 
-        $this->callAuthorizedRouteAction([], ['section' => $section->id])
+        $this->callAuthorizedByAdminRouteAction([], ['section' => $section->id])
             ->assertNoContent();
 
-        $this->assertDatabaseMissing('sections', ['id' => $section->id]);
+        $this->assertDatabaseMissing('sections', ['id' => $section->id, 'deleted_at' => null]);
     }
 
-    public function testNotFoundOnNotExistingId()
+    public function testNotFoundOnNotExistingId(): void
     {
         $this->callAuthorizedRouteAction([], ['section' => Uuid::uuid4()->toString()])
             ->assertNotFound();

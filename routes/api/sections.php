@@ -7,7 +7,7 @@ Route::prefix('sections')->name('sections')->group(function () {
 
     /**
      * @OA\Get(
-     *     path="sections",
+     *     path="/sections",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
      *     summary="Получение списка разделов",
@@ -31,10 +31,10 @@ Route::prefix('sections')->name('sections')->group(function () {
 
     /**
      * @OA\Post(
-     *     path="sections",
+     *     path="/sections",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
-     *     summary="Создание раздела",
+     *     summary="Создание раздела (admin, moderator)",
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/SectionCreateRequest")),
      *     @OA\Response(
      *          response="201",
@@ -50,11 +50,12 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::post('/')->name('.create')
+        ->middleware('user-role:moderator,admin')
         ->uses(Sections\Create\Action::class);
 
     /**
      * @OA\Get (
-     *     path="sections/{section}",
+     *     path="/sections/{section}",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
      *     summary="Получение раздела с его полями",
@@ -77,10 +78,10 @@ Route::prefix('sections')->name('sections')->group(function () {
 
     /**
      * @OA\Patch (
-     *     path="sections/{sections}",
+     *     path="/sections/{sections}",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
-     *     summary="Обновление раздела",
+     *     summary="Обновление раздела (admin, moderator)",
      *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела"),
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/SectionUpdateRequest")),
      *     @OA\Response(
@@ -97,14 +98,15 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::patch('{section}')->name('.update')
+        ->middleware('user-role:moderator,admin')
         ->uses(Sections\Update\Action::class);
 
     /**
      * @OA\Delete  (
-     *     path="sections/{section}",
+     *     path="/sections/{section}",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
-     *     summary="Удаление раздела",
+     *     summary="Удаление раздела (admin, moderator)",
      *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела"),
      *     @OA\Response(
      *          response="204",
@@ -117,7 +119,8 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::delete('{section}')->name('.destroy')
+        ->middleware('user-role:moderator,admin')
         ->uses(Sections\Destroy\Action::class);
 
-    require  __DIR__ . '/sections/materials.php';
+    require __DIR__ . '/sections/materials.php';
 });

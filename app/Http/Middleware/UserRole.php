@@ -16,6 +16,6 @@ class UserRole
             return $next($request);
         }
 
-        return response()->setStatusCode(401);
+        return response('Unauthorized', 403);
     }
 }

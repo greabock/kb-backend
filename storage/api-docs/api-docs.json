@@ -11,7 +11,7 @@
         }
     ],
     "paths": {
-        "auth/login": {
+        "/auth/login": {
             "post": {
                 "tags": [
                     "Auth"
@@ -44,7 +44,7 @@
                 "security": []
             }
         },
-        "auth/azure/redirect": {
+        "/auth/azure/redirect": {
             "get": {
                 "tags": [
                     "Auth"
@@ -65,7 +65,7 @@
                 "security": []
             }
         },
-        "auth/azure/login": {
+        "/auth/azure/login": {
             "post": {
                 "tags": [
                     "Auth"
@@ -90,7 +90,7 @@
                 "security": []
             }
         },
-        "auth/me": {
+        "/auth/me": {
             "get": {
                 "tags": [
                     "Auth"
@@ -116,7 +116,7 @@
                 }
             }
         },
-        "enums": {
+        "/enums": {
             "get": {
                 "tags": [
                     "Enums"
@@ -188,7 +188,7 @@
                 }
             }
         },
-        "enums/{enum}": {
+        "/enums/{enum}": {
             "get": {
                 "tags": [
                     "Enums"
@@ -292,7 +292,7 @@
                 }
             }
         },
-        "sections": {
+        "/sections": {
             "get": {
                 "tags": [
                     "Sections"
@@ -329,7 +329,7 @@
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Создание раздела",
+                "summary": "Создание раздела (admin, moderator)",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -364,7 +364,7 @@
                 }
             }
         },
-        "sections/{section}": {
+        "/sections/{section}": {
             "get": {
                 "tags": [
                     "Sections"
@@ -405,7 +405,7 @@
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Удаление раздела",
+                "summary": "Удаление раздела (admin, moderator)",
                 "parameters": [
                     {
                         "name": "section",
@@ -426,12 +426,12 @@
                 }
             }
         },
-        "sections/{sections}": {
+        "/sections/{sections}": {
             "patch": {
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Обновление раздела",
+                "summary": "Обновление раздела (admin, moderator)",
                 "parameters": [
                     {
                         "name": "section",
@@ -473,7 +473,7 @@
                 }
             }
         },
-        "sections/{section}/materials": {
+        "/sections/{section}/materials": {
             "get": {
                 "tags": [
                     "Materials"
@@ -552,7 +552,7 @@
                 }
             }
         },
-        "sections/{section}/materials/{material}": {
+        "/sections/{section}/materials/{material}": {
             "get": {
                 "tags": [
                     "Materials"
@@ -658,6 +658,155 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#components/schemas/MaterialDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Получение списка пользователей (admin)",
+                "responses": {
+                    "200": {
+                        "description": "Список пользователей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/UserResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    },
+                    "403": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Создание пользователя (admin)",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданный пользователь",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    },
+                    "403": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/users/{user}": {
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Удаление пользователя (admin)",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "Идентификатор пользователя"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Обновление пользователя (admin)",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "Идентификатор пользователя"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленный пользователь",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
                                         }
                                     },
                                     "type": "object"
@@ -1043,6 +1192,79 @@
                             },
                             "type": "object"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "UserCreateRequest": {
+                "required": [
+                    "login",
+                    "email",
+                    "name",
+                    "password",
+                    "role"
+                ],
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "ninja24"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "some@domain.com"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иванов Иван"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "qwerty12345"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "moderator",
+                            "admin"
+                        ]
+                    },
+                    "photo": {
+                        "type": "string",
+                        "example": "some.com/123.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "UserUpdateRequest": {
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "ninja24"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "some@domain.com"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иванов Иван"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "qwerty12345"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "moderator",
+                            "admin"
+                        ]
+                    },
+                    "photo": {
+                        "type": "string",
+                        "example": "some.com/123.jpg"
                     }
                 },
                 "type": "object"

@@ -20,9 +20,7 @@ class CreateTest extends ActionTestCase
         /** @var Enum $enum */
         $enum = Enum::factory()->create();
 
-        $user = User::factory()->create();
-
-        $response = $this->callAuthorizedByUserRouteAction($user, [
+        $response = $this->callAuthorizedByAdminRouteAction([
             'title' => 'New section',
             'is_dictionary' => true,
             'is_navigation' => true,
@@ -53,16 +51,30 @@ class CreateTest extends ActionTestCase
                             'of' => $enum->id,
                         ]
                     ]
-                ]
+                ],
+                [
+                    'title' => 'deadline',
+                    'required' => false,
+                    'is_present_in_card' => false,
+                    'is_filterable' => false,
+                    'sort_index' => 0,
+                    'type' => [
+                        'name' => 'Date',
+                    ]
+                ],
             ]
-        ])->assertCreated();
+        ])
+            ->assertCreated();
 
         $sectionId = $response->json('data.id');
         $field1Id = $response->json('data.fields.0.id');
         $field2Id = $response->json('data.fields.1.id');
+        $field3Id = $response->json('data.fields.2.id');
 
         $this->assertTrue(\Schema::hasTable('sections.' . $sectionId));
         $this->assertSame('string', \Schema::getColumnType('sections.' . $sectionId, $field1Id));
+        $this->assertSame('datetime', \Schema::getColumnType('sections.' . $sectionId, $field3Id));
+
         $this->assertTrue(\Schema::hasTable('pivots.' . $field2Id));
 
         $response = $this->callRouteAction([

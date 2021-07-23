@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $id
@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class Material extends Model
 {
+    use SoftDeletes;
+
     public static $sectionId = null;
 
     protected $keyType = 'string';

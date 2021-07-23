@@ -16,8 +16,6 @@ class SectionMaterialModelBuilder
 {
     private Repository $cache;
 
-    private Collection $sections;
-
     public function __construct(Repository $cache)
     {
         $this->cache = $cache;
@@ -58,6 +56,10 @@ class SectionMaterialModelBuilder
         $class->addProperty('fillable')
             ->setProtected()
             ->setValue(['name', ...$section->plainFieldKeys()]);
+
+        $class->addProperty('casts')
+            ->setProtected()
+            ->setValue($section->getFieldCasts());
 
         $class->addProperty('sectionId')
             ->setPublic()

@@ -21,6 +21,6 @@ class DestroyTest extends ActionTestCase
         $this->callAuthorizedRouteAction([], ['enum' => $enum->id])
             ->assertStatus(204);
 
-        $this->assertDatabaseMissing('enums', ['id' => $enum->id]);
+        $this->assertDatabaseMissing('enums', ['id' => $enum->id, 'deleted_at' => null]);
     }
 }

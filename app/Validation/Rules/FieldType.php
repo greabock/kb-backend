@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Validation\Rules;
 
+use JetBrains\PhpStorm\Pure;
 use OpenApi\Annotations as OA;
 
 /**
@@ -74,6 +75,7 @@ class FieldType
     private const T_FILE = 'File';
     private const T_TEXT = 'Text';
     private const T_WIKI = 'Wiki';
+    private const T_DATE = 'Date';
 
     private const AVAILABLE_TYPES = [
         self::T_STRING,
@@ -84,13 +86,31 @@ class FieldType
         self::T_DICTIONARY,
         self::T_ENUM,
         self::T_FILE,
+        self::T_DATE,
     ];
 
-    private const LISTED_TYPES = [
+    public const LISTABLE_TYPES = [
         self::T_DICTIONARY,
         self::T_ENUM,
         self::T_FILE,
     ];
+
+    public const LINK_TYPES = [
+        self::T_ENUM,
+        self::T_FILE,
+        self::T_DICTIONARY,
+    ];
+
+    public const SCALAR_TYPES = [
+        self::T_STRING,
+        self::T_INTEGER,
+        self::T_FLOAT,
+        self::T_BOOLEAN,
+        self::T_TEXT,
+        self::T_WIKI,
+        self::T_DATE,
+    ];
+
 
     public static function resolveRules($attribute, array $value): array
     {
@@ -103,11 +123,16 @@ class FieldType
     // String
     public static function rulesString($attribute, $value): array
     {
-
         return [
             self::prefix($attribute, 'min') => 'sometimes|integer|lte:' . self::prefix($attribute, 'max') . '|min:0|max:255',
             self::prefix($attribute, 'max') => 'sometimes|integer|gte:' . self::prefix($attribute, 'min') . '|min:0|max:255',
         ];
+    }
+
+    // Date
+    public static function rulesDate($attribute, $value): array
+    {
+        return [];
     }
 
     // Text
@@ -190,5 +215,103 @@ class FieldType
     private static function prefix($attribute, $field): string
     {
         return implode('.', [$attribute, $field]);
+    }
+
+
+    public static function rules(array $type, string $field, ?bool $required)
+    {
+        return match ($type['name']) {
+            self::T_STRING => [$field => [
+                $required ? 'required' : 'sometimes',
+                'string',
+                'min:' . ($type['min'] ?? 0),
+                'max:' . ($type['max'] ?? 255),
+            ]],
+            self::T_DATE => [$field => [
+                $required ? 'required' : 'sometimes',
+                'date',
+            ]],
+            self::T_INTEGER => [$field => [
+                $required ? 'required' : 'sometimes',
+                'integer',
+                'min:' . ($type['min'] ?? -2147483647),
+                'max:' . ($type['max'] ?? 2147483647),
+            ]],
+            self::T_FLOAT => [$field => [
+                $required ? 'required' : 'sometimes',
+                'number',
+                'min:' . ($type['min'] ?? -2147483647),
+                'max:' . ($type['max'] ?? 2147483647),
+            ]],
+            self::T_BOOLEAN => [$field => [
+                $required ? 'required' : 'sometimes',
+                'boolean',
+            ]],
+            self::T_TEXT, self::T_WIKI => [$field => [
+                $required ? 'required' : 'sometimes',
+                'string',
+                'min:' . ($type['min'] ?? 0),
+                'max:' . ($type['max'] ?? 21845),
+            ]],
+            self::T_ENUM => [
+                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field . '.id' => [
+                    $required ? 'required' : 'sometimes',
+                    'uuid',
+                    'exists:enum_values,id',
+                ]
+            ],
+            self::T_FILE => [
+                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field . '.id' => [
+                    $required ? 'required' : 'sometimes',
+                    'uuid',
+                    'exists:files,id',
+                ]
+            ],
+            self::T_DICTIONARY => [
+                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field . '.id' => [
+                    $required ? 'required' : 'sometimes',
+                    'uuid',
+                    "exists:pgsql.sections.{$type['of']},id",
+                ]
+            ],
+            self::T_LIST => self::buildSubRules($type, $field, $required),
+            default => throw new \Exception('Unknown type ' . $type['name'])
+        };
+    }
+
+    private static function buildSubRules(array $type, string $field, bool $required): array
+    {
+        $rules = [$field => [$required ? 'required' : 'sometimes']];
+
+        foreach (self::rules($type['of'], '*', $required) as $key => $rule) {
+            $rules[$field . '.' . $key] = $rule;
+        }
+
+        return $rules;
+    }
+
+    public static function struct($type, $attribute)
+    {
+        return match (true) {
+            in_array($type, self::SCALAR_TYPES, true) => [$attribute],
+            in_array($type, self::LINK_TYPES, true) => [$attribute => ['id']],
+            self::T_LIST === $type => [$attribute => [['id']]],
+            default => throw new \Exception('Unknown type ' . $type),
+        };
+    }
+
+    public static function getCast($type): string
+    {
+        return match ($type) {
+            self::T_STRING, self::T_TEXT, self::T_WIKI => 'string',
+            self::T_DATE => 'date',
+            self::T_INTEGER => 'integer',
+            self::T_FLOAT => 'float',
+            self::T_BOOLEAN => 'boolean',
+            default => null,
+        };
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 
 class Action
 {
-    public function __invoke($material, Section $section): Response
+    public function __invoke(Section $section, $material): Response
     {
         /** @var Material $material */
         $material = ($section->class_name)::findOrFail($material);

@@ -75,41 +75,45 @@ class ColumnBuilder
 
         Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
 
-            if ($field->type['name'] === 'String') {
+            if ($field->type['name'] === Field::TYPE_STRING) {
                 $table->string($field->id)->nullable();
             }
 
-            if ($field->type['name'] === 'Integer') {
+            if ($field->type['name'] === Field::TYPE_INTEGER) {
                 $table->integer($field->id)->nullable();
             }
 
-            if ($field->type['name'] === 'Float') {
+            if ($field->type['name'] === Field::TYPE_FLOAT) {
                 $table->float($field->id)->nullable();
             }
 
-            if ($field->type['name'] === 'Boolean') {
+            if ($field->type['name'] === Field::TYPE_BOOLEAN) {
                 $table->boolean($field->id)->nullable();
             }
 
-            if ($field->type['name'] === 'Text') {
+            if ($field->type['name'] === Field::TYPE_TEXT) {
                 $table->text($field->id)->nullable();
             }
 
-            if ($field->type['name'] === 'Wiki') {
+            if ($field->type['name'] === Field::TYPE_WIKI) {
                 $table->text($field->id)->nullable();
             }
 
-            if ($field->type['name'] === 'File') {
+            if ($field->type['name'] === Field::TYPE_DATE) {
+                $table->timestamp($field->id)->nullable();
+            }
+
+            if ($field->type['name'] === Field::TYPE_FILE) {
                 $table->uuid($field->foreignKey)->nullable();
                 $table->foreign($field->foreignKey, $field->id)->references('id')->on('files');
             }
 
-            if ($field->type['name'] === 'Enum') {
+            if ($field->type['name'] === Field::TYPE_ENUM) {
                 $table->uuid($field->foreignKey)->nullable();
                 $table->foreign($field->foreignKey, $field->id)->references('id')->on('enum_values');
             }
 
-            if ($field->type['name'] === 'Dictionary') {
+            if ($field->type['name'] === Field::TYPE_DICTIONARY) {
                 $table->uuid($field->foreignKey)->nullable();
                 $table->foreign($field->foreignKey)->references('id')->on($field->type['of']);
             }

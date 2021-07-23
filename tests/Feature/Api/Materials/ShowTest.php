@@ -18,12 +18,11 @@ class ShowTest extends ActionTestCase
         return 'sections.materials.show';
     }
 
-
     public function testUserCanSeeMaterialDetails(): void
     {
         /** @var Section $section */
         $section = Section::factory()->has(
-            Section\Field::factory()->count(4),
+            Section\Field::factory()->count(3),
             'fields',
         )->create();
 

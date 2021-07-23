@@ -4,11 +4,19 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Str;
+use Eloquent;
 use App\Models\Section\Field;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
+use App\Validation\Rules\FieldType;
+use Database\Factories\SectionFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * App\Models\Section
@@ -21,26 +29,35 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $sort_index
  * @property string $tableName
  * @property string $class_name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|Section newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Section newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Section query()
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereImage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereIsDictionary($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereIsNavigation($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereSortIndex($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Section whereUpdatedAt($value)
- * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Section\Field[] $fields
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @method static Builder|Section newModelQuery()
+ * @method static Builder|Section newQuery()
+ * @method static Builder|Section query()
+ * @method static Builder|Section whereCreatedAt($value)
+ * @method static Builder|Section whereId($value)
+ * @method static Builder|Section whereImage($value)
+ * @method static Builder|Section whereIsDictionary($value)
+ * @method static Builder|Section whereIsNavigation($value)
+ * @method static Builder|Section whereSortIndex($value)
+ * @method static Builder|Section whereTitle($value)
+ * @method static Builder|Section whereUpdatedAt($value)
+ * @property-read Collection|Field[] $fields
  * @property-read int|null $fields_count
+ * @property Carbon|null $deleted_at
+ * @property-read mixed $table_name
+ * @method static SectionFactory factory(...$parameters)
+ * @method static QueryBuilder|Section onlyTrashed()
+ * @method static Builder|Section whereClassName($value)
+ * @method static Builder|Section whereDeletedAt($value)
+ * @method static QueryBuilder|Section withTrashed()
+ * @method static QueryBuilder|Section withoutTrashed()
+ * @mixin Eloquent
  */
 class Section extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     public $incrementing = false;
 
@@ -56,13 +73,13 @@ class Section extends Model
 
     public function setIdAttribute($value)
     {
-        $this->setAttribute('class_name', 'Section' . \Str::replace('-', '', $value));
+        $this->setAttribute('class_name', 'Section' . Str::replace('-', '', $value));
         $this->attributes['id'] = $value;
     }
 
     public function fields(): HasMany
     {
-        return $this->hasMany(Section\Field::class, 'section_id');
+        return $this->hasMany(Section\Field::class, 'section_id')->orderBy('sort_index');
     }
 
     public function getTableNameAttribute()
@@ -72,14 +89,18 @@ class Section extends Model
 
     public function rules(?bool $required = null): array
     {
-        return $this->fields->map(fn(Section\Field $field) => $field->rules($field->type, $field->id, $required))
-            ->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), []);
+        return $this->fields->map(fn(Section\Field $field) => FieldType::rules(
+            $field->type,
+            $field->id,
+            $required ?? $field->required,
+        ))->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), []);
     }
 
     public function struct(): array
     {
-        return $this->fields->map(fn(Section\Field $field) => $field->struct())
-            ->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), ['name']);
+        return $this->fields->map(
+            fn(Section\Field $field) => FieldType::struct($field->type['name'], $field->id)
+        )->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), ['name']);
     }
 
     public function getRelationFields(): Collection
@@ -113,4 +134,11 @@ class Section extends Model
             ->reduce(fn($carry, Field $field) => [...$carry, $field->id], ['name']);
     }
 
+    public function getFieldCasts(): array
+    {
+        return $this->plainFields()->keyBy('id')
+            ->map(fn(Field $field) => FieldType::getCast($field->type['name']))
+            ->filter()
+            ->toArray();
+    }
 }

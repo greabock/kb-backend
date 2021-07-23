@@ -105,6 +105,26 @@ abstract class ActionTestCase extends TestCase
     }
 
     /**
+     * Выполнение авторизованного запроса под админом. В момент запроса создается рандомный админ
+     * и от него выполняется запрос
+     *
+     * @param array $data Request body
+     * @param array $parameters Route parameters
+     * @param array $headers Request headers
+     * @param array $scopes
+     *
+     * @return TestResponse
+     */
+    protected function callAuthorizedByAdminRouteAction(array $data = [], array $parameters = [], array $headers = [], array $scopes = []): TestResponse
+    {
+        /** @var User $user */
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
+        $user = User::findOrFail($user->getKey());
+
+        return $this->callAuthorizedByUserRouteAction($user, $data, $parameters, $headers, $scopes);
+    }
+
+    /**
      * Выполнение запроса от имени переданного пользователя.
      *
      * @param User $user

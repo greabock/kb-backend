@@ -7,7 +7,7 @@ Route::prefix('enums')->name('enums')->group(function () {
 
     /**
      * @OA\Get(
-     *     path="enums",
+     *     path="/enums",
      *     security={"apiKey":{}},
      *     tags={"Enums"},
      *     summary="Получение списка перечислений",
@@ -31,7 +31,7 @@ Route::prefix('enums')->name('enums')->group(function () {
 
     /**
      * @OA\Post(
-     *     path="enums",
+     *     path="/enums",
      *     security={"apiKey":{}},
      *     tags={"Enums"},
      *     summary="Создание перечисления",
@@ -54,7 +54,7 @@ Route::prefix('enums')->name('enums')->group(function () {
 
     /**
      * @OA\Get (
-     *     path="enums/{enum}",
+     *     path="/enums/{enum}",
      *     security={"apiKey":{}},
      *     tags={"Enums"},
      *     summary="Получение перечисления с его значениями",
@@ -77,7 +77,7 @@ Route::prefix('enums')->name('enums')->group(function () {
 
     /**
      * @OA\Patch (
-     *     path="enums/{enum}",
+     *     path="/enums/{enum}",
      *     security={"apiKey":{}},
      *     tags={"Enums"},
      *     summary="Обновление перечисления",
@@ -101,7 +101,7 @@ Route::prefix('enums')->name('enums')->group(function () {
 
     /**
      * @OA\Delete  (
-     *     path="enums/{enum}",
+     *     path="/enums/{enum}",
      *     security={"apiKey":{}},
      *     tags={"Enums"},
      *     summary="Удаление перечисления",

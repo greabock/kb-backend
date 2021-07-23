@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Section;
-use App\Observers\SectionFieldObserver;
 use App\Observers\SectionObserver;
+use App\Observers\SectionFieldObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

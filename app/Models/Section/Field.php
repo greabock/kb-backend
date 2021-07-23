@@ -8,11 +8,13 @@ use App\Models\Enum;
 use App\Models\File;
 use App\Models\Material;
 use App\Models\Section;
+use App\Validation\Rules\FieldType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Mockery\Exception;
 
@@ -50,21 +52,37 @@ use Mockery\Exception;
  * @method static Builder|Field whereUpdatedAt($value)
  * @method static Builder|Field whereUseInCard($value)
  * @property-read Section $section
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read string $foreign_key
+ * @property-read string $local_pivot_key
+ * @property-read string $pivot_name
+ * @property-read string $related_class
+ * @method static \Database\Factories\Section\FieldFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Query\Builder|Field onlyTrashed()
+ * @method static Builder|Field whereDeletedAt($value)
+ * @method static Builder|Field whereIsFilterable($value)
+ * @method static Builder|Field whereIsPresentInCard($value)
+ * @method static \Illuminate\Database\Query\Builder|Field withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Field withoutTrashed()
  */
 class Field extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    public const TYPE_STRING = 'String';
+    public const TYPE_INTEGER = 'Integer';
+    public const TYPE_FLOAT = 'Float';
+    public const TYPE_BOOLEAN = 'Boolean';
+    public const TYPE_TEXT = 'Text';
+    public const TYPE_WIKI = 'Wiki';
+    public const TYPE_ENUM = 'Enum';
+    public const TYPE_FILE = 'File';
+    public const TYPE_DICTIONARY = 'Dictionary';
+    public const TYPE_LIST = 'List';
+    public const TYPE_DATE = 'Date';
 
     protected $touches = ['section'];
-
-    private const SCALAR_TYPES = [
-        'String',
-        'Integer',
-        'Float',
-        'Boolean',
-        'Text',
-        'Wiki',
-    ];
 
     protected $table = 'section_fields';
 
@@ -91,14 +109,14 @@ class Field extends Model
         return $this->belongsTo(Section::class, 'section_id');
     }
 
+    public function getLocalPivotKeyAttribute(): string
+    {
+        return $this->section->id . '_id';
+    }
+
     public function getPivotNameAttribute(): string
     {
         return 'pivots.' . Str::snake($this->id);
-    }
-
-    public function usingInCard(): bool
-    {
-        return $this->getAttribute('is_present_in_card');
     }
 
     public function getForeignKeyAttribute(array $type = null): string
@@ -106,103 +124,10 @@ class Field extends Model
         $type = $type ?? $this->type;
 
         return match ($type['name']) {
-            'List' => $this->getForeignKeyAttribute($type['of']),
-            'Enum', 'File', 'Dictionary' => $type['of'] . '_id',
+            self::TYPE_LIST => $this->getForeignKeyAttribute($type['of']),
+            self::TYPE_ENUM, self::TYPE_FILE, self::TYPE_DICTIONARY => $type['of'] . '_id',
             default => throw new \Exception(sprintf('unknown type %s', $type['name'])),
         };
-    }
-
-    public function getLocalPivotKeyAttribute(): string
-    {
-        return $this->section->id . '_id';
-    }
-
-    public function rules(array $type = null, string $field = null, ?bool $required = null): array
-    {
-        $type = $type ?? $this->type;
-        $field = $field ?? $this->id;
-        $required = $required ?? $this->required;
-
-        return match ($type['name']) {
-            'String' => [$field => [
-                $required ? 'required' : 'sometimes',
-                'string',
-                'min:' . ($type['min'] ?? 0),
-                'max:' . ($type['max'] ?? 255),
-            ]],
-
-            'Integer' => [$field => [
-                $required ? 'required' : 'sometimes',
-                'integer',
-                'min:' . ($type['min'] ?? -2147483647),
-                'max:' . ($type['max'] ?? 2147483647),
-            ]],
-            'Float' => [$field => [
-                $required ? 'required' : 'sometimes',
-                'number',
-                'min:' . ($type['min'] ?? -2147483647),
-                'max:' . ($type['max'] ?? 2147483647),
-            ]],
-            'Boolean' => [$field => [
-                $required ? 'required' : 'sometimes',
-                'boolean',
-            ]],
-
-            'Text', 'Wiki' => [$field => [
-                $required ? 'required' : 'sometimes',
-                'string',
-                'min:' . ($type['min'] ?? 0),
-                'max:' . ($type['max'] ?? 21845),
-            ]],
-            'Enum' => [
-                $field => [$required ? 'required' : 'sometimes', 'array:id'],
-                $field . '.id' => [
-                    $required ? 'required' : 'sometimes',
-                    'uuid',
-                    'exists:enum_values,id',
-                ]
-            ],
-            'File' => [
-                $field => [$required ? 'required' : 'sometimes', 'array:id'],
-                $field . '.id' => [
-                    $required ? 'required' : 'sometimes',
-                    'uuid',
-                    'exists:files,id',
-                ]
-            ],
-            'Dictionary' => [
-                $field => [$required ? 'required' : 'sometimes', 'array:id'],
-                $field . '.id' => [
-                    $required ? 'required' : 'sometimes',
-                    'uuid',
-                    "exists:pgsql.sections.{$type['of']},id",
-                ]
-            ],
-            'List' => $this->buildSubRules($type, $field, $required),
-            default => throw new \Exception('Unknown type ' . $this->type['name'])
-        };
-    }
-
-    public function struct(): array
-    {
-        return match ($this->type['name']) {
-            'String', 'Integer', 'Float', 'Boolean', 'Text', 'Wiki' => [$this->id],
-            'Enum', 'File', 'Dictionary' => [$this->id => ['id']],
-            'List' => [$this->id => [['id']]],
-            default => throw new \Exception('Unknown type ' . $this->type['name']),
-        };
-    }
-
-    private function buildSubRules(array $type, string $field, bool $required): array
-    {
-        $subRules = $this->rules($type['of'], '*', $required);
-        $rules = [$field => [$required ? 'required' : 'sometimes']];
-
-        foreach ($subRules as $key => $rule) {
-            $rules[$field . '.' . $key] = $rule;
-        }
-
-        return $rules;
     }
 
     public function isRelationField(): bool
@@ -237,12 +162,14 @@ class Field extends Model
         return function (Material $that): BelongsTo|BelongsToMany {
             $relatedModel = (new ($this->relatedClass));
             return match (true) {
+
                 $this->isBelongsTo() => $that->belongsTo(
                     $this->relatedClass,
                     $this->foreignKey,
                     $relatedModel->getKeyName(),
                     $this->id
                 ),
+
                 $this->isBelongsToMany() => $that->belongsToMany(
                     $this->relatedClass,
                     $this->pivotName,
@@ -255,5 +182,15 @@ class Field extends Model
                 default => throw new Exception('Unknown relation type'),
             };
         };
+    }
+
+    public function getCast(): string
+    {
+
+    }
+
+    public function usingInCard(): bool
+    {
+        return $this->getAttribute('is_present_in_card');
     }
 }

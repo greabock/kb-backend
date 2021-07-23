@@ -45,11 +45,19 @@ class UpdateTest extends ActionTestCase
     {
         /** @var Enum $enum */
         $enum = Enum::factory()->has(Enum\Value::factory(), 'values')->create();
+        $enum->refresh();
+        $enumValueId = $enum->values->first()->id;
 
         $this->callAuthorizedRouteAction(['values' => [
         ]], ['enum' => $enum->id]);
 
-        $this->assertDatabaseCount('enum_values', 0);
+        $this->assertDatabaseMissing('enum_values', [
+            'deleted_at' => null, 'id' => $enumValueId,
+        ]);
+
+        $this->assertDatabaseHas('enum_values', [
+            'id' => $enumValueId,
+        ]);
     }
 
     public function testUserCanUpdateTitleOfValueToEnum(): void

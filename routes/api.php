@@ -8,7 +8,7 @@ Route::prefix('auth')->name('auth')->group(function () {
 
     /**
      * @OA\Post(
-     *     path="auth/login",
+     *     path="/auth/login",
      *     security={},
      *     tags={"Auth"},
      *     summary="Получение токена по логину и паролю",
@@ -31,7 +31,7 @@ Route::prefix('auth')->name('auth')->group(function () {
 
         /**
          * @OA\Get(
-         *     path="auth/azure/redirect",
+         *     path="/auth/azure/redirect",
          *     security={},
          *     tags={"Auth"},
          *     summary="Получение редиректа для перенаправления",
@@ -48,7 +48,7 @@ Route::prefix('auth')->name('auth')->group(function () {
 
         /**
          * @OA\Post(
-         *     path="auth/azure/login",
+         *     path="/auth/azure/login",
          *     security={},
          *     description="Нужно пробросить в тело все параметры с query string редиректа 'как есть'",
          *     summary="Получение токена после перенаправления",
@@ -71,7 +71,7 @@ Route::prefix('auth')->name('auth')->group(function () {
 
     /**
      * @OA\Get(
-     *     path="auth/me",
+     *     path="/auth/me",
      *     security={"apiKey":{}},
      *     tags={"Auth"},
      *     summary="Получение данных текущего пользователя",
@@ -94,4 +94,5 @@ Route::prefix('auth')->name('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     require  __DIR__ . '/api/enums.php';
     require   __DIR__ . '/api/sections.php';
+    require   __DIR__ . '/api/users.php';
 });

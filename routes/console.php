@@ -1,9 +1,8 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Console\ClosureCommand;
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,16 +17,10 @@ use Laravel\Socialite\Facades\Socialite;
 
 Artisan::command('user:create', function () {
     /** @var ClosureCommand $this */
-    $user = new \App\Models\User();
+    $user = new User();
     $user->login = $this->ask('Логин пользователя');
     $user->name = $this->ask('Имя пользователя');
-    $user->password = \Illuminate\Support\Facades\Hash::make($this->ask('Пароль пользователя'));
-    $user->role = $this->askWithCompletion('Роль пользователя', ['admin', 'moderator', 'user'], 'user');
+    $user->password = $this->ask('Пароль пользователя');
+    $user->role = $this->askWithCompletion('Роль пользователя', User::ROLES, 'user');
     $user->save();
-
 })->purpose('Создать нового пользователя');
-
-
-Artisan::command('testo', function () {
-    
-});
