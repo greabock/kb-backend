@@ -23,7 +23,7 @@ class ApiTokenResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'token' => $this->resource->accessToken->token,
+            'token' => $this->resource->plainTextToken,
         ];
     }
 }
