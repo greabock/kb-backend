@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Services\Search\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 abstract class Material extends Model
 {
     use SoftDeletes;
+    use Searchable;
 
     public static $sectionId = null;
 

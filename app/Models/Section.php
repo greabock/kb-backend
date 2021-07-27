@@ -141,4 +141,11 @@ class Section extends Model
             ->filter()
             ->toArray();
     }
+
+    public function getElasticMapping(): array
+    {
+        return $this->fields->keyBy('id')->map(fn(Field $field) => FieldType::getElasticConfig(
+            $field->type['name'] === Field::TYPE_LIST ? $field->type['of']['name'] : $field->type['name']
+        ))->toArray();
+    }
 }

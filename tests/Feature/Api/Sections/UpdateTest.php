@@ -19,13 +19,12 @@ class UpdateTest extends ActionTestCase
 
     public function testUserCanUpdateSection(): void
     {
-
-
         $newTitle = 'new_title';
+
         /** @var Section $section */
-        $section = Section::factory()->has(
-            Section\Field::factory()
-        )->create(['title' => 'old_title']);
+
+        $section = Section::factory()->has(Section\Field::factory(),'fields')
+            ->create(['title' => 'old_title']);
 
         $this->callAuthorizedByAdminRouteAction(['title' => $newTitle], ['section' => $section->id])
             ->assertOk()

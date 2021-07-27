@@ -7,6 +7,7 @@ namespace App\Observers;
 use App\Models\Section;
 use App\Services\SectionMaterialModelBuilder;
 use App\Services\TableBuilder;
+use Artisan;
 use DB;
 
 class SectionObserver

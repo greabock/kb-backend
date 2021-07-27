@@ -24,3 +24,10 @@ Artisan::command('user:create', function () {
     $user->role = $this->askWithCompletion('Роль пользователя', User::ROLES, 'user');
     $user->save();
 })->purpose('Создать нового пользователя');
+
+Artisan::command('elastic:clear', function () {
+    foreach (config('scout_elastic.client.hosts') as $host) {
+        (new \GuzzleHttp\Client())->delete(env('SCOUT_ELASTIC_HOST') . ':9200' . '/*');
+        $this->info('Host ' . $host . ' cleared.');
+    }
+});

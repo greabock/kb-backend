@@ -6,11 +6,10 @@ namespace App\Services;
 
 use App\Models\Material;
 use App\Models\Section;
+use App\Services\Search\MaterialIndexConfigurator;
+use App\Services\Search\Searchable;
 use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\PhpNamespace;
 
 class SectionMaterialModelBuilder
 {
@@ -65,6 +64,16 @@ class SectionMaterialModelBuilder
             ->setPublic()
             ->setStatic()
             ->setValue($section->id);
+
+        $class->addTrait(Searchable::class);
+
+        $class->addProperty('indexConfigurator')
+            ->setProtected()
+            ->setValue(MaterialIndexConfigurator::class);
+
+        $class->addProperty('mapping')
+            ->setProtected()
+            ->setValue($section->getElasticMapping());
 
         return (string)$class;
     }

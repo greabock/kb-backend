@@ -90,9 +90,9 @@ class FieldType
     ];
 
     public const LISTABLE_TYPES = [
-        self::T_DICTIONARY,
         self::T_ENUM,
         self::T_FILE,
+        self::T_DICTIONARY,
     ];
 
     public const LINK_TYPES = [
@@ -312,6 +312,42 @@ class FieldType
             self::T_FLOAT => 'float',
             self::T_BOOLEAN => 'boolean',
             default => null,
+        };
+    }
+
+    public static function getElasticConfig(string $type): array
+    {
+        return match ($type) {
+            self::T_STRING => [
+                'type' => 'text',
+                'fields' => [
+                    'raw' => ['type' => 'keyword', 'ignore_above' => 256],
+                    'without_endings' => ['type' => 'text'],
+                    'word_count' => ['type' => 'token_count'],
+                ]
+            ],
+            self::T_TEXT, self::T_WIKI => [
+                'type' => 'text',
+                'fields' => [
+                    'without_endings' => ['type' => 'text'],
+                    'word_count' => ['type' => 'token_count'],
+                ]
+            ],
+            self::T_DATE => [
+                'type' => 'date'
+            ],
+            self::T_INTEGER => [
+                'type' => 'integer'
+            ],
+            self::T_FLOAT => [
+                'type' => 'float'
+            ],
+            self::T_BOOLEAN => [
+                'type' => 'boolean'
+            ],
+            self::T_ENUM, self::T_DICTIONARY => [
+                'type' => 'keyword'
+            ],
         };
     }
 }

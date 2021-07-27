@@ -11,6 +11,7 @@ use Laravel\Sanctum\NewAccessToken;
  * @OA\Schema(schema="ApiTokenResource",
  *    @OA\Property(property="token", type="string", example="access_token"),
  * )
+ * @property NewAccessToken $resource
  */
 class ApiTokenResource extends JsonResource
 {
@@ -22,7 +23,7 @@ class ApiTokenResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'token' => $this->resource->plainTextToken,
+            'token' => $this->resource->accessToken->token,
         ];
     }
 }
