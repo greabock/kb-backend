@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Support\Collection as SupportCollection;
+use JetBrains\PhpStorm\ArrayShape;
 use Str;
 use Eloquent;
 use App\Models\Section\Field;
@@ -21,11 +23,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * App\Models\Section
  *
- * @property int $id
+ * @property string $id
  * @property string $title
  * @property string|null $image
  * @property bool $is_dictionary
  * @property bool $is_navigation
+ * @property bool $indexing
  * @property int $sort_index
  * @property string $tableName
  * @property string $class_name
@@ -69,6 +72,13 @@ class Section extends Model
         'is_dictionary',
         'is_navigation',
         'sort_index',
+    ];
+
+    protected array $defaultMapping = [
+        'id' => ['type' => 'keyword'],
+        'name' => ['type' => 'text', 'analyzer' => 'ru'],
+        'created_at' => ['type' => 'date'],
+        'updated_at' => ['type' => 'date'],
     ];
 
     public function setIdAttribute($value)
@@ -142,10 +152,13 @@ class Section extends Model
             ->toArray();
     }
 
-    public function getElasticMapping(): array
+    public function getMaterialMappings(): array
     {
-        return $this->fields->keyBy('id')->map(fn(Field $field) => FieldType::getElasticConfig(
-            $field->type['name'] === Field::TYPE_LIST ? $field->type['of']['name'] : $field->type['name']
-        ))->toArray();
+        return ['properties' => array_merge(
+            $this->defaultMapping,
+            $this->fields->keyBy('id')
+                ->map(fn(Field $field) => FieldType::getElasticConfig($field->baseType))
+                ->toArray(),
+        )];
     }
 }

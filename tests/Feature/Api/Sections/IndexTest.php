@@ -9,12 +9,10 @@ use Tests\Feature\Api\ActionTestCase;
 
 class IndexTest extends ActionTestCase
 {
-
     public function getRouteName(): string
     {
         return 'sections.index';
     }
-
 
     public function testUserCanSeeSections(): void
     {

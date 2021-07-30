@@ -23,10 +23,29 @@ class UpdateTest extends ActionTestCase
 
         /** @var Section $section */
 
-        $section = Section::factory()->has(Section\Field::factory(),'fields')
+        $section = Section::factory()->has(Section\Field::factory(), 'fields')
             ->create(['title' => 'old_title']);
 
         $this->callAuthorizedByAdminRouteAction(['title' => $newTitle], ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.id', $section->id)
+            ->assertJsonPath('data.title', $newTitle);
+    }
+
+    public function testUserCanRemoveSectionFields(): void
+    {
+        $newTitle = 'new_title';
+
+        /** @var Section $section */
+        $section = Section::factory()->has(Section\Field::factory()->count(2), 'fields')
+            ->create(['title' => 'old_title']);
+
+        $section->refresh();
+
+        $this->callAuthorizedByAdminRouteAction([
+            'title' => $newTitle,
+            'fields' => [$section->fields->first()->toArray()],
+        ], ['section' => $section->id])
             ->assertOk()
             ->assertJsonPath('data.id', $section->id)
             ->assertJsonPath('data.title', $newTitle);

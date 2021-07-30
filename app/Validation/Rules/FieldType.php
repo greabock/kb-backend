@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Validation\Rules;
 
+use App\Models\Enum;
+use App\Models\File;
+use App\Models\Material;
+use DateTime;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\Pure;
 use OpenApi\Annotations as OA;
 
@@ -65,17 +71,17 @@ use OpenApi\Annotations as OA;
  */
 class FieldType
 {
-    private const T_STRING = 'String';
-    private const T_INTEGER = 'Integer';
-    private const T_FLOAT = 'Float';
-    private const T_BOOLEAN = 'Boolean';
-    private const T_LIST = 'List';
-    private const T_DICTIONARY = 'Dictionary';
-    private const T_ENUM = 'Enum';
-    private const T_FILE = 'File';
-    private const T_TEXT = 'Text';
-    private const T_WIKI = 'Wiki';
-    private const T_DATE = 'Date';
+    public const T_STRING = 'String';
+    public const T_INTEGER = 'Integer';
+    public const T_FLOAT = 'Float';
+    public const T_BOOLEAN = 'Boolean';
+    public const T_LIST = 'List';
+    public const T_DICTIONARY = 'Dictionary';
+    public const T_ENUM = 'Enum';
+    public const T_FILE = 'File';
+    public const T_TEXT = 'Text';
+    public const T_WIKI = 'Wiki';
+    public const T_DATE = 'Date';
 
     private const AVAILABLE_TYPES = [
         self::T_STRING,
@@ -134,6 +140,7 @@ class FieldType
     {
         return [];
     }
+
 
     // Text
     public static function rulesText($attribute, $value): array
@@ -320,21 +327,14 @@ class FieldType
         return match ($type) {
             self::T_STRING => [
                 'type' => 'text',
-                'fields' => [
-                    'raw' => ['type' => 'keyword', 'ignore_above' => 256],
-                    'without_endings' => ['type' => 'text'],
-                    'word_count' => ['type' => 'token_count'],
-                ]
+                'analyzer' => 'ru',
             ],
             self::T_TEXT, self::T_WIKI => [
                 'type' => 'text',
-                'fields' => [
-                    'without_endings' => ['type' => 'text'],
-                    'word_count' => ['type' => 'token_count'],
-                ]
+                'analyzer' => 'ru'
             ],
             self::T_DATE => [
-                'type' => 'date'
+                'type' => 'date',
             ],
             self::T_INTEGER => [
                 'type' => 'integer'
@@ -348,6 +348,23 @@ class FieldType
             self::T_ENUM, self::T_DICTIONARY => [
                 'type' => 'keyword'
             ],
+        };
+    }
+
+    public static function toIndex(
+        array $type,
+        Collection|Enum\Value|Material|File|DateTime|string|float|int|bool|null $value,
+    ): mixed
+    {
+        if ($type['name'] === self::T_LIST) {
+            return $value->map(fn($el) => self::toIndex($type['of'], $el))->toArray();
+        }
+
+        return match ($type['name']) {
+            self::T_ENUM, self::T_DICTIONARY => $value->id,
+            self::T_FILE => $value->content,
+            self::T_DATE => $value?->format(DATE_W3C),
+            default => $value,
         };
     }
 }

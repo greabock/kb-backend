@@ -125,6 +125,7 @@ class CreateTest extends ActionTestCase
 
         $section->refresh();
 
+
         $this->callAuthorizedRouteAction([
             'name' => $materialName,
             $section->fields->first()->id => [['id' => $enum->values->first()->id], ['id' => $enum->values->first()->id]],

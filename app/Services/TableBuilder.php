@@ -10,6 +10,12 @@ use Schema;
 
 class TableBuilder
 {
+    public function __construct(
+        private ColumnBuilder $columnBuilder
+    )
+    {
+    }
+
     public function create(Section $section): void
     {
         Schema::create($section->tableName, function (Blueprint $table) {
@@ -18,6 +24,8 @@ class TableBuilder
             $table->softDeletes();
             $table->timestamps();
         });
+
+        $section->fields->each(fn(Section\Field $field) => $this->columnBuilder->build($field));
     }
 
     public function drop(Section $section): void

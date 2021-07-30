@@ -2,7 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Jobs\CreateSectionIndex;
+use App\Jobs\UpdateMaterialClass;
 use App\Models\Section;
+use App\Services\TableBuilder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Ramsey\Uuid\Uuid;
 
@@ -29,6 +32,16 @@ class SectionFactory extends Factory
             'is_dictionary' => true,
             'is_navigation' => true,
             'sort_index' => 1,
+            'indexing' => true,
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Section $section) {
+            app(TableBuilder::class)->create($section);
+            app()->call([(new CreateSectionIndex($section->id)), 'handle']);
+            app()->call([(new UpdateMaterialClass($section->id)), 'handle']);
+        });
     }
 }

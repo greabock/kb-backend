@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Jobs\CreateMaterialDocument;
 use App\Models\Material;
 use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,8 +29,7 @@ class MaterialFactory extends Factory
 
     public function definition()
     {
-        dd('gettModel');
-        return Section::findOrFail($this->model::$sectionId)->fields->keyBy('id')->map(function (Section\Field $field) {
+        return Section::find($this->model::$sectionId)->fields->keyBy('id')->map(function (Section\Field $field) {
             return match ($field->type['name']) {
                 'String' => $this->faker->word,
                 'Text', 'Wiki' => $this->faker->text,
@@ -39,5 +39,18 @@ class MaterialFactory extends Factory
                 default => null,
             };
         })->filter()->toArray();
+    }
+
+
+    public function configure(): MaterialFactory|static
+    {
+        $this->afterCreating(function (Material $material) {
+            app()->call([new CreateMaterialDocument(
+                get_class($material),
+                $material->id,
+            )]);
+        });
+
+        return $this;
     }
 }

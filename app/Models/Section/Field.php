@@ -28,6 +28,7 @@ use Mockery\Exception;
  * @property string $id
  * @property string $title
  * @property string $description
+ * @property string $baseType
  * @property int $sort_index
  * @property mixed $type
  * @property mixed $required
@@ -70,12 +71,6 @@ class Field extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public const TYPE_STRING = 'String';
-    public const TYPE_INTEGER = 'Integer';
-    public const TYPE_FLOAT = 'Float';
-    public const TYPE_BOOLEAN = 'Boolean';
-    public const TYPE_TEXT = 'Text';
-    public const TYPE_WIKI = 'Wiki';
     public const TYPE_ENUM = 'Enum';
     public const TYPE_FILE = 'File';
     public const TYPE_DICTIONARY = 'Dictionary';
@@ -124,8 +119,8 @@ class Field extends Model
         $type = $type ?? $this->type;
 
         return match ($type['name']) {
-            self::TYPE_LIST => $this->getForeignKeyAttribute($type['of']),
-            self::TYPE_ENUM, self::TYPE_FILE, self::TYPE_DICTIONARY => $type['of'] . '_id',
+            FieldType::T_LIST => $this->getForeignKeyAttribute($type['of']),
+            FieldType::T_ENUM, self::TYPE_FILE, self::TYPE_DICTIONARY => $type['of'] . '_id',
             default => throw new \Exception(sprintf('unknown type %s', $type['name'])),
         };
     }
@@ -192,5 +187,17 @@ class Field extends Model
     public function usingInCard(): bool
     {
         return $this->getAttribute('is_present_in_card');
+    }
+
+    public function toIndex($value): mixed
+    {
+        return FieldType::toIndex($this->type, $value);
+    }
+
+    public function getBaseTypeAttribute()
+    {
+        return $this->type['name'] === FieldType::T_LIST
+            ? $this->type['of']['name']
+            : $this->type['name'];
     }
 }

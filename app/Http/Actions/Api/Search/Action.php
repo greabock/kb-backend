@@ -9,20 +9,16 @@ use App\Models\Material;
 use App\Models\Section;
 use Elasticsearch\Client;
 use Illuminate\Http\Request;
-use ScoutElastic\Facades\ElasticClient;
 
 class Action
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, Client $esClient)
     {
         $sections = Section::all()->keyBy('id');
 
-        /** @var Client $client */
-        $client = ElasticClient::getFacadeRoot();
-
         $body = ['query' => ['query_string' => ['query' => $request->get('search')]]];
         $index = $sections->map(fn(Section $section) => $section->id . '_write')->join(',');
-        $searchResults = collect($client->search(compact('body', 'index'))['hits']['hits'])->keyBy('_id');
+        $searchResults = collect($esClient->search(compact('body', 'index'))['hits']['hits'])->keyBy('_id');
         $modelResults = collect();
 
         foreach ($searchResults->groupBy('_index') as $index => $group) {

@@ -11,7 +11,8 @@ use App\Services\Search\Searchable;
 use Illuminate\Contracts\Cache\Repository;
 use Nette\PhpGenerator\ClassType;
 
-class SectionMaterialModelBuilder
+// TODO: !!!Внимание!!! Данный билдер использует eval(). Написав его, я не проверял, как он поведет себя с JIT|Opcache
+class MaterialClassManager
 {
     private Repository $cache;
 
@@ -65,15 +66,13 @@ class SectionMaterialModelBuilder
             ->setStatic()
             ->setValue($section->id);
 
-        $class->addTrait(Searchable::class);
-
         $class->addProperty('indexConfigurator')
             ->setProtected()
             ->setValue(MaterialIndexConfigurator::class);
 
         $class->addProperty('mapping')
             ->setProtected()
-            ->setValue($section->getElasticMapping());
+            ->setValue($section->getMaterialMappings());
 
         return (string)$class;
     }
