@@ -51,6 +51,37 @@ class UpdateTest extends ActionTestCase
             ->assertJsonPath('data.title', $newTitle);
     }
 
+    public function testUserCanAddSectionFields(): void
+    {
+        $newTitle = 'new_title';
+
+        /** @var Section $section */
+        $section = Section::factory()->has(Section\Field::factory()->count(2), 'fields')
+            ->create(['title' => 'old_title']);
+
+        $section->refresh();
+
+        $this->callAuthorizedByAdminRouteAction([
+            'title' => $newTitle,
+            'fields' => [
+                [
+                    'title' => 'New Field',
+                    'description' => 'New Field Description',
+                    'sort_index' => -1,
+                    'type' => ['name' => 'String'],
+                    'required' => true,
+                    'is_present_in_card' => true,
+                    'is_filterable' => false,
+                ],
+                ...$section->fields->toArray()
+            ],
+        ], ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.id', $section->id)
+            ->assertJsonPath('data.title', $newTitle)
+            ->assertJsonPath('data.fields.0.title', 'New Field');
+    }
+
     public function testNotFoundOnNotExistingId()
     {
         $this->callAuthorizedRouteAction(['title' => 'test'], ['section' => Uuid::uuid4()->toString()])

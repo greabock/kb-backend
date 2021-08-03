@@ -325,11 +325,7 @@ class FieldType
     public static function getElasticConfig(string $type): array
     {
         return match ($type) {
-            self::T_STRING => [
-                'type' => 'text',
-                'analyzer' => 'ru',
-            ],
-            self::T_TEXT, self::T_WIKI => [
+            self::T_TEXT, self::T_WIKI, self::T_STRING, self::T_FILE => [
                 'type' => 'text',
                 'analyzer' => 'ru'
             ],

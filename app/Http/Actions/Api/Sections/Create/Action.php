@@ -16,9 +16,7 @@ class Action
     {
         /** @var Section $section */
         $section = $populator->populate(Section::class, $request->getStruct());
-        $section->indexing = true;
         $populator->flush();
-
         $events->dispatch(new SectionCreated($section->id));
 
         return new SectionResource($section);

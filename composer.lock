@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "20c37b554959159380c5b6e9e20cca79",
+    "content-hash": "872a3c55946543a250bab8445efcc0e9",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7327,6 +7327,88 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/2.2.3"
             },
             "time": "2020-07-13T06:12:54+00:00"
+        },
+        {
+            "name": "vaites/php-apache-tika",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vaites/php-apache-tika.git",
+                "reference": "927dc77d873d7e441052833bf4c3f283e6a9dd1a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vaites/php-apache-tika/zipball/927dc77d873d7e441052833bf4c3f283e6a9dd1a",
+                "reference": "927dc77d873d7e441052833bf4c3f283e6a9dd1a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=7.3.0"
+            },
+            "require-dev": {
+                "filp/whoops": "^2.7",
+                "nunomaduro/phpinsights": "^1.14",
+                "phpstan/phpstan": "^0.12.26",
+                "phpunit/phpunit": "^9.0",
+                "psy/psysh": "^0.10.8",
+                "symfony/var-dumper": "^5.1"
+            },
+            "type": "library",
+            "extra": {
+                "supported-versions": [
+                    "1.15",
+                    "1.16",
+                    "1.17",
+                    "1.18",
+                    "1.19",
+                    "1.19.1",
+                    "1.20",
+                    "1.21",
+                    "1.22",
+                    "1.23",
+                    "1.24",
+                    "1.24.1",
+                    "1.25",
+                    "1.26",
+                    "1.27",
+                    "2.0.0"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "Vaites\\ApacheTika\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Martínez",
+                    "email": "contacto@davidmartinez.net"
+                }
+            ],
+            "description": "Apache Tika bindings for PHP: extracts text from documents and images (with OCR), metadata and more...",
+            "keywords": [
+                "OCR",
+                "apache",
+                "doc",
+                "documents",
+                "docx",
+                "odt",
+                "office",
+                "pdf",
+                "ppt",
+                "pptx",
+                "tika"
+            ],
+            "support": {
+                "issues": "https://github.com/vaites/php-apache-tika/issues",
+                "source": "https://github.com/vaites/php-apache-tika/tree/v1.1.1"
+            },
+            "time": "2021-07-06T21:20:59+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

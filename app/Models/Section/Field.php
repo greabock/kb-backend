@@ -120,7 +120,8 @@ class Field extends Model
 
         return match ($type['name']) {
             FieldType::T_LIST => $this->getForeignKeyAttribute($type['of']),
-            FieldType::T_ENUM, self::TYPE_FILE, self::TYPE_DICTIONARY => $type['of'] . '_id',
+            FieldType::T_ENUM, self::TYPE_DICTIONARY => $type['of'] . '_id',
+            self::TYPE_FILE => $this->id . '_file_id',
             default => throw new \Exception(sprintf('unknown type %s', $type['name'])),
         };
     }

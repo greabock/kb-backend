@@ -23,6 +23,7 @@ use Illuminate\Http\Request as BaseRequest;
  *           @OA\Property(property="sort_index", type="integer"),
  *           @OA\Property(property="required", type="boolean"),
  *           @OA\Property(property="is_present_in_card", type="boolean"),
+ *           @OA\Property(property="is_filterable", type="boolean"),
  *           @OA\Property(property="type", oneOf={
  *                 @OA\Schema(ref="#components/schemas/TypeString"),
  *                 @OA\Schema(ref="#components/schemas/TypeInteger"),
@@ -50,24 +51,23 @@ class Request extends ApiRequest
             $typeRules[] = FieldType::resolveRules("fields.{$index}.type", data_get($data, "fields.{$index}.type"));
         }
 
-        $rules = array_merge([
-            'title' => 'sometimes|string|max:255',
-            'image' => 'sometimes|string|max:255',
-            'is_dictionary' => 'sometimes|boolean',
-            'is_navigation' => 'sometimes|boolean',
-            'fields' => 'sometimes|array',
-            'fields.*.id' => 'sometimes|uuid|distinct',
-            'fields.*.title' => 'sometimes|string|max:255',
-            'fields.*.description' => 'sometimes|string|max:255',
-            'fields.*.sort_index' => 'sometimes|integer',
-            'fields.*.required' => 'sometimes|boolean',
-            'fields.*.is_present_in_card' => 'sometimes|boolean',
-            'fields.*.type' => 'sometimes|array',
-        ],
+        return array_merge(
+            [
+                'title' => 'sometimes|string|max:255',
+                'image' => 'sometimes|string|max:255',
+                'is_dictionary' => 'sometimes|boolean',
+                'is_navigation' => 'sometimes|boolean',
+                'fields' => 'sometimes|array',
+                'fields.*.id' => 'sometimes|uuid|distinct',
+                'fields.*.title' => 'sometimes|string|max:255',
+                'fields.*.description' => 'sometimes|string|max:255',
+                'fields.*.sort_index' => 'sometimes|integer',
+                'fields.*.required' => 'sometimes|boolean',
+                'fields.*.is_present_in_card' => 'sometimes|boolean',
+                'fields.*.type' => 'sometimes|array',
+            ],
             ...$typeRules
         );
-
-        return $rules;
     }
 
     public function struct(): array
@@ -85,6 +85,7 @@ class Request extends ApiRequest
                 'sort_index',
                 'required',
                 'is_present_in_card',
+                'is_filterable',
                 'type',
             ]]
         ];

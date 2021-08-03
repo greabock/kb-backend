@@ -52,25 +52,24 @@ class Request extends ApiRequest
             $typeRules[] = FieldType::resolveRules("fields.{$index}.type", data_get($data, "fields.{$index}.type"));
         }
 
-        $rules = array_merge([
-            'id' => 'sometimes|uuid|unique:enums,id',
-            'title' => 'required|string|max:255',
-            'image' => 'sometimes|string|max:255',
-            'is_dictionary' => 'required|boolean',
-            'is_navigation' => 'required|boolean',
-            'fields' => 'sometimes|array',
-            'fields.*.id' => 'sometimes|uuid|distinct|unique:enum_values,id',
-            'fields.*.title' => 'required|string|max:255',
-            'fields.*.description' => 'sometimes|string|max:255',
-            'fields.*.sort_index' => 'sometimes|integer',
-            'fields.*.required' => 'required|boolean',
-            'fields.*.is_present_in_card' => 'required|boolean',
-            'fields.*.type' => 'required|array',
-        ],
+        return array_merge(
+            [
+                'id' => 'sometimes|uuid|unique:sections,id',
+                'title' => 'required|string|max:255',
+                'image' => 'sometimes|string|max:255',
+                'is_dictionary' => 'required|boolean',
+                'is_navigation' => 'required|boolean',
+                'fields' => 'sometimes|array',
+                'fields.*.id' => 'sometimes|uuid|distinct|unique:enum_values,id',
+                'fields.*.title' => 'required|string|max:255',
+                'fields.*.description' => 'sometimes|string|max:255',
+                'fields.*.sort_index' => 'sometimes|integer',
+                'fields.*.required' => 'required|boolean',
+                'fields.*.is_present_in_card' => 'required|boolean',
+                'fields.*.type' => 'required|array',
+            ],
             ...$typeRules
         );
-
-        return $rules;
     }
 
     public function struct(): array

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Actions\Api\Materials\Create;
 
 use App\Http\Actions\Api\ApiRequest;
+use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
 use App\Models\Section;
 
@@ -31,8 +32,12 @@ class Request extends ApiRequest
 {
     public function rules(): array
     {
+
         return array_merge(
-            ['name' => 'required|string|max:255'],
+            [
+                'id' => ['sometimes', 'uuid', Rule::unique($this->resolveSection()->tableName, 'id')],
+                'name' => 'required|string|max:255'
+            ],
             $this->resolveSection()->rules(),
         );
     }

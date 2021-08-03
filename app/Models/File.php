@@ -27,5 +27,5 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class File extends Model
 {
-
+    protected $fillable = [];
 }
