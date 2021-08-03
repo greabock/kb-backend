@@ -12,9 +12,8 @@ class Action
 {
     public function __invoke(Request $request, Populator $populator): UserResource
     {
-        /** @var User $user */
-        $user = $populator->populate(User::class, $request->getStruct());
-        $populator->flush();
+        $user = new User($request->getStruct());
+        $user->save();
 
         return new UserResource($user);
     }
