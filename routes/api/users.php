@@ -103,7 +103,7 @@ Route::prefix('users')->name('users')->middleware('user-role:admin')->group(func
      *     )
      * )
      */
-    Route::delete('{user}')->name('.update')
+    Route::delete('{user}')->name('.delete')
         ->middleware('user-role:admin')
         ->uses(Users\Delete\Action::class);
 });
