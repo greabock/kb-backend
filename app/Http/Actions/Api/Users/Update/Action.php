@@ -12,6 +12,7 @@ class Action
     public function __invoke(Request $request, User $user): UserResource
     {
         $user->fill($request->getStruct());
+        $user->save();
 
         return new UserResource($user);
     }

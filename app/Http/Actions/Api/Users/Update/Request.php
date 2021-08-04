@@ -24,8 +24,8 @@ class Request extends ApiRequest
     public function rules(): array
     {
         return [
-            'login' => ['sometimes', 'string', 'unique:users,login'],
-            'email' => ['sometimes', 'string', 'unique:users,email'],
+            'login' => ['sometimes', 'string', Rule::unique('users', 'login')->ignore($this->user->id, 'id')],
+            'email' => ['sometimes', 'string', Rule::unique('users', 'email')->ignore($this->user->id, 'id')],
             'name' => ['sometimes', 'string'],
             'password' => ['sometimes', 'string'],
             'role' => ['sometimes', Rule::in(User::ROLES)],
