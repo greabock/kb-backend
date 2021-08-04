@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->register(MaterialServiceProvider::class);
         $this->app->register(SearchServiceProvider::class);
 
-        $this->app->singleton(FileManager::class, fn() => new FileManager(Storage::disk('local')));
+        $this->app->singleton(FileManager::class, fn() => new FileManager(Storage::disk('local'), $this->app[TikaClient::class]));
         $this->app->singleton(TikaClient::class, fn() => TikaClient::make(config('services.tika.path')));
     }
 

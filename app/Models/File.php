@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
  *
  * @property int $id
  * @property string $url
+ * @property string $realpath
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|File newModelQuery()
