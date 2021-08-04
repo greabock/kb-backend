@@ -6,6 +6,7 @@ namespace App\Http\Actions\Api\Files\Upload;
 
 use App\Http\Actions\Api\ApiRequest;
 use App\Models\Section\Field;
+use App\Validation\Rules\FieldType;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rule;
 
@@ -21,10 +22,10 @@ class Request extends ApiRequest
                 'required',
                 Rule::exists('section_fields', 'id')->where(function (Builder $query) {
                     return $query
-                        ->whereJsonContains('type->name', 'File')
+                        ->whereJsonContains('type->name', FieldType::T_FILE)
                         ->orWhere(function (Builder $query) {
-                            $query->whereJsonContains('type->name', 'List');
-                            $query->whereJsonContains('type->of->name', 'File');
+                            $query->whereJsonContains('type->name', FieldType::T_LIST);
+                            $query->whereJsonContains('type->of->name', FieldType::T_FILE);
                         });
                 }),
             ],
@@ -35,12 +36,11 @@ class Request extends ApiRequest
 
     private function getLengthRules(): array
     {
-
         $rules = ['min:1'];
 
         if (
             ($field = $this->getField()) &&
-            ($field->type['name'] === 'File')
+            ($field->type['name'] === FieldType::T_FILE)
         ) {
             $rules[] = 'max:1';
         }
@@ -53,7 +53,7 @@ class Request extends ApiRequest
         $rules = [];
 
         if ($field = $this->getField()) {
-            $type = $field->type['name'] === 'List' ?
+            $type = $field->type['name'] === FieldType::T_LIST ?
                 $field->type['of'] : $field->type;
 
             if (isset($type['extensions'])) {

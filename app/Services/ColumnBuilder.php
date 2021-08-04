@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Validation\Rules\FieldType;
 use Schema;
 use App\Models\Section;
 use App\Models\Section\Field;
+use App\Validation\Rules\FieldType;
 use Illuminate\Database\Schema\Blueprint;
 
 class ColumnBuilder
 {
     public function build(Field $field): void
     {
-        if ($field->type['name'] === 'List') {
+        if ($field->type['name'] === FieldType::T_LIST) {
 
             if (Schema::hasTable($field->pivotName)) {
                 return;
             }
 
-            if ($field->type['of']['name'] === 'Enum') {
+            if ($field->type['of']['name'] === FieldType::T_ENUM) {
 
                 Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
                     $table->uuid($field->localPivotKey);
@@ -36,7 +36,7 @@ class ColumnBuilder
                 });
             }
 
-            if ($field->type['of']['name'] === 'Dictionary') {
+            if ($field->type['of']['name'] === FieldType::T_DICTIONARY) {
                 Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
                     $table->uuid($field->localPivotKey);
                     $table->uuid($field->foreignKey);
@@ -51,7 +51,7 @@ class ColumnBuilder
                 });
             }
 
-            if ($field->type['of']['name'] === 'File') {
+            if ($field->type['of']['name'] === FieldType::T_FILE) {
 
                 Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
                     $table->uuid($field->localPivotKey);
@@ -123,7 +123,7 @@ class ColumnBuilder
 
     public function drop(Field $field): void
     {
-        if ($field->type['name'] === 'List') {
+        if ($field->type['name'] === FieldType::T_LIST) {
             Schema::dropIfExists($field->pivotName);
             return;
         }
