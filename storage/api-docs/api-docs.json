@@ -750,6 +750,50 @@
                 "security": {
                     "apiKey": {}
                 }
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Обновление пользователей",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserMassUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Список обновленных пользователей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/UserResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    },
+                    "403": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
             }
         },
         "/users/{user}": {
@@ -1158,6 +1202,9 @@
                                 "is_present_in_card": {
                                     "type": "boolean"
                                 },
+                                "is_filterable": {
+                                    "type": "boolean"
+                                },
                                 "type": {
                                     "oneOf": [
                                         {
@@ -1235,6 +1282,30 @@
                     }
                 },
                 "type": "object"
+            },
+            "UserMassUpdateRequest": {
+                "type": "array",
+                "items": {
+                    "required": [
+                        "id",
+                        "role"
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "example": "123e4567-e89b-12d3-a456-426655440000"
+                        },
+                        "role": {
+                            "type": "string",
+                            "enum": [
+                                "user",
+                                "moderator",
+                                "admin"
+                            ]
+                        }
+                    },
+                    "type": "object"
+                }
             },
             "UserUpdateRequest": {
                 "properties": {

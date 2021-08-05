@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Actions\Api\Users;
+use OpenApi\Annotations as OA;
+
 
 Route::prefix('users')->name('users')->middleware('user-role:admin')->group(function () {
 
@@ -60,6 +62,37 @@ Route::prefix('users')->name('users')->middleware('user-role:admin')->group(func
     Route::post('/')->name('.create')
         ->middleware('user-role:admin')
         ->uses(Users\Create\Action::class);
+
+
+    /**
+     * @OA\Patch(
+     *     path="/users",
+     *     security={"apiKey":{}},
+     *     tags={"Users"},
+     *     summary="Обновление пользователей",
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/UserMassUpdateRequest")),
+     *     @OA\Response(
+     *          response="201",
+     *          description="Список обновленных пользователей",
+     *          @OA\JsonContent(type="object",
+     *             @OA\Property(property="data", type="array",
+     *                @OA\Items(ref="#components/schemas/UserResource")
+     *             )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неаутентифицирован",
+     *     ),
+     *     @OA\Response(
+     *          response="403",
+     *          description="Неавторизован",
+     *     )
+     * )
+     */
+    Route::patch('/')->name('.mass-update')
+        ->middleware('user-role:admin')
+        ->uses(Users\MassUpdate\Action::class);
 
     /**
      * @OA\Patch (
