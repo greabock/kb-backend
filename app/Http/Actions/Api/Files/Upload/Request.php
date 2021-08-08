@@ -17,7 +17,7 @@ class Request extends ApiRequest
     public function rules(): array
     {
         return [
-            'field' => 'required',
+            'field' => 'sometimes|array',
             'field.id' => [
                 'required',
                 Rule::exists('section_fields', 'id')->where(function (Builder $query) {

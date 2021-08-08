@@ -10,14 +10,14 @@ use Illuminate\Http\Request as BaseRequest;
 use OpenApi\Annotations as OA;
 
 /**
- * @OA\Schema(schema="SectionCreateRequest", required={"title", "is_dictionary", "is_navigation"},
+ * @OA\Schema(schema="SectionCreateRequest", required={"title", "is_dictionary", "is_navigation", "sort_index"},
  *     @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
  *     @OA\Property(property="title", type="string", example="Имя раздела", minimum="1", maximum="255"),
  *     @OA\Property(property="is_dictionary", type="boolean"),
  *     @OA\Property(property="is_navigation", type="boolean"),
  *     @OA\Property(property="image", type="string", example="Имя раздела", nullable=true, minimum="1", maximum="255"),
  *     @OA\Property(property="fields", type="array",
- *       @OA\Items(type="object", required={"title", "type", "required", "is_present_in_card", "is_filterable"},
+ *       @OA\Items(type="object", required={"title", "type", "required", "is_present_in_card", "is_filterable", "sort_index"},
  *           @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
  *           @OA\Property(property="title", type="string"),
  *           @OA\Property(property="description", type="string"),
@@ -63,7 +63,7 @@ class Request extends ApiRequest
                 'fields.*.id' => 'sometimes|uuid|distinct|unique:enum_values,id',
                 'fields.*.title' => 'required|string|max:255',
                 'fields.*.description' => 'sometimes|string|max:255',
-                'fields.*.sort_index' => 'sometimes|integer',
+                'fields.*.sort_index' => 'required|integer',
                 'fields.*.required' => 'required|boolean',
                 'fields.*.is_present_in_card' => 'required|boolean',
                 'fields.*.type' => 'required|array',

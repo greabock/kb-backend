@@ -16,7 +16,7 @@ class Action
         foreach ($request->getStruct() as ['id' => $id, 'role' => $role]) {
             $users[] = tap(
                 User::findOrFail($id),
-                fn(User $user) => $user->setAttribute('role', $role)->save()
+                static fn(User $user) => $user->setAttribute('role', $role)->save()
             );
         }
 
