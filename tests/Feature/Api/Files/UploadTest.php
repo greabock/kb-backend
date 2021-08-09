@@ -7,6 +7,7 @@ namespace Tests\Feature\Api\Files;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Session\Store;
 use Storage;
 use Tests\Feature\Api\ActionTestCase;
 
@@ -18,7 +19,7 @@ class UploadTest extends ActionTestCase
         return 'files.upload';
     }
 
-    public function testUserCanUploadFile()
+    public function testUserCanUploadFileForField()
     {
         $section = Section::factory()->has(Section\Field::factory([
             'type' => [
@@ -43,4 +44,25 @@ class UploadTest extends ActionTestCase
             ->dump()
             ->assertOk();
     }
+
+
+    public function testUserCanUploadFileWithoutField()
+    {
+        \Auth::login(User::factory()->create());
+
+        $mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+        $response = $this->post(route($this->getRouteName()), [
+            'files' => [UploadedFile::fake()->create('CV.docx', 0, $mime)],
+        ], ['accept' => 'application/json'])
+            ->dump()
+            ->assertOk();
+
+        $this->assertDatabaseHas('files', [
+            'id' => $response->json('data.0.id')
+        ]);
+
+        $this->assertTrue(Storage::disk()->exists('uploads/' . $response->json('data.0.id') . '.docx'));
+    }
+
 }

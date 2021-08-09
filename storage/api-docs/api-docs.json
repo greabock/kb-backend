@@ -292,6 +292,59 @@
                 }
             }
         },
+        "/files": {
+            "post": {
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Загрузка файла",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "files"
+                                ],
+                                "properties": {
+                                    "files": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FileResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": []
+            }
+        },
         "/sections": {
             "get": {
                 "tags": [
@@ -1057,7 +1110,8 @@
                 "required": [
                     "title",
                     "is_dictionary",
-                    "is_navigation"
+                    "is_navigation",
+                    "sort_index"
                 ],
                 "properties": {
                     "id": {
@@ -1091,7 +1145,8 @@
                                 "type",
                                 "required",
                                 "is_present_in_card",
-                                "is_filterable"
+                                "is_filterable",
+                                "sort_index"
                             ],
                             "properties": {
                                 "id": {
@@ -1399,6 +1454,19 @@
                         "items": {
                             "$ref": "#/components/schemas/EnumValueResource"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "FileResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "some.jpg"
                     }
                 },
                 "type": "object"

@@ -17,9 +17,9 @@ class Request extends ApiRequest
     public function rules(): array
     {
         return [
-            'field' => 'sometimes|array',
+            'field' => 'sometimes|array,id',
             'field.id' => [
-                'required',
+                'sometimes',
                 Rule::exists('section_fields', 'id')->where(function (Builder $query) {
                     return $query
                         ->whereJsonContains('type->name', FieldType::T_FILE)

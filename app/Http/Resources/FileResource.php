@@ -8,7 +8,10 @@ use App\Models\File;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property File $resource
+ * @OA\Schema(schema="FileResource",
+ *    @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
+ *    @OA\Property(property="url", type="string", example="some.jpg"),
+ * )
  */
 class FileResource extends JsonResource
 {

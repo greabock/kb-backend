@@ -28,5 +28,17 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class File extends Model
 {
-    protected $fillable = [];
+    protected $table = 'files';
+
+    public $incrementing = false;
+
+    public $keyType = 'string';
+
+    protected $fillable = [
+        'id',
+        'realpath',
+        'url',
+        'indexed',
+        'content',
+    ];
 }
