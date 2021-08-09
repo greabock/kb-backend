@@ -29,6 +29,32 @@ Route::prefix('sections')->name('sections')->group(function () {
     Route::get('/')->name('.index')
         ->uses(Sections\Index\Action::class);
 
+
+    /**
+     * @OA\Patch  (
+     *     path="/sections",
+     *     security={"apiKey":{}},
+     *     tags={"Sections"},
+     *     summary="Получение списка разделов",
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/UserMassUpdateRequest")),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Список разделов",
+     *          @OA\JsonContent(type="object",
+     *             @OA\Property(property="data", type="array",
+     *                @OA\Items(ref="#components/schemas/SectionResource")
+     *             )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неаутентифицирован",
+     *     )
+     * )
+     */
+    Route::patch('/')->name('.massUpdate')
+        ->uses(Sections\MassUpdate\Action::class);
+
     /**
      * @OA\Post(
      *     path="/sections",
