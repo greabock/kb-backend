@@ -12,13 +12,13 @@ class Action
 {
     public function __invoke(Request $request): AnonymousResourceCollection
     {
-        foreach ($request->getStruct() as ['id' => $id, 'sort_index' => $sortIndex]) {
+        foreach ($request->getStruct() as $struct) {
             $sections[] = tap(
-                Section::findOrFail($id),
-                static fn(Section $section) => $section->setAttribute('sort_index', $sortIndex)->save()
+                Section::findOrFail($struct['id']),
+                static fn(Section $section) => $section->fill($struct)->save()
             );
         }
-
+        
         return SectionResource::collection($sections ?? []);
     }
 }
