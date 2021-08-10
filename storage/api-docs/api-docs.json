@@ -1186,7 +1186,6 @@
                                 "type",
                                 "required",
                                 "is_present_in_card",
-                                "is_filterable",
                                 "sort_index",
                                 "filter_sort_index"
                             ],
@@ -1208,9 +1207,6 @@
                                     "type": "boolean"
                                 },
                                 "is_present_in_card": {
-                                    "type": "boolean"
-                                },
-                                "is_filterable": {
                                     "type": "boolean"
                                 },
                                 "filter_sort_index": {
@@ -1325,9 +1321,6 @@
                                     "type": "boolean"
                                 },
                                 "is_present_in_card": {
-                                    "type": "boolean"
-                                },
-                                "is_filterable": {
                                     "type": "boolean"
                                 },
                                 "filter_sort_index": {
@@ -1644,8 +1637,8 @@
                     "is_present_in_card": {
                         "type": "boolean"
                     },
-                    "is_filterable": {
-                        "type": "boolean"
+                    "filter_sort_index": {
+                        "type": "integer"
                     },
                     "type": {
                         "oneOf": [
