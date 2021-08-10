@@ -92,6 +92,8 @@ class FieldType
         self::T_DICTIONARY,
         self::T_ENUM,
         self::T_FILE,
+        self::T_TEXT,
+        self::T_WIKI,
         self::T_DATE,
     ];
 
