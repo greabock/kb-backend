@@ -71,7 +71,7 @@ class UpdateTest extends ActionTestCase
                     'type' => ['name' => 'String'],
                     'required' => true,
                     'is_present_in_card' => true,
-                    'is_filterable' => false,
+                    'filter_sort_index' => null,
                 ],
                 ...$section->fields->toArray()
             ],

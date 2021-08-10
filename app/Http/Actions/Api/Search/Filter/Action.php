@@ -18,7 +18,7 @@ class Action
     public function __invoke(Section $section, Request $request): LengthAwarePaginator
     {
         /** @var Section\Field[] $filterableFields */
-        $filterableFields = $section->fields->filter(fn(Section\Field $field) => $field->is_filterable);
+        $filterableFields = $section->fields->filter(fn(Section\Field $field) => isset($field->filter_sort_index));
 
         /** @var Material $materialClass */
         $materialClass = $section->class_name;

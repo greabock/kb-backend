@@ -28,7 +28,7 @@ class FieldFactory extends Factory
             'type' => ['name' => 'String'],
             'required' => true,
             'is_present_in_card' => true,
-            'is_filterable' => false,
+            'filter_sort_index' => null,
         ];
     }
 }

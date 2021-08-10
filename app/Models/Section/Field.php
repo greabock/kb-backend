@@ -43,7 +43,6 @@ use ScoutElastic\Builders\SearchBuilder;
  * @property string $foreignKey
  * @property string $localPivotKey
  * @property string $relatedClass
- * @property boolean $is_filterable
  * @property int $filter_sort_index
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -97,7 +96,6 @@ class Field extends Model
         'type',
         'required',
         'is_present_in_card',
-        'is_filterable',
         'filter_sort_index',
     ];
 

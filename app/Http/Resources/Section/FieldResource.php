@@ -16,7 +16,6 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="sort_index", type="integer"),
  *    @OA\Property(property="required", type="boolean"),
  *    @OA\Property(property="is_present_in_card", type="boolean"),
- *    @OA\Property(property="is_filterable", type="boolean"),
  *    @OA\Property(property="filter_sort_index", type="integer"),
  *    @OA\Property(property="type", oneOf={
  *        @OA\Schema(ref="#components/schemas/TypeString"),

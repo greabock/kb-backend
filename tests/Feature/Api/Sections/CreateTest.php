@@ -30,7 +30,7 @@ class CreateTest extends ActionTestCase
                     'title' => 'title',
                     'required' => false,
                     'is_present_in_card' => false,
-                    'is_filterable' => false,
+                    'filter_sort_index' => null,
                     'sort_index' => 0,
                     'type' => [
                         'name' => 'String',
@@ -42,7 +42,7 @@ class CreateTest extends ActionTestCase
                     'title' => 'title',
                     'required' => false,
                     'is_present_in_card' => false,
-                    'is_filterable' => false,
+                    'filter_sort_index' => null,
                     'sort_index' => 0,
                     'type' => [
                         'name' => 'List',
@@ -56,7 +56,7 @@ class CreateTest extends ActionTestCase
                     'title' => 'deadline',
                     'required' => false,
                     'is_present_in_card' => false,
-                    'is_filterable' => false,
+                    'filter_sort_index' => null,
                     'sort_index' => 0,
                     'type' => [
                         'name' => 'Date',
@@ -88,7 +88,7 @@ class CreateTest extends ActionTestCase
                     'required' => false,
                     'is_present_in_card' => false,
                     'sort_index' => 0,
-                    'is_filterable' => false,
+                    'filter_sort_index' => null,
                     'type' => [
                         'name' => 'List',
                         'of' => [
