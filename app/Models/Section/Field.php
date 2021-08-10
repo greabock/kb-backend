@@ -43,7 +43,8 @@ use ScoutElastic\Builders\SearchBuilder;
  * @property string $foreignKey
  * @property string $localPivotKey
  * @property string $relatedClass
- * @property string $is_filterable
+ * @property boolean $is_filterable
+ * @property int $filter_sort_index
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|Field whereCreatedAt($value)

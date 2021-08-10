@@ -17,6 +17,7 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="required", type="boolean"),
  *    @OA\Property(property="is_present_in_card", type="boolean"),
  *    @OA\Property(property="is_filterable", type="boolean"),
+ *    @OA\Property(property="filter_sort_index", type="integer"),
  *    @OA\Property(property="type", oneOf={
  *        @OA\Schema(ref="#components/schemas/TypeString"),
  *        @OA\Schema(ref="#components/schemas/TypeInteger"),
@@ -47,6 +48,7 @@ class FieldResource extends JsonResource
             'sort_index' => $this->resource->sort_index,
             'required' => $this->resource->required,
             'is_present_in_card' => $this->resource->is_present_in_card,
+            'filter_sort_index' => $this->resource->filter_sort_index,
             'type' => $this->resource->type,
         ];
     }
