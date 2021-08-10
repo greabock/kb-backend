@@ -66,6 +66,7 @@ class Request extends ApiRequest
                 'fields.*.sort_index' => 'required|integer',
                 'fields.*.required' => 'required|boolean',
                 'fields.*.is_present_in_card' => 'required|boolean',
+                'fields.*.is_filterable' => 'required|boolean',
                 'fields.*.type' => 'required|array',
             ],
             ...$typeRules
