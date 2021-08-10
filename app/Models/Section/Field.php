@@ -97,6 +97,7 @@ class Field extends Model
         'required',
         'is_present_in_card',
         'is_filterable',
+        'filter_sort_index',
     ];
 
     protected $casts = [

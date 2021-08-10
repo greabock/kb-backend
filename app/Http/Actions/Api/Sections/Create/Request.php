@@ -17,7 +17,7 @@ use OpenApi\Annotations as OA;
  *     @OA\Property(property="is_navigation", type="boolean"),
  *     @OA\Property(property="image", type="string", example="Имя раздела", nullable=true, minimum="1", maximum="255"),
  *     @OA\Property(property="fields", type="array",
- *       @OA\Items(type="object", required={"title", "type", "required", "is_present_in_card", "is_filterable", "sort_index"},
+ *       @OA\Items(type="object", required={"title", "type", "required", "is_present_in_card", "is_filterable", "sort_index", "filter_sort_index"},
  *           @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
  *           @OA\Property(property="title", type="string"),
  *           @OA\Property(property="description", type="string"),
@@ -25,6 +25,7 @@ use OpenApi\Annotations as OA;
  *           @OA\Property(property="required", type="boolean"),
  *           @OA\Property(property="is_present_in_card", type="boolean"),
  *           @OA\Property(property="is_filterable", type="boolean"),
+ *           @OA\Property(property="filter_sort_index", type="integer"),
  *           @OA\Property(property="type", oneOf={
  *                 @OA\Schema(ref="#components/schemas/TypeString"),
  *                 @OA\Schema(ref="#components/schemas/TypeInteger"),
@@ -67,6 +68,7 @@ class Request extends ApiRequest
                 'fields.*.required' => 'required|boolean',
                 'fields.*.is_present_in_card' => 'required|boolean',
                 'fields.*.is_filterable' => 'required|boolean',
+                'fields.*.filter_sort_index' => 'nullable|integer',
                 'fields.*.type' => 'required|array',
             ],
             ...$typeRules
@@ -90,6 +92,7 @@ class Request extends ApiRequest
                 'required',
                 'is_present_in_card',
                 'is_filterable',
+                'filter_sort_index',
                 'type',
             ]]
         ];
