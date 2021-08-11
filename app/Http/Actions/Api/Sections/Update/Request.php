@@ -60,7 +60,7 @@ class Request extends ApiRequest
                 'fields' => 'sometimes|array',
                 'fields.*.id' => 'sometimes|uuid|distinct',
                 'fields.*.title' => 'sometimes|string|max:255',
-                'fields.*.description' => 'sometimes|string|max:255',
+                'fields.*.description' => 'nullable|string|max:255',
                 'fields.*.sort_index' => 'sometimes|integer',
                 'fields.*.required' => 'sometimes|boolean',
                 'fields.*.is_present_in_card' => 'sometimes|boolean',
