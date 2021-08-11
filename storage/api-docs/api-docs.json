@@ -1243,6 +1243,9 @@
                                         },
                                         {
                                             "$ref": "#components/schemas/TypeSelect"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeDate"
                                         }
                                     ]
                                 }
@@ -1360,6 +1363,9 @@
                                         },
                                         {
                                             "$ref": "#components/schemas/TypeSelect"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeDate"
                                         }
                                     ]
                                 }
@@ -1485,19 +1491,6 @@
                 },
                 "type": "object"
             },
-            "EnumValueResource": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Пример названия значения перечисления"
-                    }
-                },
-                "type": "object"
-            },
             "EnumResource": {
                 "properties": {
                     "id": {
@@ -1526,6 +1519,19 @@
                         "items": {
                             "$ref": "#/components/schemas/EnumValueResource"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "EnumValueResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Пример названия значения перечисления"
                     }
                 },
                 "type": "object"
@@ -1620,6 +1626,64 @@
                     ]
                 }
             },
+            "SectionResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Агенты"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "SectionWithFieldsResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SectionFieldResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "SectionFieldResource": {
                 "properties": {
                     "id": {
@@ -1676,64 +1740,6 @@
                                 "$ref": "#components/schemas/TypeList"
                             }
                         ]
-                    }
-                },
-                "type": "object"
-            },
-            "SectionResource": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Агенты"
-                    },
-                    "image": {
-                        "type": "string",
-                        "example": "absolute://path.to/image.jpg"
-                    },
-                    "is_dictionary": {
-                        "type": "boolean"
-                    },
-                    "is_navigation": {
-                        "type": "boolean"
-                    },
-                    "sort_index": {
-                        "type": "integer"
-                    }
-                },
-                "type": "object"
-            },
-            "SectionWithFieldsResource": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Страны"
-                    },
-                    "image": {
-                        "type": "string",
-                        "example": "absolute://path.to/image.jpg"
-                    },
-                    "is_dictionary": {
-                        "type": "boolean"
-                    },
-                    "is_navigation": {
-                        "type": "boolean"
-                    },
-                    "sort_index": {
-                        "type": "integer"
-                    },
-                    "fields": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/SectionFieldResource"
-                        }
                     }
                 },
                 "type": "object"
@@ -1931,6 +1937,21 @@
                 },
                 "type": "object"
             },
+            "TypeDate": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Date"
+                        ],
+                        "example": "Date"
+                    }
+                },
+                "type": "object"
+            },
             "TypeDictionary": {
                 "required": [
                     "name",
@@ -1984,7 +2005,7 @@
                         ],
                         "example": "File"
                     },
-                    "min": {
+                    "max": {
                         "type": "integer",
                         "maximum": 9223372036854775807,
                         "minimum": "1",

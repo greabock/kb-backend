@@ -45,6 +45,9 @@ use OpenApi\Annotations as OA;
  * @OA\Schema(schema="TypeBoolean", required={"name"},
  *     @OA\Property(property="name", type="string", enum={"Boolean"}, example="Boolean"),
  * )
+ * @OA\Schema(schema="TypeDate", required={"name"},
+ *     @OA\Property(property="name", type="string", enum={"Date"}, example="Date"),
+ * )
  * @OA\Schema(schema="TypeDictionary", required={"name", "of"},
  *     @OA\Property(property="name", type="string", enum={"Dictionary"}, example="Dictionary"),
  *     @OA\Property(property="of", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
@@ -55,7 +58,7 @@ use OpenApi\Annotations as OA;
  * )
  * @OA\Schema(schema="TypeFile", required={"name", "of"},
  *     @OA\Property(property="name", type="string", enum={"File"}, example="File"),
- *     @OA\Property(property="min", type="integer", example="1", minimum="1", maximum=PHP_INT_MAX),
+ *     @OA\Property(property="max", type="integer", example="1", minimum="1", maximum=PHP_INT_MAX),
  *     @OA\Property(property="extensions", type="array",
  *          @OA\Items(type="string")
  *     ),
