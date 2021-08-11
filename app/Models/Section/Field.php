@@ -133,10 +133,10 @@ class Field extends Model
     public function isRelationField(): bool
     {
         return in_array(
-            $this->type['name'],
-            [FieldType::T_ENUM, FieldType::T_DICTIONARY, FieldType::T_FILE, FieldType::T_LIST],
-            true
-        );
+                $this->type['name'],
+                [FieldType::T_ENUM, FieldType::T_DICTIONARY, FieldType::T_FILE],
+                true
+            ) || ($this->type['name'] === FieldType::T_LIST && $this->type['of']['name'] !== FieldType::T_SELECT);
     }
 
     public function isBelongsTo(): bool

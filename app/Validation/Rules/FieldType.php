@@ -8,8 +8,10 @@ use App\Models\Enum;
 use App\Models\File;
 use App\Models\Material;
 use DateTime;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use JetBrains\PhpStorm\Pure;
 use OpenApi\Annotations as OA;
 
@@ -58,6 +60,14 @@ use OpenApi\Annotations as OA;
  *          @OA\Items(type="string")
  *     ),
  * )
+ *
+ * @OA\Schema(schema="TypeSelect", required={"name"},
+ *     @OA\Property(property="name", type="string", enum={"String"}, example="Select"),
+ *     @OA\Property(property="of", type="array",
+ *      @OA\Items(type="string")
+ *    ),
+ * )
+ *
  * @OA\Schema(schema="TypeList", required={"name", "of"},
  *     @OA\Property(property="name", type="string", enum={"List"},  example="List"),
  *     @OA\Property(property="min", type="integer", example="1", minimum="1", maximum=PHP_INT_MAX),
@@ -66,6 +76,7 @@ use OpenApi\Annotations as OA;
  *           @OA\Schema(ref="#components/schemas/TypeEnum"),
  *           @OA\Schema(ref="#components/schemas/TypeDictionary"),
  *           @OA\Schema(ref="#components/schemas/TypeFile"),
+ *           @OA\Schema(ref="#components/schemas/TypeSelect"),
  *     }),
  * )
  */
@@ -82,6 +93,7 @@ class FieldType
     public const T_TEXT = 'Text';
     public const T_WIKI = 'Wiki';
     public const T_DATE = 'Date';
+    public const T_SELECT = 'Select';
 
     private const AVAILABLE_TYPES = [
         self::T_STRING,
@@ -95,6 +107,7 @@ class FieldType
         self::T_TEXT,
         self::T_WIKI,
         self::T_DATE,
+        self::T_SELECT,
     ];
 
     public const LISTABLE_TYPES = [
@@ -117,13 +130,13 @@ class FieldType
         self::T_TEXT,
         self::T_WIKI,
         self::T_DATE,
+        self::T_SELECT,
     ];
-
 
     public static function resolveRules($attribute, array $value): array
     {
         return array_merge(
-            [self::prefix($attribute, 'name') => ['required', \Illuminate\Validation\Rule::in(self::AVAILABLE_TYPES)]],
+            [self::prefix($attribute, 'name') => ['required', Rule::in(self::AVAILABLE_TYPES)]],
             call_user_func([self::class, 'rules' . $value['name']], $attribute, $value)
         );
     }
@@ -182,6 +195,14 @@ class FieldType
     public static function rulesBoolean($attribute, $value): array
     {
         return [];
+    }
+
+    public static function rulesSelect($attribute, $value)
+    {
+        return [
+            'of' => 'array|min:1',
+            'of.*' => 'required|string',
+        ];
     }
 
     // List
@@ -262,6 +283,7 @@ class FieldType
                 'min:' . ($type['min'] ?? 0),
                 'max:' . ($type['max'] ?? 21845),
             ]],
+
             self::T_ENUM => [
                 $field => [$required ? 'required' : 'sometimes', 'array:id'],
                 $field . '.id' => [
@@ -286,8 +308,16 @@ class FieldType
                     "exists:pgsql.sections.{$type['of']},id",
                 ]
             ],
+
+            self::T_SELECT => [
+                $field => [
+                    $required ? 'required' : 'sometimes',
+                    'in:' . implode(',', $type['of']),
+                ],
+            ],
+
             self::T_LIST => self::buildSubRules($type, $field, $required),
-            default => throw new \Exception('Unknown type ' . $type['name'])
+            default => throw new Exception('Unknown type ' . $type['name'])
         };
     }
 
@@ -305,21 +335,25 @@ class FieldType
     public static function struct($type, $attribute)
     {
         return match (true) {
-            in_array($type, self::SCALAR_TYPES, true) => [$attribute],
-            in_array($type, self::LINK_TYPES, true) => [$attribute => ['id']],
-            self::T_LIST === $type => [$attribute => [['id']]],
-            default => throw new \Exception('Unknown type ' . $type),
+            in_array($type['name'], self::SCALAR_TYPES, true) => [$attribute],
+            in_array($type['name'], self::LINK_TYPES, true) => [$attribute => ['id']],
+            self::T_LIST === $type['name'] => match (true) {
+                $type['of']['name'] === self::T_SELECT => [$attribute],
+                default => [$attribute => [['id']]],
+            },
+            default => throw new Exception('Unknown type ' . $type),
         };
     }
 
     public static function getCast($type): string
     {
         return match ($type) {
-            self::T_STRING, self::T_TEXT, self::T_WIKI => 'string',
+            self::T_STRING, self::T_TEXT, self::T_WIKI, self::T_SELECT => 'string',
             self::T_DATE => 'date',
             self::T_INTEGER => 'integer',
             self::T_FLOAT => 'float',
             self::T_BOOLEAN => 'boolean',
+            self::T_LIST => 'array',
             default => null,
         };
     }
@@ -343,7 +377,7 @@ class FieldType
             self::T_BOOLEAN => [
                 'type' => 'boolean'
             ],
-            self::T_ENUM, self::T_DICTIONARY => [
+            self::T_ENUM, self::T_DICTIONARY, self::T_SELECT => [
                 'type' => 'keyword'
             ],
         };
@@ -351,10 +385,15 @@ class FieldType
 
     public static function toIndex(
         array $type,
-        Collection|Enum\Value|Material|File|DateTime|string|float|int|bool|null $value,
+        Collection|Enum\Value|Material|File|DateTime|array|string|float|int|bool|null $value,
     ): mixed
     {
         if ($type['name'] === self::T_LIST) {
+
+            if ($type['of']['name'] === self::T_SELECT) {
+                return $value;
+            }
+
             return $value->map(fn($el) => self::toIndex($type['of'], $el))->toArray();
         }
 

@@ -109,7 +109,7 @@ class Section extends Model
     public function struct(): array
     {
         return $this->fields->map(
-            fn(Section\Field $field) => FieldType::struct($field->type['name'], $field->id)
+            fn(Section\Field $field) => FieldType::struct($field->type, $field->id)
         )->reduce(fn(array $carry, array $rules) => array_merge($carry, $rules), ['name']);
     }
 

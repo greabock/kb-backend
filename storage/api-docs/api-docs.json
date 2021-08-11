@@ -1240,6 +1240,9 @@
                                         },
                                         {
                                             "$ref": "#components/schemas/TypeList"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeSelect"
                                         }
                                     ]
                                 }
@@ -1354,6 +1357,9 @@
                                         },
                                         {
                                             "$ref": "#components/schemas/TypeList"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeSelect"
                                         }
                                     ]
                                 }
@@ -1993,6 +1999,27 @@
                 },
                 "type": "object"
             },
+            "TypeSelect": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "String"
+                        ],
+                        "example": "Select"
+                    },
+                    "of": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "TypeList": {
                 "required": [
                     "name",
@@ -2028,6 +2055,9 @@
                             },
                             {
                                 "$ref": "#components/schemas/TypeFile"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeSelect"
                             }
                         ]
                     }

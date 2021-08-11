@@ -15,6 +15,11 @@ class ColumnBuilder
     public function build(Field $field): void
     {
         if ($field->type['name'] === FieldType::T_LIST) {
+            if ($field->type['of']['name'] === FieldType::T_SELECT) {
+                Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
+                    $table->jsonb($field->id)->nullable();
+                });
+            }
 
             if (Schema::hasTable($field->pivotName)) {
                 return;
@@ -75,6 +80,9 @@ class ColumnBuilder
         }
 
         Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
+            if ($field->type['name'] === FieldType::T_SELECT) {
+                $table->string($field->id)->nullable();
+            }
 
             if ($field->type['name'] === FieldType::T_STRING) {
                 $table->string($field->id)->nullable();
@@ -118,12 +126,21 @@ class ColumnBuilder
                 $table->uuid($field->foreignKey)->nullable();
                 $table->foreign($field->foreignKey)->references('id')->on($field->type['of']);
             }
+
         });
     }
 
     public function drop(Field $field): void
     {
         if ($field->type['name'] === FieldType::T_LIST) {
+            if ($field->type['of']['name'] === FieldType::T_SELECT) {
+                Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
+                    $table->dropColumn($field->columnName);
+                });
+
+                return;
+            }
+
             Schema::dropIfExists($field->pivotName);
             return;
         }

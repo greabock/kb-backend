@@ -157,4 +157,52 @@ class CreateTest extends ActionTestCase
             ->assertJsonValidationErrors(['name'])
             ->assertJsonMissingValidationErrors([$section->fields->first()->id]);
     }
+
+    public function testSelectField(): void
+    {
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(['type' => [
+                'name' => 'Select',
+                'of' => ['one', 'other']
+            ]]), 'fields'
+        )->create();
+
+        $section->refresh();
+
+
+        $section->refresh();
+        $this->callAuthorizedRouteAction([
+            'name' => 'test',
+            $section->fields->first()->id => 'one'
+        ], ['section' => $section->id])
+            ->assertCreated();
+
+
+        $this->assertDatabaseHas($section->tableName, [$section->fields->first()->id => 'one']);
+    }
+
+    public function testMultiSelectField(): void
+    {
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(['type' => [
+                'name' => 'List',
+                'of' => [
+                    'name' => 'Select',
+                    'of' => ['one', 'other']
+                ]
+            ]]), 'fields'
+        )->create();
+
+        $section->refresh();
+
+        $this->callAuthorizedRouteAction([
+            'name' => 'test',
+            $section->fields->first()->id => ['one']
+        ], ['section' => $section->id])
+            ->assertCreated();
+    }
 }
+
+

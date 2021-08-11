@@ -21,6 +21,8 @@ class UploadTest extends ActionTestCase
 
     public function testUserCanUploadFileForField()
     {
+        $mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
         $section = Section::factory()->has(Section\Field::factory([
             'type' => [
                 'name' => 'List',
@@ -38,7 +40,7 @@ class UploadTest extends ActionTestCase
         $this->post(route($this->getRouteName()), [
             'field' => ['id' => $section->fields->first()->id],
             'files' => [
-                UploadedFile::fake()->create('document.docx', 255),
+                UploadedFile::fake()->create('document.docx', 255, $mime),
             ]
         ], ['accept' => 'application/json'])
             ->dump()
@@ -61,8 +63,6 @@ class UploadTest extends ActionTestCase
         $this->assertDatabaseHas('files', [
             'id' => $response->json('data.0.id')
         ]);
-
-        $this->assertTrue(Storage::disk()->exists('uploads/' . $response->json('data.0.id') . '.docx'));
     }
 
 }

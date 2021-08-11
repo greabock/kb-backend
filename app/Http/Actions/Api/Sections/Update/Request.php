@@ -34,6 +34,7 @@ use Illuminate\Http\Request as BaseRequest;
  *                 @OA\Schema(ref="#components/schemas/TypeEnum"),
  *                 @OA\Schema(ref="#components/schemas/TypeFile"),
  *                 @OA\Schema(ref="#components/schemas/TypeList"),
+ *                 @OA\Schema(ref="#components/schemas/TypeSelect"),
  *          }),
  *       )
  *    )
