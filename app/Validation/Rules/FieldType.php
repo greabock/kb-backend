@@ -170,9 +170,12 @@ class FieldType
     }
 
     // Wiki
-    public function rulesWiki($attribute, $value): array
+    public static function rulesWiki($attribute, $value): array
     {
-        return self::rulesText($attribute, $value);
+        return [
+            self::prefix($attribute, 'min') => 'sometimes|integer|lte:' . self::prefix($attribute, 'max') . '|min:0|max:21844',
+            self::prefix($attribute, 'max') => 'sometimes|integer|gte:' . self::prefix($attribute, 'min') . '|min:0|max:21844',
+        ];
     }
 
     // Integer
