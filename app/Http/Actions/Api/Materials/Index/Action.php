@@ -14,7 +14,7 @@ class Action
     public function __invoke(Section $section): AnonymousResourceCollection
     {
         /** @var LengthAwarePaginator $materials */
-        $materials = ($section->class_name)::only($section->cardFields())->paginate();
+        $materials = ($section->class_name)::select(...$section->cardFields())->paginate();
 
         return MaterialResource::collection($materials);
     }
