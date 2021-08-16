@@ -21,6 +21,39 @@ class SearchTest extends ActionTestCase
         return 'search';
     }
 
+    public function testEmptySearch()
+    {
+        /** @var Section $section */
+        $section = Section::factory()
+            ->has(Section\Field::factory(['type' => ['name' => 'Text']]), 'fields')
+            ->create();
+
+        $section->refresh();
+
+        $data = ['name' => 'Об особенностях Laravel'];
+
+        foreach ($section->fields as $field) {
+            $data[$field->id] = <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT;
+        }
+
+        /** @var Material $material */
+        $material = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['search' => ''])
+            ->assertOk();
+    }
+
     public function testUserCanSearchInMaterial()
     {
         /** @var Section $section */

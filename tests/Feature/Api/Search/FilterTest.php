@@ -12,16 +12,16 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Ramsey\Uuid\Uuid;
 use Tests\Feature\Api\ActionTestCase;
 
-class SearchTest extends ActionTestCase
+class FilterTest extends ActionTestCase
 {
     use WithFaker;
 
     public function getRouteName(): string
     {
-        return 'search';
+        return 'search.filter';
     }
 
-    public function testUserCanSearchInMaterial()
+    public function testUserCanFilterInMaterial()
     {
         /** @var Section $section */
         $section = Section::factory()
@@ -50,11 +50,12 @@ class SearchTest extends ActionTestCase
         $this->populator()->flush();
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
-        $this->callAuthorizedRouteAction(['search' => 'удобный'])
-            ->assertOk();
+        $this->callAuthorizedRouteAction(['search' => 'удобный'], ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material->id);
     }
 
-    public function testUserCanSearchWithOneFile()
+    public function testUserCanFilterWithOneFile()
     {
         /** @var Section $section */
         $section = Section::factory()
@@ -64,7 +65,7 @@ class SearchTest extends ActionTestCase
         $section->refresh();
 
 
-        File::create([
+        $file = File::create([
             'id' => $fileId = Uuid::uuid4()->toString(),
             'realpath' => '_',
             'url' => route('files.download', [$fileId]),
@@ -82,7 +83,6 @@ class SearchTest extends ActionTestCase
             'name' => 'Трактат о Laravel',
             'extension' => 'docx',
         ]);
-
 
         $data = [
             'name' => 'Об особенностях Laravel',
@@ -94,12 +94,16 @@ class SearchTest extends ActionTestCase
         $this->populator()->flush();
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
-        $this->callAuthorizedRouteAction(['search' => 'удобный'])
-            ->assertOk();
+        $this->callAuthorizedRouteAction(['search' => 'удобный'], ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.files.0.material.id', $material->id)
+            ->assertJsonPath('data.files.0.material.name', $material->name)
+            ->assertJsonPath('data.files.0.section.id', $section->id)
+            ->assertJsonPath('data.files.0.file.id', $file->id);
     }
 
 
-    public function testUserCanSearchWithMultipleFiles()
+    public function testUserCanFilterWithMultipleFiles()
     {
         /** @var Section $section */
         $section = Section::factory()
@@ -164,12 +168,12 @@ class SearchTest extends ActionTestCase
         $this->populator()->flush();
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
-        $this->callAuthorizedRouteAction(['search' => 'трактат'])
+        $this->callAuthorizedRouteAction(['search' => 'трактат'], ['section' => $section->id])
             ->assertOk();
     }
 
 
-    public function testUserCanSearchWithFilterExtensions()
+    public function testUserCanFilterWithFilterExtensions()
     {
         /** @var Section $section */
         $section = Section::factory()
@@ -235,7 +239,35 @@ class SearchTest extends ActionTestCase
         $this->populator()->flush();
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
-        $this->callAuthorizedRouteAction(['search' => 'трактат', 'extensions' => ['doc']])
+        $this->callAuthorizedRouteAction(['search' => 'трактат', 'extensions' => ['doc']], ['section' => $section->id])
+            ->assertJsonCount(1, 'data.files')
+            ->assertJsonPath('data.files.0.file.extension', 'doc')
+            ->assertOk();
+    }
+
+    public function testUserCanFilterResult(): void
+    {
+        /** @var Section $section */
+        $section = Section::factory()
+            ->has(Section\Field::factory(['type' => ['name' => 'Select', 'of' => ['one', 'two']]]), 'fields')
+            ->create();
+
+        $section->refresh();
+
+        $data = ['name' => 'Об особенностях Laravel'];
+
+        foreach ($section->fields as $field) {
+            $data[$field->id] = 'two';
+        }
+
+        /** @var Material $material */
+        $material = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['search' => 'Laravel', 'filter' => [
+            $section->fields->first()->id => 'two',
+        ]], ['section' => $section->id])
             ->assertOk();
     }
 }

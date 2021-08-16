@@ -439,4 +439,39 @@ class FieldType
             default => $value,
         };
     }
+
+    public static function filterRules(array $basType, $fieldId): array
+    {
+        return match ($basType['name']) {
+            self::T_DATE => [
+                $fieldId => ['array', 'max:2', 'min:2'],
+                $fieldId . '.*' => ['date']
+            ],
+            self::T_FLOAT => [
+                $fieldId => ['array', 'max:2', 'min:2'],
+                $fieldId . '.*' => ['number']
+            ],
+            self::T_INTEGER => [
+                $fieldId => ['array', 'max:2', 'min:2'],
+                $fieldId . '.*' => ['integer']
+            ],
+            self::T_STRING,
+            self::T_WIKI,
+            self::T_TEXT => [
+                $fieldId => ['string'],
+            ],
+            self::T_DICTIONARY,
+            self::T_ENUM,
+            self::T_FILE => [
+                $fieldId => ['uuid'],
+            ],
+            self::T_SELECT => [
+                $fieldId => ['string', 'in:' . implode(',', $basType['of'])]
+            ],
+            self::T_BOOLEAN => [
+                $fieldId => ['boolean'],
+            ],
+            default => throw new \Exception("Unknown base type [{$basType['name']}]")
+        };
+    }
 }

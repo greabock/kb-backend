@@ -224,4 +224,33 @@ class Field extends Model
             default => throw new \Exception("Unknown base type [{$this->base_type['name']}]")
         };
     }
+
+    public function getFilter($value): array
+    {
+        return match ($this->base_type['name']) {
+            FieldType::T_DATE,
+            FieldType::T_FLOAT,
+            FieldType::T_INTEGER => [
+                'range' => [
+                    $this->id => [
+                        'gte' => $value[0],
+                        'lte' => $value[1],
+                    ],
+                ],
+            ],
+            FieldType::T_STRING,
+            FieldType::T_WIKI,
+            FieldType::T_TEXT,
+            FieldType::T_DICTIONARY,
+            FieldType::T_ENUM,
+            FieldType::T_FILE,
+            FieldType::T_SELECT,
+            FieldType::T_BOOLEAN => [
+                'match' => [
+                    $this->id => $value,
+                ],
+            ],
+            default => throw new \Exception("Unknown base type [{$this->base_type['name']}]")
+        };
+    }
 }

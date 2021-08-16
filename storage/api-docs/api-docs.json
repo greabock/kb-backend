@@ -416,6 +416,106 @@
                 }
             }
         },
+        "/search/{section}": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Поиск и фильтрация по файлам и материалам конкретного раздела",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "properties": {
+                                "direction": {
+                                    "type": "string",
+                                    "enum": [
+                                        "asc",
+                                        "desc"
+                                    ]
+                                },
+                                "field": {
+                                    "type": "string",
+                                    "enum": [
+                                        "created_at",
+                                        "name"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    {
+                        "name": "extensions",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "docx"
+                            }
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "oneOf": [
+                                    {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "date"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Списки материалов и файлов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SearchResultResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
         "/sections": {
             "get": {
                 "tags": [

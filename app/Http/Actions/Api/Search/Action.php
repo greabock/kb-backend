@@ -10,11 +10,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use App\Validation\Rules\FieldType;
 use App\Http\Resources\SearchResultResource;
+use Validator;
 
 class Action
 {
     public function __invoke(Request $request, Client $esClient): SearchResultResource
     {
+        Validator::validate($request->all(), [
+            'search' => 'sometimes|string',
+            'sort' => 'sometimes|array:field,direction',
+            'sort.field' => 'in:created_at,name',
+            'sort.direction' => 'in:asc,desc',
+            'extensions' => 'sometimes|array',
+            'extensions.*' => 'string',
+        ]);
+
         $sections = Section::with('fields')->get()->keyBy('id');
 
         /** @var Section\Field[]|Collection $fields */
@@ -27,7 +37,7 @@ class Action
 
 
         $materials = $request->has('extensions') ? collect() : $this->searchMaterials(
-            $request->get('search'),
+            $request->get('search') ?? '',
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $fields->filter(fn(Section\Field $field) => $field->base_type['name'] !== FieldType::T_FILE),
             $index,
@@ -35,7 +45,7 @@ class Action
         );
 
         $files = $this->searchFiles(
-            $request->get('search'),
+            $request->get('search') ?? '',
             $request->get('extensions', []),
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $fields->filter(fn(Section\Field $field) => $field->base_type['name'] === FieldType::T_FILE),
@@ -60,13 +70,7 @@ class Action
         $body = [
             'query' => [
                 'bool' => [
-                    'should' => [
-                        [
-                            'query_string' => [
-                                'query' => $queryString,
-                                'fields' => array_keys($highlightFields),
-                            ]
-                        ],
+                    'must' => [
                     ]
                 ]
             ],
@@ -77,6 +81,17 @@ class Action
             '_source' => ['id', 'name'],
         ];
 
+        if (!empty($queryString)) {
+            $body['query']['bool']['must'][] = [
+                [
+                    'query_string' => [
+                        'query' => $queryString,
+                        'fields' => array_keys($highlightFields),
+                    ]
+                ],
+            ];
+        }
+
         $response = $esClient->search(compact('body', 'index'));
 
         $materials = [];
@@ -85,7 +100,7 @@ class Action
             $materials[] = [
                 'section' => ['id' => $hit['_index']],
                 'material' => $hit['_source'],
-                'highlight' => $hit['highlight'],
+                'highlight' => $hit['highlight'] ?? (object)[],
             ];
         }
 
@@ -121,6 +136,18 @@ class Action
                 ];
             }
 
+            if (!empty($queryString)) {
+                $must[] = [
+                    'query_string' => [
+                        'query' => $queryString,
+                        'fields' => [
+                            $fileField->id . '.name',
+                            $fileField->id . '.content',
+                        ]
+                    ],
+                ];
+            }
+
             $body['query']['bool']['should'][] = [
                 'nested' => [
                     'path' => $fileField->id,
@@ -143,25 +170,9 @@ class Action
                     ],
                     'query' => [
                         'bool' => [
-                            'must' => [
-                                [
-                                    'query_string' => [
-                                        'query' => $queryString,
-                                        'fields' => [
-                                            $fileField->id . '.name',
-                                            $fileField->id . '.content',
-                                        ]
-                                    ],
-                                ],
-                                [
-                                    'bool' => [
-                                        'should' => $extensionMatches
-                                    ]
-                                ]
-                            ],
+                            'must' => $must,
                         ]
                     ],
-
                 ]
             ];
 
