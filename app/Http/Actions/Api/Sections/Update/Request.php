@@ -61,7 +61,7 @@ class Request extends ApiRequest
                 'image' => 'nullable|string|max:255',
                 'is_dictionary' => 'sometimes|boolean',
                 'is_navigation' => 'sometimes|boolean',
-                'fields' => 'sometimes|array|integer_keys',
+                'fields' => 'sometimes|array|index_array',
                 'fields.*.id' => 'sometimes|uuid|distinct',
                 'fields.*.title' => 'sometimes|string|max:255',
                 'fields.*.description' => 'nullable|string|max:255',
