@@ -53,6 +53,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::patch('/')->name('.massUpdate')
+        ->middleware('user-role:moderator,admin')
         ->uses(Sections\MassUpdate\Action::class);
 
     /**

@@ -37,10 +37,29 @@ class UpdateSectionIndex implements ShouldQueue, ShouldBeUnique
     public function handle(Client $client): void
     {
         if ($section = Section::find($this->sectionId)) {
-            $client->indices()->putMapping([
-                'index' => $section->id,
-                'body' => \Arr::only($section->getMaterialMappings(), $this->fields),
-            ]);
+
+            if ($client->indices()->exists(['index' => $section->id])) {
+                $client->indices()->putMapping([
+                    'index' => $section->id,
+                    'body' => \Arr::only($section->getMaterialMappings(), $this->fields),
+                ]);
+            } else {
+                $configurator = new MaterialIndexConfigurator($section->class_name);
+
+                $client->indices()->create(
+                    (new IndexPayload($configurator))
+                        ->setIfNotEmpty('body.settings', $configurator->getSettings())
+                        ->setIfNotEmpty('body.mappings', $section->getMaterialMappings())
+                        ->get()
+                );
+
+                $client->indices()
+                    ->putAlias(
+                        (new IndexPayload($configurator))
+                            ->set('name', $configurator->getWriteAlias())->get()
+                    );
+            }
+
         }
 
         $section->indexing = false;

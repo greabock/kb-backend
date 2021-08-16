@@ -18,7 +18,7 @@ class TableBuilder
 
     public function create(Section $section): void
     {
-        Schema::create($section->tableName, function (Blueprint $table) {
+        Schema::create($section->table_name, function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->softDeletes();
@@ -30,7 +30,7 @@ class TableBuilder
 
     public function drop(Section $section): void
     {
-        Schema::dropIfExists($section->tableName);
+        Schema::dropIfExists($section->table_name);
     }
 
 }

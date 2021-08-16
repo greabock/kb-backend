@@ -32,7 +32,9 @@ class DropSectionIndex implements ShouldQueue, ShouldBeUnique
      */
     public function handle(Client $client)
     {
-        $client->indices()->delete(['index' => $this->sectionId]);
+        if ($client->indices()->exists(['index' => $this->sectionId])) {
+            $client->indices()->delete(['index' => $this->sectionId]);
+        }
     }
 
     public function uniqueId(): string

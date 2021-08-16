@@ -9,6 +9,7 @@ use App\Services\FileManager;
 use Illuminate\Support\ServiceProvider;
 use Storage;
 use Vaites\ApacheTika\Client as TikaClient;
+use Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +22,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->register(MaterialServiceProvider::class);
         $this->app->register(SearchServiceProvider::class);
-
         $this->app->singleton(FileManager::class, fn() => new FileManager(Storage::disk('local'), $this->app[TikaClient::class]));
         $this->app->singleton(TikaClient::class, fn() => TikaClient::make(config('services.tika.path')));
     }
@@ -33,7 +33,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Section::observe(SectionObserver::class);
-        Section\Field::observe(SectionFieldObserver::class);
+        Validator::extend('index_array', function ($attribute, $value, $parameters, $validator) {
+            return (is_array($value) && count(array_filter(array_keys($value), 'is_string')) === 0);
+        }, 'Field :attribute should be an index array');
     }
 }

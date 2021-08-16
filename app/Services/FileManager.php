@@ -33,7 +33,7 @@ class FileManager
             $id,
             $path,
             route('files.download', [$id], true),
-            $index ? $this->tika->getText($path) : null
+            $index ? $this->tika->getText($path) : null,
         ];
     }
 }

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Mockery\Exception;
@@ -25,27 +26,26 @@ use ScoutElastic\Builders\SearchBuilder;
 /**
  * App\Models\SectionField
  *
- * @method static Builder|Field newModelQuery()
- * @method static Builder|Field newQuery()
- * @method static Builder|Field query()
  * @mixin Eloquent
  * @property string $id
  * @property string $title
  * @property string $description
- * @property string $baseType
+ * @property array $baseType
  * @property int $sort_index
  * @property mixed $type
  * @property mixed $required
  * @property bool $is_present_in_card
  * @property string $section_id
- * @property string $columnName
- * @property string $pivotName
- * @property string $foreignKey
- * @property string $localPivotKey
- * @property string $relatedClass
  * @property int $filter_sort_index
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read Section $section
+ * @property-read string $foreign_key
+ * @property-read string $local_pivot_key
+ * @property-read string $pivot_name
+ * @property-read string $related_class
+ * @property-read array $base_type
  * @method static Builder|Field whereCreatedAt($value)
  * @method static Builder|Field whereDescription($value)
  * @method static Builder|Field whereId($value)
@@ -56,19 +56,17 @@ use ScoutElastic\Builders\SearchBuilder;
  * @method static Builder|Field whereType($value)
  * @method static Builder|Field whereUpdatedAt($value)
  * @method static Builder|Field whereUseInCard($value)
- * @property-read Section $section
- * @property Carbon|null $deleted_at
- * @property-read string $foreign_key
- * @property-read string $local_pivot_key
- * @property-read string $pivot_name
- * @property-read string $related_class
- * @method static FieldFactory factory(...$parameters)
- * @method static \Illuminate\Database\Query\Builder|Field onlyTrashed()
  * @method static Builder|Field whereDeletedAt($value)
  * @method static Builder|Field whereIsFilterable($value)
  * @method static Builder|Field whereIsPresentInCard($value)
- * @method static \Illuminate\Database\Query\Builder|Field withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Field withoutTrashed()
+ * @method static Builder|Field newModelQuery()
+ * @method static Builder|Field newQuery()
+ * @method static Builder|Field query()
+ * @method static QueryBuilder|Field onlyTrashed()
+ * @method static QueryBuilder|Field withTrashed()
+ * @method static QueryBuilder|Field withoutTrashed()
+ * @method static Builder|Field whereFilterSortIndex($value)
+ * @method static FieldFactory factory(...$parameters)
  */
 class Field extends Model
 {
@@ -169,21 +167,21 @@ class Field extends Model
     public function getRelationLoader(): callable
     {
         return function (Material $that): BelongsTo|BelongsToMany {
-            $relatedModel = (new ($this->relatedClass));
+            $relatedModel = (new ($this->related_class));
             return match (true) {
 
                 $this->isBelongsTo() => $that->belongsTo(
-                    $this->relatedClass,
-                    $this->foreignKey,
+                    $this->related_class,
+                    $this->foreign_key,
                     $relatedModel->getKeyName(),
                     $this->id
                 ),
 
                 $this->isBelongsToMany() => $that->belongsToMany(
-                    $this->relatedClass,
-                    $this->pivotName,
-                    $this->localPivotKey,
-                    $this->foreignKey,
+                    $this->related_class,
+                    $this->pivot_name,
+                    $this->local_pivot_key,
+                    $this->foreign_key,
                     $this->getKeyName(),
                     $relatedModel->getKeyName(),
                     $this->id,
@@ -203,16 +201,16 @@ class Field extends Model
         return FieldType::toIndex($this->type, $value);
     }
 
-    public function getBaseTypeAttribute()
+    public function getBaseTypeAttribute(): array
     {
         return $this->type['name'] === FieldType::T_LIST
-            ? $this->type['of']['name']
-            : $this->type['name'];
+            ? $this->type['of']
+            : $this->type;
     }
 
     public function applyFilter(SearchBuilder $builder, array $params): SearchBuilder
     {
-        return match ($this->baseType) {
+        return match ($this->base_type['name']) {
             FieldType::T_DATE,
             FieldType::T_FLOAT,
             FieldType::T_INTEGER => $builder->whereBetween($this->id, $params[$this->id]),
@@ -223,7 +221,7 @@ class Field extends Model
             FieldType::T_ENUM,
             FieldType::T_FILE,
             FieldType::T_BOOLEAN => $builder->whereMatch($this->id, $params[$this->id]),
-            default => throw new \Exception("Unknown base type [$this->baseType]")
+            default => throw new \Exception("Unknown base type [{$this->base_type['name']}]")
         };
     }
 }

@@ -22,7 +22,6 @@ class UpdateTest extends ActionTestCase
 
         $this
             ->callAuthorizedByAdminRouteAction($user->toArray(), ['user' => $user->id])
-            ->dump()
             ->assertOk()
         ;
     }

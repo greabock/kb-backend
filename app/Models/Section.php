@@ -30,10 +30,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property bool $is_navigation
  * @property bool $indexing
  * @property int $sort_index
- * @property string $tableName
  * @property string $class_name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read int|null $fields_count
+ * @property-read mixed $table_name
+ * @property-read Collection|Field[] $fields
  * @method static Builder|Section newModelQuery()
  * @method static Builder|Section newQuery()
  * @method static Builder|Section query()
@@ -45,16 +48,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static Builder|Section whereSortIndex($value)
  * @method static Builder|Section whereTitle($value)
  * @method static Builder|Section whereUpdatedAt($value)
- * @property-read Collection|Field[] $fields
- * @property-read int|null $fields_count
- * @property Carbon|null $deleted_at
- * @property-read mixed $table_name
- * @method static SectionFactory factory(...$parameters)
- * @method static QueryBuilder|Section onlyTrashed()
+ * @method static Builder|Section whereIndexing($value)
  * @method static Builder|Section whereClassName($value)
  * @method static Builder|Section whereDeletedAt($value)
  * @method static QueryBuilder|Section withTrashed()
  * @method static QueryBuilder|Section withoutTrashed()
+ * @method static QueryBuilder|Section onlyTrashed()
+ * @method static SectionFactory factory(...$parameters)
  * @mixin Eloquent
  */
 class Section extends Model
@@ -156,8 +156,8 @@ class Section extends Model
     {
         return ['properties' => array_merge(
             $this->defaultMapping,
-            $this->fields->keyBy('id')
-                ->map(fn(Field $field) => FieldType::getElasticConfig($field->baseType))
+            $this->fields
+                ->mapWithKeys(fn(Field $field) => FieldType::getElasticConfig($field->baseType, $field->id))
                 ->toArray(),
         )];
     }

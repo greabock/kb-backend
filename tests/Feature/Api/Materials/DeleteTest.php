@@ -27,6 +27,6 @@ class DeleteTest extends ActionTestCase
         $this->callAuthorizedRouteAction([], ['section' => $section->id, 'material' => $material->id])
             ->assertNoContent();
 
-        $this->assertDatabaseMissing($section->tableName, ['id' => $material->id, 'deleted_at' => null]);
+        $this->assertDatabaseMissing($section->table_name, ['id' => $material->id, 'deleted_at' => null]);
     }
 }

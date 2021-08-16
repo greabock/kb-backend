@@ -117,6 +117,7 @@ class FieldType
         self::T_ENUM,
         self::T_FILE,
         self::T_DICTIONARY,
+        self::T_SELECT,
     ];
 
     public const LINK_TYPES = [
@@ -364,35 +365,57 @@ class FieldType
         };
     }
 
-    public static function getElasticConfig(string $type): array
+    public static function getElasticConfig(array $type, $field): array
     {
-        return match ($type) {
-            self::T_TEXT, self::T_WIKI, self::T_STRING, self::T_FILE => [
+        return match ($type['name']) {
+            self::T_TEXT, self::T_WIKI, self::T_STRING => [$field => [
                 'type' => 'text',
                 'analyzer' => 'ru'
-            ],
-            self::T_DATE => [
+            ]],
+            self::T_FILE => [$field => [
+                'type' => 'nested',
+                'properties' => [
+                    'id' => [
+                        'type' => 'keyword',
+                    ],
+                    'content' => [
+                        'type' => 'text',
+                        'analyzer' => 'ru',
+                    ],
+                    'name' => [
+                        'type' => 'text',
+                        'analyzer' => 'ru'
+                    ],
+                    'extension' => [
+                        'type' => 'keyword',
+                    ],
+                    'created_at' => [
+                        'type' => 'date',
+                    ],
+                ]
+            ]],
+            self::T_DATE => [$field => [
                 'type' => 'date',
-            ],
-            self::T_INTEGER => [
+            ]],
+            self::T_INTEGER => [$field => [
                 'type' => 'integer'
-            ],
-            self::T_FLOAT => [
+            ]],
+            self::T_FLOAT => [$field => [
                 'type' => 'float'
-            ],
-            self::T_BOOLEAN => [
+            ]],
+            self::T_BOOLEAN => [$field => [
                 'type' => 'boolean'
-            ],
-            self::T_ENUM, self::T_DICTIONARY, self::T_SELECT => [
+            ]],
+            self::T_ENUM, self::T_DICTIONARY, self::T_SELECT => [$field => [
                 'type' => 'keyword'
-            ],
+            ]],
         };
     }
 
     public static function toIndex(
         array $type,
         Collection|Enum\Value|Material|File|DateTime|array|string|float|int|bool|null $value,
-    ): mixed
+    ): array|string|null
     {
         if ($type['name'] === self::T_LIST) {
 
@@ -404,8 +427,14 @@ class FieldType
         }
 
         return match ($type['name']) {
-            self::T_ENUM, self::T_DICTIONARY => $value->id,
-            self::T_FILE => $value->content,
+            self::T_ENUM, self::T_DICTIONARY => $value?->id,
+            self::T_FILE => [
+                'id' => $value->id,
+                'content' => $value?->content,
+                'name' => $value?->name,
+                'extension' => $value?->extension,
+                'created_at' => $value?->created_at->format(DATE_W3C),
+            ],
             self::T_DATE => $value?->format(DATE_W3C),
             default => $value,
         };

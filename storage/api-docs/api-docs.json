@@ -345,6 +345,77 @@
                 "security": []
             }
         },
+        "/search": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Поиск по файлам и материалам всех разделов",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "properties": {
+                                "direction": {
+                                    "type": "string",
+                                    "enum": [
+                                        "asc",
+                                        "desc"
+                                    ]
+                                },
+                                "field": {
+                                    "type": "string",
+                                    "enum": [
+                                        "created_at",
+                                        "name"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    {
+                        "name": "extensions",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "docx"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Списки материалов и файлов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SearchResultResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
         "/sections": {
             "get": {
                 "tags": [
@@ -1491,6 +1562,19 @@
                 },
                 "type": "object"
             },
+            "EnumValueResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Пример названия значения перечисления"
+                    }
+                },
+                "type": "object"
+            },
             "EnumResource": {
                 "properties": {
                     "id": {
@@ -1519,19 +1603,6 @@
                         "items": {
                             "$ref": "#/components/schemas/EnumValueResource"
                         }
-                    }
-                },
-                "type": "object"
-            },
-            "EnumValueResource": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Пример названия значения перечисления"
                     }
                 },
                 "type": "object"
@@ -1626,59 +1697,116 @@
                     ]
                 }
             },
-            "SectionResource": {
+            "SearchResultResource": {
                 "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    "materials": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MaterialSearchResult"
+                        }
                     },
-                    "title": {
-                        "type": "string",
-                        "example": "Агенты"
-                    },
-                    "image": {
-                        "type": "string",
-                        "example": "absolute://path.to/image.jpg"
-                    },
-                    "is_dictionary": {
-                        "type": "boolean"
-                    },
-                    "is_navigation": {
-                        "type": "boolean"
-                    },
-                    "sort_index": {
-                        "type": "integer"
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FileSearchResult"
+                        }
                     }
                 },
                 "type": "object"
             },
-            "SectionWithFieldsResource": {
+            "FileSearchResult": {
                 "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    "section": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            }
+                        },
+                        "type": "object"
                     },
-                    "title": {
-                        "type": "string",
-                        "example": "Страны"
+                    "material": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            },
+                            "name": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "Имя материала"
+                            }
+                        },
+                        "type": "object"
                     },
-                    "image": {
-                        "type": "string",
-                        "example": "absolute://path.to/image.jpg"
+                    "highlight": {
+                        "properties": {
+                            "content": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Благодаря <em>удобному</em> для масштабирования характеру PHP и встроенной"
+                                }
+                            },
+                            "name": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Имя <em>удобного</em> файла"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "MaterialSearchResult": {
+                "properties": {
+                    "section": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            }
+                        },
+                        "type": "object"
                     },
-                    "is_dictionary": {
-                        "type": "boolean"
+                    "material": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            },
+                            "name": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "Имя материала"
+                            }
+                        },
+                        "type": "object"
                     },
-                    "is_navigation": {
-                        "type": "boolean"
-                    },
-                    "sort_index": {
-                        "type": "integer"
-                    },
-                    "fields": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/SectionFieldResource"
+                    "highlight": {
+                        "properties": {
+                            "name": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Название <em>удобного</em> материала"
+                                }
+                            }
+                        },
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "Благодаря <em>удобному</em> для масштабирования характеру PHP и встроенной"
+                            }
                         }
                     }
                 },
@@ -1740,6 +1868,64 @@
                                 "$ref": "#components/schemas/TypeList"
                             }
                         ]
+                    }
+                },
+                "type": "object"
+            },
+            "SectionResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Агенты"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "SectionWithFieldsResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SectionFieldResource"
+                        }
                     }
                 },
                 "type": "object"

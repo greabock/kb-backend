@@ -37,7 +37,7 @@ class UpdateTest extends ActionTestCase
             ->assertOk()
             ->assertJsonPath('data.name', $newName);
 
-        $this->assertDatabaseHas($section->tableName, [
+        $this->assertDatabaseHas($section->table_name, [
             'id' => $material->id,
             'name' => $newName,
         ]);

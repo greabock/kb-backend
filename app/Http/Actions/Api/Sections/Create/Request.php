@@ -61,7 +61,7 @@ class Request extends ApiRequest
                 'image' => 'sometimes|string|max:255',
                 'is_dictionary' => 'required|boolean',
                 'is_navigation' => 'required|boolean',
-                'fields' => 'sometimes|array',
+                'fields' => 'sometimes|array|index_array',
                 'fields.*.id' => 'sometimes|uuid|distinct|unique:enum_values,id',
                 'fields.*.title' => 'required|string|max:255',
                 'fields.*.description' => 'nullable|string|max:255',

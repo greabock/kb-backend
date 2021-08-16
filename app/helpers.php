@@ -8,7 +8,7 @@ function data_get_struct($data, array $struct): array
     $objects = array_filter($struct, static fn($value, $key) => is_string($key) && is_array($value), ARRAY_FILTER_USE_BOTH);
 
     foreach ($plainKeys as $key) {
-        if (array_key_exists($key, $data)) {
+        if (is_array($data) && array_key_exists($key, $data)) {
             $results[$key] = $data[$key];
         }
     }

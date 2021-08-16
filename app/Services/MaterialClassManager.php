@@ -51,7 +51,7 @@ class MaterialClassManager
 
         $class->addProperty('table')
             ->setProtected()
-            ->setValue($section->tableName);
+            ->setValue($section->table_name);
 
         $class->addProperty('fillable')
             ->setProtected()

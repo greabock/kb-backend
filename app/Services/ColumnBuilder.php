@@ -16,57 +16,57 @@ class ColumnBuilder
     {
         if ($field->type['name'] === FieldType::T_LIST) {
             if ($field->type['of']['name'] === FieldType::T_SELECT) {
-                Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
+                Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
                     $table->jsonb($field->id)->nullable();
                 });
             }
 
-            if (Schema::hasTable($field->pivotName)) {
+            if (Schema::hasTable($field->pivot_name)) {
                 return;
             }
 
             if ($field->type['of']['name'] === FieldType::T_ENUM) {
 
-                Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
-                    $table->uuid($field->localPivotKey);
-                    $table->uuid($field->foreignKey);
+                Schema::create($field->pivot_name, function (Blueprint $table) use ($field) {
+                    $table->uuid($field->local_pivot_key);
+                    $table->uuid($field->foreign_key);
 
-                    $table->foreign($field->localPivotKey)
+                    $table->foreign($field->local_pivot_key)
                         ->references('id')
-                        ->on($field->section->tableName);
+                        ->on($field->section->table_name);
 
-                    $table->foreign($field->foreignKey)
+                    $table->foreign($field->foreign_key)
                         ->references('id')
                         ->on('enum_values');
                 });
             }
 
             if ($field->type['of']['name'] === FieldType::T_DICTIONARY) {
-                Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
-                    $table->uuid($field->localPivotKey);
-                    $table->uuid($field->foreignKey);
+                Schema::create($field->pivot_name, function (Blueprint $table) use ($field) {
+                    $table->uuid($field->local_pivot_key);
+                    $table->uuid($field->foreign_key);
 
-                    $table->foreign($field->localPivotKey)
+                    $table->foreign($field->local_pivot_key)
                         ->references('id')
-                        ->on($field->section->tableName);
+                        ->on($field->section->table_name);
 
-                    $table->foreign($field->foreignKey)
+                    $table->foreign($field->foreign_key)
                         ->references('id')
-                        ->on(Section::findOrFail($field->type['of']['of'])->tableName);
+                        ->on(Section::findOrFail($field->type['of']['of'])->table_name);
                 });
             }
 
             if ($field->type['of']['name'] === FieldType::T_FILE) {
 
-                Schema::create($field->pivotName, function (Blueprint $table) use ($field) {
-                    $table->uuid($field->localPivotKey);
-                    $table->uuid($field->foreignKey);
+                Schema::create($field->pivot_name, function (Blueprint $table) use ($field) {
+                    $table->uuid($field->local_pivot_key);
+                    $table->uuid($field->foreign_key);
 
-                    $table->foreign($field->localPivotKey)
+                    $table->foreign($field->local_pivot_key)
                         ->references('id')
-                        ->on($field->section->tableName);
+                        ->on($field->section->table_name);
 
-                    $table->foreign($field->foreignKey)
+                    $table->foreign($field->foreign_key)
                         ->references('id')
                         ->on('files');
                 });
@@ -75,11 +75,11 @@ class ColumnBuilder
             return;
         }
 
-        if (Schema::hasColumn($field->section->tableName, $field->id)) {
+        if (Schema::hasColumn($field->section->table_name, $field->id)) {
             return;
         }
 
-        Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
+        Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
             if ($field->type['name'] === FieldType::T_SELECT) {
                 $table->string($field->id)->nullable();
             }
@@ -113,18 +113,18 @@ class ColumnBuilder
             }
 
             if ($field->type['name'] === FieldType::T_FILE) {
-                $table->uuid($field->foreignKey)->nullable();
-                $table->foreign($field->foreignKey, $field->id)->references('id')->on('files');
+                $table->uuid($field->foreign_key)->nullable();
+                $table->foreign($field->foreign_key, $field->id)->references('id')->on('files');
             }
 
             if ($field->type['name'] === FieldType::T_ENUM) {
-                $table->uuid($field->foreignKey)->nullable();
-                $table->foreign($field->foreignKey, $field->id)->references('id')->on('enum_values');
+                $table->uuid($field->foreign_key)->nullable();
+                $table->foreign($field->foreign_key, $field->id)->references('id')->on('enum_values');
             }
 
             if ($field->type['name'] === FieldType::T_DICTIONARY) {
-                $table->uuid($field->foreignKey)->nullable();
-                $table->foreign($field->foreignKey)->references('id')->on($field->type['of']);
+                $table->uuid($field->foreign_key)->nullable();
+                $table->foreign($field->foreign_key)->references('id')->on($field->type['of']);
             }
 
         });
@@ -134,19 +134,19 @@ class ColumnBuilder
     {
         if ($field->type['name'] === FieldType::T_LIST) {
             if ($field->type['of']['name'] === FieldType::T_SELECT) {
-                Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
-                    $table->dropColumn($field->columnName);
+                Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
+                    $table->dropColumn($field->column_name);
                 });
 
                 return;
             }
 
-            Schema::dropIfExists($field->pivotName);
+            Schema::dropIfExists($field->pivot_name);
             return;
         }
 
-        Schema::table($field->section->tableName, function (Blueprint $table) use ($field) {
-            $table->dropColumn($field->columnName);
+        Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
+            $table->dropColumn($field->column_name);
         });
     }
 }

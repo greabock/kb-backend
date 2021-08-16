@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Sections;
 
+use App\Http\Resources\SectionResource;
 use App\Models\Section;
 use App\Models\User;
 use Ramsey\Uuid\Uuid;
@@ -88,4 +89,28 @@ class UpdateTest extends ActionTestCase
             ->assertNotFound();
     }
 
+    public function testUserCanUpdateWikiField()
+    {
+        /** @var Section $section */
+        $section = Section::factory()->create();
+
+        $section->refresh();
+
+        $data = (new SectionResource($section))->toArray(null);
+        $data['fields'] = [
+            "description" => "default",
+            "filter_sort_index" => null,
+            "is_present_in_card" => false,
+            "required" => true,
+            "sort_index" => 1,
+            "title" => "Вики",
+            "type" => [
+                "name" => "Wiki"
+            ]
+        ];
+
+        $this
+            ->callAuthorizedByAdminRouteAction($data, ['section' => $section->id])
+            ->assertOk();
+    }
 }

@@ -50,16 +50,18 @@ class Request extends ApiRequest
         $typeRules = [];
 
         foreach ($request->get('fields', []) as $index => $field) {
-            $typeRules[] = FieldType::resolveRules("fields.{$index}.type", data_get($data, "fields.{$index}.type"));
+            if ($type = data_get($data, "fields.{$index}.type")) {
+                $typeRules[] = FieldType::resolveRules("fields.{$index}.type", $type);
+            }
         }
 
         return array_merge(
             [
                 'title' => 'sometimes|string|max:255',
-                'image' => 'sometimes|string|max:255',
+                'image' => 'nullable|string|max:255',
                 'is_dictionary' => 'sometimes|boolean',
                 'is_navigation' => 'sometimes|boolean',
-                'fields' => 'sometimes|array',
+                'fields' => 'sometimes|array|integer_keys',
                 'fields.*.id' => 'sometimes|uuid|distinct',
                 'fields.*.title' => 'sometimes|string|max:255',
                 'fields.*.description' => 'nullable|string|max:255',

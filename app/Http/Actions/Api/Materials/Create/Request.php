@@ -35,7 +35,7 @@ class Request extends ApiRequest
 
         return array_merge(
             [
-                'id' => ['sometimes', 'uuid', Rule::unique($this->resolveSection()->tableName, 'id')],
+                'id' => ['sometimes', 'uuid', Rule::unique($this->resolveSection()->table_name, 'id')],
                 'name' => 'required|string|max:255'
             ],
             $this->resolveSection()->rules(),

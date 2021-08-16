@@ -21,7 +21,9 @@ class CreateTest extends ActionTestCase
     {
         /** @var Section $section */
         $section = Section::factory()->has(
-            Section\Field::factory(), 'fields'
+            Section\Field::factory([
+                'type' => ['name' => 'String']
+            ]), 'fields'
         )->create();
 
         $section->refresh();
@@ -179,7 +181,7 @@ class CreateTest extends ActionTestCase
             ->assertCreated();
 
 
-        $this->assertDatabaseHas($section->tableName, [$section->fields->first()->id => 'one']);
+        $this->assertDatabaseHas($section->table_name, [$section->fields->first()->id => 'one']);
     }
 
     public function testMultiSelectField(): void
