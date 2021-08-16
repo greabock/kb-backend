@@ -17,7 +17,7 @@ class Action
     public function __invoke(Request $request, Client $esClient): SearchResultResource
     {
         Validator::validate($request->all(), [
-            'search' => 'sometimes|string',
+            'search' => 'nullable|string',
             'sort' => 'sometimes|array:field,direction',
             'sort.field' => 'in:created_at,name',
             'sort.direction' => 'in:asc,desc',
@@ -78,7 +78,7 @@ class Action
                 [$sort['field'] => $sort['direction']]
             ],
             'highlight' => ['fields' => $highlightFields],
-            '_source' => ['id', 'name'],
+            '_source' => ['id', 'name', ...$fields->filter(fn(Section\Field $f) => $f->is_present_in_card)->pluck('id')->toArray()],
         ];
 
         if (!empty($queryString)) {

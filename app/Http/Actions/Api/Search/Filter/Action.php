@@ -79,7 +79,7 @@ class Action
                 [$sort['field'] => $sort['direction']]
             ],
             'highlight' => ['fields' => $highlightFields],
-            '_source' => ['id', 'name'],
+            '_source' => ['id', 'name', ...$fields->filter(fn(Section\Field $f) => $f->is_present_in_card)->pluck('id')->toArray()],
         ];
 
         if (!empty($queryString)) {
