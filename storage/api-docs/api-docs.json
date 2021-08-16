@@ -675,7 +675,7 @@
                 "tags": [
                     "Materials"
                 ],
-                "summary": "Создание материала",
+                "summary": "Создание материала (admin, moderator)",
                 "parameters": [
                     {
                         "name": "section",
@@ -763,7 +763,7 @@
                 "tags": [
                     "Materials"
                 ],
-                "summary": "Удаление материала",
+                "summary": "Удаление материала (admin, modrator)",
                 "parameters": [
                     {
                         "name": "section",
@@ -792,7 +792,7 @@
                 "tags": [
                     "Materials"
                 ],
-                "summary": "Обновление материала",
+                "summary": "Обновление материала (admin, modrator)",
                 "parameters": [
                     {
                         "name": "section",

@@ -37,7 +37,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      *     path="/sections/{section}/materials",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
-     *     summary="Создание материала",
+     *     summary="Создание материала (admin, moderator)",
      *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела материалов"),
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/MaterialCreateRequest")),
      *     @OA\Response(
@@ -54,6 +54,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      * )
      */
     Route::post('/')->name('.create')
+        ->middleware('user-role:admin,moderator')
         ->uses(Materials\Create\Action::class);
 
     /**
@@ -85,7 +86,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      *     path="/sections/{section}/materials/{material}",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
-     *     summary="Обновление материала",
+     *     summary="Обновление материала (admin, modrator)",
      *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела материалов"),
      *     @OA\Parameter(name="material", in="path", description="Идентификатор обновляемого материала"),
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/MaterialUpdateRequest")),
@@ -103,6 +104,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      * )
      */
     Route::patch('{material}')->name('.update')
+        ->middleware('user-role:admin,moderator')
         ->uses(Materials\Update\Action::class);
 
 
@@ -111,7 +113,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      *     path="/sections/{section}/materials/{material}",
      *     security={"apiKey":{}},
      *     tags={"Materials"},
-     *     summary="Удаление материала",
+     *     summary="Удаление материала (admin, modrator)",
      *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела материалов"),
      *     @OA\Parameter(name="material", in="path", description="Идентификатор удаляемого материала"),
      *     @OA\Response(
@@ -125,5 +127,6 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      * )
      */
     Route::delete('{material}')->name('.destroy')
+        ->middleware('user-role:admin,moderator')
         ->uses(Materials\Delete\Action::class);
 });
