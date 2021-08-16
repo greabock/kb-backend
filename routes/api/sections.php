@@ -53,7 +53,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::patch('/')->name('.massUpdate')
-        ->middleware('user-role:moderator,admin')
+        ->middleware('user-role:admin')
         ->uses(Sections\MassUpdate\Action::class);
 
     /**
@@ -61,7 +61,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      *     path="/sections",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
-     *     summary="Создание раздела (admin, moderator)",
+     *     summary="Создание раздела (admin)",
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/SectionCreateRequest")),
      *     @OA\Response(
      *          response="201",
@@ -77,7 +77,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::post('/')->name('.create')
-        ->middleware('user-role:moderator,admin')
+        ->middleware('user-role:admin')
         ->uses(Sections\Create\Action::class);
 
     /**
@@ -108,7 +108,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      *     path="/sections/{sections}",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
-     *     summary="Обновление раздела (admin, moderator)",
+     *     summary="Обновление раздела (admin)",
      *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела"),
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/SectionUpdateRequest")),
      *     @OA\Response(
@@ -125,7 +125,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::patch('{section}')->name('.update')
-        ->middleware('user-role:moderator,admin')
+        ->middleware('user-role:admin')
         ->uses(Sections\Update\Action::class);
 
     /**
@@ -133,7 +133,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      *     path="/sections/{section}",
      *     security={"apiKey":{}},
      *     tags={"Sections"},
-     *     summary="Удаление раздела (admin, moderator)",
+     *     summary="Удаление раздела (admin)",
      *     @OA\Parameter(name="section", in="path", description="Идентификатор раздела"),
      *     @OA\Response(
      *          response="204",
@@ -146,7 +146,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::delete('{section}')->name('.destroy')
-        ->middleware('user-role:moderator,admin')
+        ->middleware('user-role:admin')
         ->uses(Sections\Destroy\Action::class);
 
     require __DIR__ . '/sections/materials.php';

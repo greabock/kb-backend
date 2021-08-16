@@ -453,7 +453,7 @@
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Создание раздела (admin, moderator)",
+                "summary": "Создание раздела (admin)",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -570,7 +570,7 @@
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Удаление раздела (admin, moderator)",
+                "summary": "Удаление раздела (admin)",
                 "parameters": [
                     {
                         "name": "section",
@@ -596,7 +596,7 @@
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Обновление раздела (admin, moderator)",
+                "summary": "Обновление раздела (admin)",
                 "parameters": [
                     {
                         "name": "section",
