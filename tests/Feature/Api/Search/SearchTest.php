@@ -51,6 +51,11 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => ''])
+            ->assertJsonPath('data.materials.0.section.id', $section->id)
+            ->assertJsonPath('data.materials.0.material.id', $material->id)
+            ->assertJsonPath('data.materials.0.material.name', $material->name)
+            ->assertJsonPath('data.materials.1', null)
+            ->assertJsonPath('data.files', [])
             ->assertOk();
     }
 
@@ -84,6 +89,11 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'удобный'])
+            ->assertJsonPath('data.materials.0.section.id', $section->id)
+            ->assertJsonPath('data.materials.0.material.id', $material->id)
+            ->assertJsonPath('data.materials.0.material.name', $material->name)
+            ->assertJsonPath('data.materials.1', null)
+            ->assertJsonPath('data.files', [])
             ->assertOk();
     }
 
@@ -128,6 +138,11 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'удобный'])
+            ->assertJsonPath('data.files.0.section.id', $section->id)
+            ->assertJsonPath('data.files.0.material.id', $material->id)
+            ->assertJsonPath('data.files.0.material.name', $material->name)
+            ->assertJsonPath('data.files.1', null)
+            ->assertJsonPath('data.materials', [])
             ->assertOk();
     }
 
@@ -201,7 +216,6 @@ class SearchTest extends ActionTestCase
             ->assertOk();
     }
 
-
     public function testUserCanSearchWithFilterExtensions()
     {
         /** @var Section $section */
@@ -269,6 +283,14 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'трактат', 'extensions' => ['doc']])
+            ->assertJsonPath('data.files.0.section.id', $section->id)
+            ->assertJsonPath('data.files.0.material.id', $material->id)
+            ->assertJsonPath('data.files.0.material.name', $material->name)
+            ->assertJsonPath('data.files.1.section.id', $section->id)
+            ->assertJsonPath('data.files.1.material.id', $material->id)
+            ->assertJsonPath('data.files.1.material.name', $material->name)
+            ->assertJsonPath('data.files.2', null)
+            ->assertJsonPath('data.materials', [])
             ->assertOk();
     }
 }
