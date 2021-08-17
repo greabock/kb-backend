@@ -51,12 +51,12 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => ''])
+            ->assertOk()
             ->assertJsonPath('data.materials.0.section.id', $section->id)
             ->assertJsonPath('data.materials.0.material.id', $material->id)
             ->assertJsonPath('data.materials.0.material.name', $material->name)
             ->assertJsonPath('data.materials.1', null)
-            ->assertJsonPath('data.files', [])
-            ->assertOk();
+            ->assertJsonPath('data.files', []);
     }
 
     public function testUserCanSearchInMaterial()
@@ -89,12 +89,12 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'удобный'])
+            ->assertOk()
             ->assertJsonPath('data.materials.0.section.id', $section->id)
             ->assertJsonPath('data.materials.0.material.id', $material->id)
             ->assertJsonPath('data.materials.0.material.name', $material->name)
             ->assertJsonPath('data.materials.1', null)
-            ->assertJsonPath('data.files', [])
-            ->assertOk();
+            ->assertJsonPath('data.files', []);
     }
 
     public function testUserCanSearchWithOneFile()
@@ -138,12 +138,12 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'удобный'])
+            ->assertOk()
             ->assertJsonPath('data.files.0.section.id', $section->id)
             ->assertJsonPath('data.files.0.material.id', $material->id)
             ->assertJsonPath('data.files.0.material.name', $material->name)
             ->assertJsonPath('data.files.1', null)
-            ->assertJsonPath('data.materials', [])
-            ->assertOk();
+            ->assertJsonPath('data.materials', []);
     }
 
 
@@ -216,7 +216,7 @@ class SearchTest extends ActionTestCase
             ->assertOk();
     }
 
-    public function testUserCanSearchWithFilterExtensions()
+    public function testUserCanSearchWithFilterExtensions(): void
     {
         /** @var Section $section */
         $section = Section::factory()
@@ -283,14 +283,11 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'трактат', 'extensions' => ['doc']])
+            ->assertOk()
             ->assertJsonPath('data.files.0.section.id', $section->id)
             ->assertJsonPath('data.files.0.material.id', $material->id)
             ->assertJsonPath('data.files.0.material.name', $material->name)
-            ->assertJsonPath('data.files.1.section.id', $section->id)
-            ->assertJsonPath('data.files.1.material.id', $material->id)
-            ->assertJsonPath('data.files.1.material.name', $material->name)
-            ->assertJsonPath('data.files.2', null)
-            ->assertJsonPath('data.materials', [])
-            ->assertOk();
+            ->assertJsonPath('data.files.1', null)
+            ->assertJsonPath('data.materials', []);
     }
 }

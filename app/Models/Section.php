@@ -36,7 +36,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Carbon|null $deleted_at
  * @property-read int|null $fields_count
  * @property-read mixed $table_name
- * @property-read Collection|Field[] $fields
+ * @property-read Section\Field\Collection|Section\Field[] $fields
  * @method static Builder|Section newModelQuery()
  * @method static Builder|Section newQuery()
  * @method static Builder|Section query()
@@ -147,7 +147,7 @@ class Section extends Model
     public function getFieldCasts(): array
     {
         return $this->plainFields()->keyBy('id')
-            ->map(fn(Field $field) => FieldType::getCast($field->type['name']))
+            ->map(fn(Section\Field $field) => FieldType::getCast($field->type['name']))
             ->filter()
             ->toArray();
     }
@@ -160,5 +160,10 @@ class Section extends Model
                 ->mapWithKeys(fn(Field $field) => FieldType::getElasticConfig($field->baseType, $field->id))
                 ->toArray(),
         )];
+    }
+
+    public function newCollection(array $models = []): Section\Collection
+    {
+        return new Section\Collection($models);
     }
 }

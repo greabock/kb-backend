@@ -11,6 +11,7 @@ use App\Models\Section;
 use App\Validation\Rules\FieldType;
 use Database\Factories\Section\FieldFactory;
 use Eloquent;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Mockery\Exception;
 use ScoutElastic\Builders\SearchBuilder;
 
 /**
@@ -124,7 +124,7 @@ class Field extends Model
             FieldType::T_LIST => $this->getForeignKeyAttribute($type['of']),
             FieldType::T_ENUM, self::TYPE_DICTIONARY => $type['of'] . '_id',
             self::TYPE_FILE => $this->id . '_file_id',
-            default => throw new \Exception(sprintf('unknown type %s', $type['name'])),
+            default => throw new Exception(sprintf('unknown type %s', $type['name'])),
         };
     }
 
@@ -160,7 +160,7 @@ class Field extends Model
             FieldType::T_ENUM => Enum\Value::class,
             FieldType::T_FILE => File::class,
             FieldType::T_DICTIONARY => Section::findOrFail($type['of'])->class_name,
-            default => throw new \Exception("Type [{$type['name']}] is not relation type.")
+            default => throw new Exception("Type [{$type['name']}] is not relation type.")
         };
     }
 
@@ -208,36 +208,12 @@ class Field extends Model
             : $this->type;
     }
 
-    public function applyFilter(SearchBuilder $builder, array $params): SearchBuilder
-    {
-        return match ($this->base_type['name']) {
-            FieldType::T_DATE,
-            FieldType::T_FLOAT,
-            FieldType::T_INTEGER => $builder->whereBetween($this->id, $params[$this->id]),
-            FieldType::T_STRING,
-            FieldType::T_WIKI,
-            FieldType::T_TEXT,
-            FieldType::T_DICTIONARY,
-            FieldType::T_ENUM,
-            FieldType::T_FILE,
-            FieldType::T_BOOLEAN => $builder->whereMatch($this->id, $params[$this->id]),
-            default => throw new \Exception("Unknown base type [{$this->base_type['name']}]")
-        };
-    }
-
     public function getFilter($value): array
     {
         return match ($this->base_type['name']) {
             FieldType::T_DATE,
             FieldType::T_FLOAT,
-            FieldType::T_INTEGER => [
-                'range' => [
-                    $this->id => [
-                        'gte' => $value[0],
-                        'lte' => $value[1],
-                    ],
-                ],
-            ],
+            FieldType::T_INTEGER => ['range' => [$this->id => ['gte' => $value[0], 'lte' => $value[1]]]],
             FieldType::T_STRING,
             FieldType::T_WIKI,
             FieldType::T_TEXT,
@@ -245,12 +221,13 @@ class Field extends Model
             FieldType::T_ENUM,
             FieldType::T_FILE,
             FieldType::T_SELECT,
-            FieldType::T_BOOLEAN => [
-                'match' => [
-                    $this->id => $value,
-                ],
-            ],
-            default => throw new \Exception("Unknown base type [{$this->base_type['name']}]")
+            FieldType::T_BOOLEAN => ['match' => [$this->id => $value]],
+            default => throw new Exception("Unknown base type [{$this->base_type['name']}]")
         };
+    }
+
+    public function newCollection(array $models = []): Field\Collection
+    {
+        return new Field\Collection($models);
     }
 }
