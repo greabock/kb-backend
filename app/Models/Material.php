@@ -61,6 +61,7 @@ abstract class Material extends Model
         return [
             'id' => $this->getKey(),
             'name' => $this->name,
+            'attributes' => $this->attributes,
         ];
     }
 
