@@ -141,7 +141,7 @@ class Section extends Model
         return $this
             ->fields
             ->filter(fn(Section\Field $field) => $field->usingInCard())
-            ->reduce(fn($carry, Field $field) => [...$carry, $field->id], ['name']);
+            ->reduce(fn($carry, Field $field) => [...$carry, $field->id], ['name', 'id']);
     }
 
     public function getFieldCasts(): array
