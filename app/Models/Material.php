@@ -59,7 +59,7 @@ abstract class Material extends Model
 
     public function toArray() {
         return [
-            'id' => $this->id,
+            'id' => $this->getKey(),
             'name' => $this->name,
         ];
     }
