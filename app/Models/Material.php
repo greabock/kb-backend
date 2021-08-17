@@ -57,6 +57,13 @@ abstract class Material extends Model
         return $data;
     }
 
+    public function toArray() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
+    }
+
     public function getSectionIdAttribute()
     {
         return static::$sectionId;
