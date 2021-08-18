@@ -37,6 +37,20 @@ class CreateTest extends ActionTestCase
             ->assertCreated();
     }
 
+    public function testUserCanCreateMaterialWithDefinedId(): void
+    {
+        /** @var Section $section */
+        $section = Section::factory()->create();
+
+        $section->refresh();
+
+        $this->callAuthorizedByAdminRouteAction([
+            'id' => Uuid::uuid4()->toString(),
+            'name' => 'test name',
+        ], ['section' => $section->id])
+            ->assertCreated();
+    }
+
     public function testUserCanCreateMaterialWithEnum(): void
     {
         /** @var Enum $enum */
