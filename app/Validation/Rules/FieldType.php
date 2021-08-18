@@ -423,18 +423,18 @@ class FieldType
                 return $value;
             }
 
-            return $value->map(fn($el) => self::toIndex($type['of'], $el))->toArray();
+            return $value->map(fn($el) => self::toIndex($type['of'], $el))->filter()->toArray();
         }
 
         return match ($type['name']) {
             self::T_ENUM, self::T_DICTIONARY => $value?->id,
-            self::T_FILE => [
-                'id' => $value->id,
+            self::T_FILE => $value ? [
+                'id' => $value?->id,
                 'content' => $value?->content,
                 'name' => $value?->name,
                 'extension' => $value?->extension,
                 'created_at' => $value?->created_at->format(DATE_W3C),
-            ],
+            ] : null,
             self::T_DATE => $value?->format(DATE_W3C),
             default => $value,
         };
