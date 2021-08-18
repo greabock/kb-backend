@@ -23,7 +23,7 @@ if (config('app.debug')) {
                 Artisan::call('class:refresh');
                 break;
             case 'schema':
-                Artisan::call('class:schema');
+                Artisan::call('schema:refresh');
                 break;
             default:
                 return;
