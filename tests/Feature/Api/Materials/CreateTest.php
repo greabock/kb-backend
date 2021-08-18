@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Materials;
 
+use App\Events\Handlers\UpdateDatabaseOnSectionUpdated;
+use App\Events\SectionUpdated;
+use App\Jobs\UpdateMaterialClass;
+use App\Jobs\UpdateSectionIndex;
 use App\Models\Enum;
 use App\Models\File;
 use App\Models\Material;
@@ -188,14 +192,11 @@ class CreateTest extends ActionTestCase
 
         $section->refresh();
 
-
-        $section->refresh();
         $this->callAuthorizedByAdminRouteAction([
             'name' => 'test',
             $section->fields->first()->id => 'one'
         ], ['section' => $section->id])
             ->assertCreated();
-
 
         $this->assertDatabaseHas($section->table_name, [$section->fields->first()->id => 'one']);
     }

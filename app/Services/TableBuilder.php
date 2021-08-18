@@ -30,7 +30,17 @@ class TableBuilder
 
     public function drop(Section $section): void
     {
+        $section->fields->each(fn(Section\Field $field) => $this->columnBuilder->drop($field));
         Schema::dropIfExists($section->table_name);
     }
 
+    public function addField(Section\Field $field)
+    {
+        $this->columnBuilder->build($field);
+    }
+
+    public function dropField(Section\Field $field): void
+    {
+        $this->columnBuilder->drop($field);
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Section;
 use App\Models\User;
 use Illuminate\Foundation\Console\ClosureCommand;
 use Illuminate\Support\Facades\Artisan;
@@ -29,6 +30,37 @@ Artisan::command('elastic:clear', function () {
     foreach (config('scout_elastic.client.hosts') as $host) {
         (new \GuzzleHttp\Client())->delete(env('SCOUT_ELASTIC_HOST') . ':9200' . '/*');
         $this->info('Host ' . $host . ' cleared.');
+    }
+});
+
+
+\Artisan::command('schema:refresh', function () {
+    /** @var \App\Services\TableBuilder $tableBuilder */
+    $tableBuilder = app(\App\Services\TableBuilder::class);
+
+
+    foreach (Section::all() as $section) {
+        $tableBuilder->drop($section);
+        $tableBuilder->create($section);
+    }
+});
+
+\Artisan::command('class:refresh', function () {
+    /** @var \App\Services\MaterialClassManager $classBuilder */
+    $classBuilder = app(\App\Services\MaterialClassManager::class);
+
+    foreach (Section::all() as $section) {
+        $classBuilder->remember($section);
+    }
+});
+
+\Artisan::command('index:refresh', function () {
+    foreach (Section::all() as $section) {
+        app()->call([(new \App\Jobs\DropSectionIndex($section->id)), 'handle']);
+        app()->call([(new \App\Jobs\CreateSectionIndex($section->id)), 'handle']);
+        foreach ($section->class_name::all() as $material) {
+            app()->call([new \App\Jobs\CreateMaterialDocument($section->class_name, $material->id), 'handle']);
+        }
     }
 });
 

@@ -26,7 +26,9 @@ class EventServiceProvider extends ServiceProvider
             \App\Events\Handlers\CreateMaterialClassOnSectionCreated::class,
         ],
         \App\Events\SectionUpdated::class => [
-            \App\Events\Handlers\UpdateIndexOnSectionUpdated::class
+            \App\Events\Handlers\UpdateIndexOnSectionUpdated::class,
+            \App\Events\Handlers\UpdateDatabaseOnSectionUpdated::class,
+            \App\Events\Handlers\UpdateMaterialClassOnSectionUpdated::class,
         ],
         \App\Events\MaterialCreated::class => [
             \App\Events\Handlers\CreateMaterialDocumentOnMaterialCreated::class,
