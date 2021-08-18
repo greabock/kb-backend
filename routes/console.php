@@ -38,9 +38,12 @@ Artisan::command('elastic:clear', function () {
     /** @var \App\Services\TableBuilder $tableBuilder */
     $tableBuilder = app(\App\Services\TableBuilder::class);
 
+    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS pivots cascade"));
+    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS sections cascade"));
+    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS sections"));
+    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS pivots"));
 
     foreach (Section::all() as $section) {
-        $tableBuilder->drop($section);
         $tableBuilder->create($section);
     }
 });
