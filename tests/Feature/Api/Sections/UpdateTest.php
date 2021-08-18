@@ -98,14 +98,16 @@ class UpdateTest extends ActionTestCase
 
         $data = (new SectionResource($section))->toArray(null);
         $data['fields'] = [
-            "description" => "default",
-            "filter_sort_index" => null,
-            "is_present_in_card" => false,
-            "required" => true,
-            "sort_index" => 1,
-            "title" => "Вики",
-            "type" => [
-                "name" => "Wiki"
+            [
+                "description" => "default",
+                "filter_sort_index" => null,
+                "is_present_in_card" => false,
+                "required" => true,
+                "sort_index" => 1,
+                "title" => "Вики",
+                "type" => [
+                    "name" => "Wiki"
+                ]
             ]
         ];
 

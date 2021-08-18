@@ -24,7 +24,7 @@ class DeleteTest extends ActionTestCase
         $material = $this->populator()->populate($section->class_name, ['name' => 'Name']);
         $this->populator()->flush();
 
-        $this->callAuthorizedRouteAction([], ['section' => $section->id, 'material' => $material->id])
+        $this->callAuthorizedByAdminRouteAction([], ['section' => $section->id, 'material' => $material->id])
             ->assertNoContent();
 
         $this->assertDatabaseMissing($section->table_name, ['id' => $material->id, 'deleted_at' => null]);

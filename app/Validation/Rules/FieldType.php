@@ -292,7 +292,7 @@ class FieldType
             ]],
 
             self::T_ENUM => [
-                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field => [$required ? 'required' : 'sometimes', 'array'],
                 $field . '.id' => [
                     $required ? 'required' : 'sometimes',
                     'uuid',
@@ -300,7 +300,7 @@ class FieldType
                 ]
             ],
             self::T_FILE => [
-                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field => [$required ? 'required' : 'sometimes', 'array'],
                 $field . '.id' => [
                     $required ? 'required' : 'sometimes',
                     'uuid',
@@ -308,7 +308,7 @@ class FieldType
                 ]
             ],
             self::T_DICTIONARY => [
-                $field => [$required ? 'required' : 'sometimes', 'array:id'],
+                $field => [$required ? 'required' : 'sometimes', 'array'],
                 $field . '.id' => [
                     $required ? 'required' : 'sometimes',
                     'uuid',

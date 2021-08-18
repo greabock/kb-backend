@@ -31,7 +31,7 @@ class UpdateTest extends ActionTestCase
 
         $this->populator()->flush();
 
-        $this->callAuthorizedRouteAction([
+        $this->callAuthorizedByAdminRouteAction([
             'name' => $newName
         ], ['section' => $section->id, 'material' => $material->id])
             ->assertOk()
@@ -53,6 +53,6 @@ class UpdateTest extends ActionTestCase
 
         $this->populator()->flush();
 
-        $this->callAuthorizedRouteAction([], ['section' => $section->id, 'material' => $material->id])->assertOk();
+        $this->callAuthorizedByAdminRouteAction([], ['section' => $section->id, 'material' => $material->id])->assertOk();
     }
 }

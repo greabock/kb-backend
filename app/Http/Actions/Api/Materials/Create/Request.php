@@ -32,7 +32,6 @@ class Request extends ApiRequest
 {
     public function rules(): array
     {
-
         return array_merge(
             [
                 'id' => ['sometimes', 'uuid', Rule::unique($this->resolveSection()->table_name, 'id')],

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Materials;
 
 use App\Models\Enum;
+use App\Models\File;
 use App\Models\Material;
 use App\Models\Section;
 use Greabock\Populator\Populator;
+use Ramsey\Uuid\Uuid;
 use Tests\Feature\Api\ActionTestCase;
 
 class CreateTest extends ActionTestCase
@@ -28,7 +30,7 @@ class CreateTest extends ActionTestCase
 
         $section->refresh();
 
-        $this->callAuthorizedRouteAction([
+        $this->callAuthorizedByAdminRouteAction([
             'name' => 'test name',
             $section->fields->first()->id => 'Привет!',
         ], ['section' => $section->id])
@@ -54,7 +56,7 @@ class CreateTest extends ActionTestCase
 
         $section->refresh();
 
-        $this->callAuthorizedRouteAction([
+        $this->callAuthorizedByAdminRouteAction([
             'name' => $materialName,
             $section->fields->first()->id => ['id' => $enum->values->first()->id],
         ], ['section' => $section->id])
@@ -99,7 +101,7 @@ class CreateTest extends ActionTestCase
             'id' => $material->id,
         ]);
 
-        $this->callAuthorizedRouteAction([
+        $this->callAuthorizedByAdminRouteAction([
             'name' => $materialName,
             $section2->fields->first()->id => ['id' => $material->id],
         ], ['section' => $section2->id])
@@ -128,7 +130,7 @@ class CreateTest extends ActionTestCase
         $section->refresh();
 
 
-        $this->callAuthorizedRouteAction([
+        $this->callAuthorizedByAdminRouteAction([
             'name' => $materialName,
             $section->fields->first()->id => [['id' => $enum->values->first()->id], ['id' => $enum->values->first()->id]],
         ], ['section' => $section->id])
@@ -143,7 +145,7 @@ class CreateTest extends ActionTestCase
         )->create();
 
         $section->refresh();
-        $this->callAuthorizedRouteAction([], ['section' => $section->id])
+        $this->callAuthorizedByAdminRouteAction([], ['section' => $section->id])
             ->assertJsonValidationErrors([$section->fields->first()->id, 'name']);
     }
 
@@ -155,7 +157,7 @@ class CreateTest extends ActionTestCase
         )->create();
 
         $section->refresh();
-        $this->callAuthorizedRouteAction([], ['section' => $section->id])
+        $this->callAuthorizedByAdminRouteAction([], ['section' => $section->id])
             ->assertJsonValidationErrors(['name'])
             ->assertJsonMissingValidationErrors([$section->fields->first()->id]);
     }
@@ -174,7 +176,7 @@ class CreateTest extends ActionTestCase
 
 
         $section->refresh();
-        $this->callAuthorizedRouteAction([
+        $this->callAuthorizedByAdminRouteAction([
             'name' => 'test',
             $section->fields->first()->id => 'one'
         ], ['section' => $section->id])
@@ -199,9 +201,202 @@ class CreateTest extends ActionTestCase
 
         $section->refresh();
 
-        $this->callAuthorizedRouteAction([
+        $this->callAuthorizedByAdminRouteAction([
             'name' => 'test',
             $section->fields->first()->id => ['one']
+        ], ['section' => $section->id])
+            ->assertCreated();
+    }
+
+
+    public function testMultipleEnums(): void
+    {
+        /** @var Enum $enum */
+        $enum = Enum::factory()->has(Enum\Value::factory(), 'values')->create();
+        $enum->refresh();
+
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(['type' => [
+                'name' => 'List',
+                'of' => [
+                    'name' => 'Enum',
+                    'of' => $enum->id,
+                ]
+            ]]), 'fields'
+        )->create();
+
+        $section->refresh();
+
+        $this->callAuthorizedByAdminRouteAction([
+            'name' => 'test',
+            $section->fields->first()->id => [['id' => $enum->values->first()->id]]
+        ], ['section' => $section->id])
+            ->assertJsonPath('data.' . $section->fields->first()->id . '.0.id', $enum->values->first()->id)
+            ->assertCreated();
+    }
+
+    public function testCreateMaterialWithFile(): void
+    {
+        $file = File::create([
+            'id' => $fileId = Uuid::uuid4()->toString(),
+            'realpath' => '_',
+            'url' => route('files.download', [$fileId]),
+            'indexed' => true,
+            'content' => <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT,
+            'name' => 'Трактат о Laravel',
+            'extension' => 'docx',
+        ]);
+
+
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(['type' => [
+                'name' => 'File',
+            ]]), 'fields'
+        )->create();
+
+        $section->refresh();
+
+        $this->callAuthorizedByAdminRouteAction([
+            'name' => 'test',
+            $section->fields->first()->id => ['id' => $file->id]
+        ], ['section' => $section->id])
+            ->assertJsonPath('data.' . $section->fields->first()->id . '.id', $file->id)
+            ->assertCreated();
+    }
+
+
+    public function testCreateMaterialWithMultipleFiles(): void
+    {
+        $file = File::create([
+            'id' => $fileId = Uuid::uuid4()->toString(),
+            'realpath' => '_',
+            'url' => route('files.download', [$fileId]),
+            'indexed' => true,
+            'content' => <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT,
+            'name' => 'Трактат о Laravel',
+            'extension' => 'docx',
+        ]);
+
+        $file2 = File::create([
+            'id' => $fileId = Uuid::uuid4()->toString(),
+            'realpath' => '_',
+            'url' => route('files.download', [$fileId]),
+            'indexed' => true,
+            'content' => <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT,
+            'name' => 'Трактат о Laravel',
+            'extension' => 'docx',
+        ]);
+
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(['type' => [
+                'name' => 'List',
+                'of' => [
+                    'name' => 'File',
+                ]
+            ]]), 'fields'
+        )->create();
+
+        $section->refresh();
+
+        $this->callAuthorizedByAdminRouteAction([
+            'name' => 'test',
+            $section->fields->first()->id => [
+                ['id' => $file->id],
+                ['id' => $file2->id],
+            ]
+        ], ['section' => $section->id])
+            ->assertCreated();
+    }
+
+
+    public function testCreateMaterialWithMultipleFilesIgnoreExtraFields(): void
+    {
+        $file = File::create([
+            'id' => $fileId = Uuid::uuid4()->toString(),
+            'realpath' => '_',
+            'url' => route('files.download', [$fileId]),
+            'indexed' => true,
+            'content' => <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT,
+            'name' => 'Трактат о Laravel',
+            'extension' => 'docx',
+        ]);
+
+        $file2 = File::create([
+            'id' => $fileId = Uuid::uuid4()->toString(),
+            'realpath' => '_',
+            'url' => route('files.download', [$fileId]),
+            'indexed' => true,
+            'content' => <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT,
+            'name' => 'Трактат о Laravel',
+            'extension' => 'docx',
+        ]);
+
+        /** @var Section $section */
+        $section = Section::factory()->has(
+            Section\Field::factory(['type' => [
+                'name' => 'List',
+                'of' => [
+                    'name' => 'File',
+                ]
+            ]]), 'fields'
+        )->create();
+
+        $section->refresh();
+
+        $this->callAuthorizedByAdminRouteAction([
+            'name' => 'test',
+            $section->fields->first()->id => [
+                ['id' => $file->id, 'name' => $file->name],
+                ['id' => $file2->id, 'name' => $file2->name],
+            ]
         ], ['section' => $section->id])
             ->assertCreated();
     }
