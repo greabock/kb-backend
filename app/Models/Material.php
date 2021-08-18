@@ -22,6 +22,8 @@ abstract class Material extends Model
 {
     use SoftDeletes;
 
+    protected $connection = 'pgsql';
+
     public static $sectionId = null;
 
     protected $keyType = 'string';
