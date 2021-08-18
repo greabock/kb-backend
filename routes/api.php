@@ -29,4 +29,20 @@ if (config('app.debug')) {
                 return;
         }
     });
+
+    Route::get('refresh/{type}', function (string $type) {
+        switch ($type) {
+            case 'index':
+                Artisan::call('index:refresh');
+                break;
+            case 'class':
+                Artisan::call('class:refresh');
+                break;
+            case 'schema':
+                Artisan::call('schema:refresh');
+                break;
+            default:
+                return;
+        }
+    });
 }

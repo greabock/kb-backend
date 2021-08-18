@@ -135,18 +135,23 @@ class ColumnBuilder
         if ($field->type['name'] === FieldType::T_LIST) {
             if ($field->type['of']['name'] === FieldType::T_SELECT) {
                 Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
-                    $table->dropColumn($field->column_name);
+                    if (Schema::hasColumn($field->section->table_name, $field->id)) {
+                        $table->dropColumn($field->id);
+                    }
                 });
 
                 return;
             }
 
             Schema::dropIfExists($field->pivot_name);
+
             return;
         }
 
         Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
-            $table->dropColumn($field->column_name);
+            if (Schema::hasColumn($field->section->table_name, $field->id)) {
+                $table->dropColumn($field->id);
+            }
         });
     }
 }

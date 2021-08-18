@@ -30,7 +30,12 @@ class TableBuilder
 
     public function drop(Section $section): void
     {
-        $section->fields->each(fn(Section\Field $field) => $this->columnBuilder->drop($field));
+        $section->fields->each(function (Section\Field $field) {
+            if ($field->isRelationField()) {
+                $this->columnBuilder->drop($field);
+            }
+        });
+
         Schema::dropIfExists($section->table_name);
     }
 
