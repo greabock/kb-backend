@@ -53,7 +53,15 @@ Artisan::command('elastic:clear', function () {
     }
 });
 
+\Artisan::command('schema:columns', function () {
+    /** @var \App\Services\TableBuilder $tableBuilder */
 
+    $tableBuilder = app(\App\Services\TableBuilder::class);
+
+    foreach (Section::all() as $section) {
+        $tableBuilder->buildColumns($section);
+    }
+});
 
 
 \Artisan::command('schema:refresh', function () {

@@ -16,9 +16,12 @@ class ColumnBuilder
     {
         if ($field->type['name'] === FieldType::T_LIST) {
             if ($field->type['of']['name'] === FieldType::T_SELECT) {
+                
                 Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
                     $table->jsonb($field->id)->nullable();
                 });
+
+                return;
             }
 
             if (Schema::hasTable($field->pivot_name)) {
@@ -39,6 +42,8 @@ class ColumnBuilder
                         ->references('id')
                         ->on('enum_values');
                 });
+
+                return;
             }
 
             if ($field->type['of']['name'] === FieldType::T_DICTIONARY) {
@@ -54,6 +59,8 @@ class ColumnBuilder
                         ->references('id')
                         ->on(Section::findOrFail($field->type['of']['of'])->table_name);
                 });
+
+                return;
             }
 
             if ($field->type['of']['name'] === FieldType::T_FILE) {
@@ -70,6 +77,8 @@ class ColumnBuilder
                         ->references('id')
                         ->on('files');
                 });
+
+                return;
             }
 
             return;

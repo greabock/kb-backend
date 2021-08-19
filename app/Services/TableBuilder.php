@@ -24,8 +24,11 @@ class TableBuilder
             $table->softDeletes();
             $table->timestamps();
         });
+    }
 
-        $section->fields->each(fn(Section\Field $field) => $this->columnBuilder->build($field));
+    public function buildColumns(Section $section): void
+    {
+        $section->fields->each([$this, 'addField']);
     }
 
     public function drop(Section $section): void
@@ -39,7 +42,7 @@ class TableBuilder
         Schema::dropIfExists($section->table_name);
     }
 
-    public function addField(Section\Field $field)
+    public function addField(Section\Field $field): void
     {
         $this->columnBuilder->build($field);
     }

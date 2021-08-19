@@ -20,6 +20,8 @@ class CreateTableOnSectionCreated
     {
         $section = Section::find($event->sectionId);
 
+        // TODO: в отдельные задачи
         $this->builder->create($section);
+        $this->builder->buildColumns($section);
     }
 }
