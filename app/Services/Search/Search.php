@@ -74,11 +74,13 @@ class Search
                         'name' => [],
                     ];
 
-                    foreach ($nestedHit['highlight'] as $path => $value) {
-                        foreach (['name', 'content'] as $subField) {
-                            if (Str::endsWith($path, '.' . $subField)) {
-                                foreach ($value as $content) {
-                                    $highlights[$subField][] = $content;
+                    if(isset($nestedHit['highlight'])) {
+                        foreach ($nestedHit['highlight'] as $path => $value) {
+                            foreach (['name', 'content'] as $subField) {
+                                if (Str::endsWith($path, '.' . $subField)) {
+                                    foreach ($value as $content) {
+                                        $highlights[$subField][] = $content;
+                                    }
                                 }
                             }
                         }
