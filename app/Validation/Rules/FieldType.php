@@ -415,7 +415,7 @@ class FieldType
     public static function toIndex(
         array $type,
         Collection|Enum\Value|Material|File|DateTime|array|string|float|int|bool|null $value,
-    ): array|string|null
+    ): array|string|bool|null
     {
         if ($type['name'] === self::T_LIST) {
 
