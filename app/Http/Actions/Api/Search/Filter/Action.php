@@ -18,7 +18,7 @@ class Action
         // TODO: вынести валидацию
         Validator::validate($request->all(), array_merge(
             [
-                'search' => 'sometimes|string',
+                'search' => 'nullable|string',
                 'sort' => 'sometimes|array:field,direction',
                 'sort.field' => 'in:created_at,name',
                 'sort.direction' => 'in:asc,desc',
