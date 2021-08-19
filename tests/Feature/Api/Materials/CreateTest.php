@@ -405,7 +405,6 @@ class CreateTest extends ActionTestCase
         )->create();
 
         $section->refresh();
-
         $this->callAuthorizedByAdminRouteAction([
             'name' => 'test',
             $section->fields->first()->id => [
@@ -413,8 +412,11 @@ class CreateTest extends ActionTestCase
                 ['id' => $file2->id, 'name' => $file2->name],
             ]
         ], ['section' => $section->id])
-            ->assertCreated();
+            ->dump()
+            ->assertCreated()
+            ->assertJsonPath('data.' . $section->fields->first()->id. '.0.id', $file->id)
+            ->assertJsonPath('data.' . $section->fields->first()->id. '.1.id', $file2->id)
+            ;
     }
 }
-
 

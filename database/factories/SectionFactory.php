@@ -40,6 +40,7 @@ class SectionFactory extends Factory
     {
         return $this->afterCreating(function (Section $section) {
             app(TableBuilder::class)->create($section);
+            app(TableBuilder::class)->buildColumns($section);
             app()->call([(new CreateSectionIndex($section->id)), 'handle']);
             app()->call([(new UpdateMaterialClass($section->id)), 'handle']);
         });
