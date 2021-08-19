@@ -11,6 +11,6 @@ before_script:
 deploy:
   script:
     # Deploy
-    - ssh -o StrictHostKeyChecking=no knowledge@knowledge.msharks.ru "cd ~/knowledge.msharks.ru/code/; git pull; git checkout dev; docker-compose down; docker-compose up -d; docker exec -i kb_php_http composer install; docker exec -i kb_php_http php artisan migrate"
+    - ssh -o StrictHostKeyChecking=no knowledge@knowledge.msharks.ru "cd ~/knowledge.msharks.ru/code/ && git pull && git checkout dev && docker-compose stop php-http && docker-compose up -d php-http && docker exec -i kb_php_http composer install && docker exec -i kb_php_http php artisan migrate"
   only:
     - dev
