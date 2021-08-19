@@ -14,35 +14,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 if (config('app.debug')) {
-    Route::get('refresh/{type}', function (string $type) {
-        switch ($type) {
-            case 'index':
-                Artisan::call('index:refresh');
-                break;
-            case 'class':
-                Artisan::call('class:refresh');
-                break;
-            case 'schema':
-                Artisan::call('schema:refresh');
-                break;
-            default:
-                return;
-        }
-    });
-
-    Route::get('refresh/{type}', function (string $type) {
-        switch ($type) {
-            case 'index':
-                Artisan::call('index:refresh');
-                break;
-            case 'class':
-                Artisan::call('class:refresh');
-                break;
-            case 'schema':
-                Artisan::call('schema:refresh');
-                break;
-            default:
-                return;
-        }
+    Route::get('console/{type}:{command}', function (string $type, string $command) {
+        Artisan::call("$type:$command");
     });
 }

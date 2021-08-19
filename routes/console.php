@@ -34,14 +34,45 @@ Artisan::command('elastic:clear', function () {
 });
 
 
-\Artisan::command('schema:refresh', function () {
+\Artisan::command('schema:drop', function () {
     /** @var \App\Services\TableBuilder $tableBuilder */
-    $tableBuilder = app(\App\Services\TableBuilder::class);
+
 
     DB::statement(\DB::raw("DROP SCHEMA IF EXISTS pivots cascade"));
     DB::statement(\DB::raw("DROP SCHEMA IF EXISTS sections cascade"));
     DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS sections"));
     DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS pivots"));
+
+    $tableBuilder = app(\App\Services\TableBuilder::class);
+
+    foreach (Section::all() as $section) {
+        $tableBuilder->create($section);
+    }
+});
+
+\Artisan::command('schema:build', function () {
+    /** @var \App\Services\TableBuilder $tableBuilder */
+
+    $tableBuilder = app(\App\Services\TableBuilder::class);
+
+    foreach (Section::all() as $section) {
+        $tableBuilder->create($section);
+    }
+});
+
+
+
+
+\Artisan::command('schema:refresh', function () {
+    /** @var \App\Services\TableBuilder $tableBuilder */
+
+
+    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS pivots cascade"));
+    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS sections cascade"));
+    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS sections"));
+    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS pivots"));
+
+    $tableBuilder = app(\App\Services\TableBuilder::class);
 
     foreach (Section::all() as $section) {
         $tableBuilder->create($section);
