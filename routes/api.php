@@ -18,7 +18,7 @@ if (config('app.debug')) {
         Artisan::call("$type:$command");
     });
 
-    Route::get('pivot/{$pivot}', function ($pivot) {
+    Route::get('pivot/{pivot}', function ($pivot) {
         dump(Schema::getColumnListing("pivots.$pivot"));
     });
 }
