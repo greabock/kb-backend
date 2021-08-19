@@ -2,9 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Section;
-use App\Observers\SectionObserver;
-use App\Observers\SectionFieldObserver;
 use App\Services\FileManager;
 use Illuminate\Support\ServiceProvider;
 use Storage;

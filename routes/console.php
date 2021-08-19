@@ -37,11 +37,10 @@ Artisan::command('elastic:clear', function () {
 \Artisan::command('schema:drop', function () {
     /** @var \App\Services\TableBuilder $tableBuilder */
 
-
-    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS pivots cascade"));
-    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS sections cascade"));
-    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS sections"));
-    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS pivots"));
+    DB::statement(\DB::raw("DROP SCHEMA pivots cascade"));
+    DB::statement(\DB::raw("DROP SCHEMA sections cascade"));
+    DB::statement(\DB::raw("CREATE SCHEMA sections"));
+    DB::statement(\DB::raw("CREATE SCHEMA pivots"));
 });
 
 \Artisan::command('schema:build', function () {
