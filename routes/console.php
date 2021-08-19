@@ -90,10 +90,10 @@ Artisan::command('elastic:clear', function () {
 });
 
 \Artisan::command('index:refresh', function () {
-    foreach (Section::all() as $section) {
+    foreach (Section::cursor() as $section) {
         app()->call([(new \App\Jobs\DropSectionIndex($section->id)), 'handle']);
         app()->call([(new \App\Jobs\CreateSectionIndex($section->id)), 'handle']);
-        foreach ($section->class_name::all() as $material) {
+        foreach ($section->class_name::cursor() as $material) {
             app()->call([new \App\Jobs\CreateMaterialDocument($section->class_name, $material->id), 'handle']);
         }
     }
