@@ -35,6 +35,7 @@ use OpenApi\Annotations as OA;
  * )
  */
 Route::get('search')->name('search')->uses(Search\Action::class);
+Route::post('search')->name('search')->uses(Search\Action::class);
 
 /**
  * @OA\Get (
@@ -80,4 +81,6 @@ Route::get('search')->name('search')->uses(Search\Action::class);
  * )
  */
 Route::get('search/{section}')->name('search.filter')->uses(Search\Filter\Action::class);
+Route::post('search/{section}')->name('search.filter')->uses(Search\Filter\Action::class);
+
 
