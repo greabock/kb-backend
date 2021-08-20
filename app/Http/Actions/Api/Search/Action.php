@@ -26,13 +26,13 @@ class Action
                 $fields->fileFields(),
                 $index,
             ),
-            'materials' => $request->has('extensions') ? collect() : $search->searchMaterials(
+            'materials' => $request->get('materials', false) ?  $search->searchMaterials(
                 $request->get('search'),
                 $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
                 [],
                 $fields->nonFileFields(),
                 $index,
-            )
+            ) : collect();
         ]);
     }
 }
