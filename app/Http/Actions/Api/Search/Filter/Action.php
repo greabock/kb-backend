@@ -24,7 +24,7 @@ class Action
                 'sort.direction' => 'in:asc,desc',
                 'extensions' => 'sometimes|array',
                 'extensions.*' => 'string',
-
+                'materials' => 'sometimes|boolean',
             ],
             $this->buildFilterRules($section)
         ));
@@ -35,13 +35,13 @@ class Action
 
         $index = $section->id . '_write';
 
-        $materials = $request->has('extensions') ? collect() : $search->searchMaterials(
+        $materials = $request->ge('materials', false) ? $search->searchMaterials(
             $request->get('search') ?? '',
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $request->get('filter', []),
             $fields->nonFileFields(),
             $index,
-        );
+        ) :  collect();
 
         $files = $search->searchFiles(
             $request->get('search') ?? '',
