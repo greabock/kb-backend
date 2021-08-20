@@ -35,7 +35,7 @@ class Action
 
         $index = $section->id . '_write';
 
-        $materials = $request->ge('materials', false) ? $search->searchMaterials(
+        $materials = $request->get('materials', false) ? $search->searchMaterials(
             $request->get('search') ?? '',
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $request->get('filter', []),
