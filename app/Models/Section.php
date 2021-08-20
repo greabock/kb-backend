@@ -89,7 +89,7 @@ class Section extends Model
 
     public function fields(): HasMany
     {
-        return $this->hasMany(Section\Field::class, 'section_id', $this->getKey())
+        return $this->hasMany(Section\Field::class, 'section_id', $this->getKeyName())
             ->orderBy('sort_index');
     }
 
