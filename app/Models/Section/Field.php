@@ -145,7 +145,8 @@ class Field extends Model
 
     public function isBelongsToMany(): bool
     {
-        return $this->type['name'] === FieldType::T_LIST && $this->type['of']['name'] !== FieldType::T_SELECT;
+        return $this->type['name'] === FieldType::T_LIST
+            && $this->type['of']['name'] !== FieldType::T_SELECT;
     }
 
     public function getRelatedClassAttribute($type = null): string

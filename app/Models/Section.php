@@ -116,6 +116,10 @@ class Section extends Model
 
     public function getRelationFields(): Collection
     {
+        if (!$this->relationLoaded('fields')) {
+            $this->load('fields');
+        }
+
         return $this->fields->relations();
     }
 

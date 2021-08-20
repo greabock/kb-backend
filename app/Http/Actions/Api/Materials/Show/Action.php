@@ -14,6 +14,8 @@ class Action
 {
     public function __invoke(Section $section, Request $request): JsonResponse
     {
+        $section->load('fields');
+
         /** @var Material $material */
         $material = ($section->class_name)::with(
             $section->getRelationFields()->pluck('id')->toArray()

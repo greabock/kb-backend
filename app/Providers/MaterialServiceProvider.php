@@ -13,7 +13,7 @@ class MaterialServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(MaterialClassManager::class, function () {
-            return new MaterialClassManager($this->app['cache']->driver('array'));
+            return new MaterialClassManager($this->app['cache']->driver('redis'));
         });
     }
 
