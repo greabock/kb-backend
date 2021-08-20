@@ -24,4 +24,14 @@ class Collection extends EloquentCollection
     {
         return $this->filter(fn(Field $f) => $f->is_present_in_card);
     }
+
+    public function relations(): self
+    {
+        return $this->filter(fn(Field $f) => $f->isRelationField());
+    }
+
+    public function plain(): self
+    {
+        return $this->filter(fn(Field $f) => $f->isPlainField());
+    }
 }

@@ -108,12 +108,12 @@ class Field extends Model
 
     public function getLocalPivotKeyAttribute(): string
     {
-        return $this->section->id . '_id';
+        return $this->section_id . '_id';
     }
 
     public function getPivotNameAttribute(): string
     {
-        return 'pivots.' . Str::snake($this->id);
+        return 'pivots.' . $this->id;
     }
 
     public function getForeignKeyAttribute(array $type = null): string
@@ -122,7 +122,8 @@ class Field extends Model
 
         return match ($type['name']) {
             FieldType::T_LIST => $this->getForeignKeyAttribute($type['of']),
-            FieldType::T_ENUM, self::TYPE_DICTIONARY => $type['of'] . '_id',
+            FieldType::T_ENUM,
+            self::TYPE_DICTIONARY => $type['of'] . '_id',
             self::TYPE_FILE => $this->id . '_file_id',
             default => throw new Exception(sprintf('unknown type %s', $type['name'])),
         };
@@ -130,11 +131,7 @@ class Field extends Model
 
     public function isRelationField(): bool
     {
-        return in_array(
-                $this->type['name'],
-                [FieldType::T_ENUM, FieldType::T_DICTIONARY, FieldType::T_FILE],
-                true
-            ) || ($this->type['name'] === FieldType::T_LIST && $this->type['of']['name'] !== FieldType::T_SELECT);
+        return $this->isBelongsTo() || $this->isBelongsToMany();
     }
 
     public function isBelongsTo(): bool
@@ -164,9 +161,15 @@ class Field extends Model
         };
     }
 
+    public function isPlainField(): bool
+    {
+        return !$this->isRelationField();
+    }
+
     public function getRelationLoader(): callable
     {
-        return function (Material $that): BelongsTo|BelongsToMany {
+        function (Material $that): BelongsTo|BelongsToMany
+        {
             $relatedModel = (new ($this->related_class));
             return match (true) {
 
@@ -188,7 +191,7 @@ class Field extends Model
                 ),
                 default => throw new Exception('Unknown relation type'),
             };
-        };
+        }
     }
 
     public function usingInCard(): bool

@@ -89,7 +89,8 @@ class Section extends Model
 
     public function fields(): HasMany
     {
-        return $this->hasMany(Section\Field::class, 'section_id')->orderBy('sort_index');
+        return $this->hasMany(Section\Field::class, 'section_id', $this->getKey())
+            ->orderBy('sort_index');
     }
 
     public function getTableNameAttribute()
@@ -115,17 +116,17 @@ class Section extends Model
 
     public function getRelationFields(): Collection
     {
-        return $this->fields->filter(fn(Field $field) => $field->isRelationField());
+        return $this->fields->relations();
     }
 
     public function plainFieldKeys(): array
     {
-        return $this->plainFields()->pluck('id')->toArray();
+        return $this->getPlainFields()->pluck('id')->toArray();
     }
 
-    public function plainFields(): Collection
+    public function getPlainFields(): Collection
     {
-        return $this->fields->filter(fn(Field $field) => !$field->isRelationField());
+        return $this->fields->plain();
     }
 
     public function relationLoaders(): array
@@ -146,7 +147,7 @@ class Section extends Model
 
     public function getFieldCasts(): array
     {
-        return $this->plainFields()->keyBy('id')
+        return $this->getPlainFields()->keyBy('id')
             ->map(fn(Section\Field $field) => FieldType::getCast($field->type['name']))
             ->filter()
             ->toArray();
