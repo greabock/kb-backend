@@ -60,7 +60,7 @@ class Action
 
         foreach ($section->fields as $field) {
             foreach (FieldType::filterRules($field->base_type, $field->id) as $key => $rule) {
-                $rules['filter.' . $key] = $rule;
+                $rules['filter.' . $key . '.*'] = $rule;
             }
         }
 

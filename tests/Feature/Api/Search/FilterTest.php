@@ -176,16 +176,13 @@ class FilterTest extends ActionTestCase
     public function testUserCanFilterWithFilterExtensions()
     {
         /** @var Section $section */
-        $section = Section::factory()
-            ->has(Section\Field::factory([
-                'title' => 'My file', 'type' => [
-                    'name' => 'List',
-                    'of' => [
-                        'name' => 'File'
-                    ]
-                ]
-            ]), 'fields')
-            ->create();
+        $section = Section::factory()->has(Section\Field::factory([
+            'title' => 'My file',
+            'type' => [
+                'name' => 'List',
+                'of' => ['name' => 'File']
+            ]
+        ]), 'fields')->make();
 
         $section->refresh();
 
@@ -245,7 +242,7 @@ class FilterTest extends ActionTestCase
             ->assertOk();
     }
 
-    public function testUserCanFilterResult(): void
+    public function testUserCanFilterSelect(): void
     {
         /** @var Section $section */
         $section = Section::factory()
@@ -254,20 +251,56 @@ class FilterTest extends ActionTestCase
 
         $section->refresh();
 
-        $data = ['name' => 'Об особенностях Laravel'];
+        $data = [
+            'name' => 'Об особенностях Laravel',
+            $section->fields->first()->id => 'two',
+        ];
 
-        foreach ($section->fields as $field) {
-            $data[$field->id] = 'two';
-        }
-
-        /** @var Material $material */
-        $material = $this->populator()->populate($section->class_name, $data);
+        /** @var Material $material1 */
+        $material1 = $this->populator()->populate($section->class_name, $data);
         $this->populator()->flush();
-        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material1->id)), 'handle']);
+
+
+        $data = [
+            'name' => 'Об особенностях Laravel',
+            $section->fields->first()->id => 'one',
+        ];
+
+        /** @var Material $material1 */
+        $material2 = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material2->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'Laravel', 'filter' => [
-            $section->fields->first()->id => 'two',
+            $section->fields->first()->id => ['two'],
         ]], ['section' => $section->id])
-            ->assertOk();
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material1->id)
+            ->assertJsonPath('data.materials.0.material.' . $section->fields->first()->id, $material1->{$section->fields->first()->id})
+            ->assertJsonPath('data.materials.1', null);
+
+
+        $this->callRouteAction(['search' => 'Laravel', 'filter' => [
+            $section->fields->first()->id => ['one'],
+        ]], ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material2->id)
+            ->assertJsonPath('data.materials.0.material.' . $section->fields->first()->id, $material2->{$section->fields->first()->id})
+            ->assertJsonPath('data.materials.1', null);
+        
+        $this->callRouteAction(
+            [
+                'search' => 'Laravel',
+                'filter' => [$section->fields->first()->id => ['one', 'two']],
+                'sort' => ['field' => 'created_at', 'direction' => 'desc']
+            ]
+            , ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material2->id)
+            ->assertJsonPath('data.materials.0.material.' . $section->fields->first()->id, $material2->{$section->fields->first()->id})
+            ->assertJsonPath('data.materials.1.material.id', $material1->id)
+            ->assertJsonPath('data.materials.1.material.' . $section->fields->first()->id, $material1->{$section->fields->first()->id});
     }
+
 }

@@ -74,7 +74,7 @@ class Search
                         'name' => [],
                     ];
 
-                    if(isset($nestedHit['highlight'])) {
+                    if (isset($nestedHit['highlight'])) {
                         foreach ($nestedHit['highlight'] as $path => $value) {
                             foreach (['name', 'content'] as $subField) {
                                 if (Str::endsWith($path, '.' . $subField)) {
@@ -118,7 +118,7 @@ class Search
         }
 
         $body = [
-            'query' => ['bool' => ['must' => []]],
+            'query' => ['bool' => ['must' => [['bool' => ['should' => []]]]]],
             'sort' => [[$sort['field'] => $sort['direction']]],
             'highlight' => ['fields' => $highlightFields],
             '_source' => ['id', 'name', ...$fields->presentInCard()->pluck('id')],
@@ -134,7 +134,7 @@ class Search
         foreach ($filter as $fieldId => $value) {
             if ($field = $fields->where('id', $fieldId)->first()) {
                 /** @var Section\Field $field */
-                $body['query']['bool']['must'][] = $field->getFilter($value);
+                $body['query']['bool']['must'][0]['bool']['should'][] = $field->getFilter($value);
             }
         }
 
