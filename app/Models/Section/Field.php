@@ -168,8 +168,7 @@ class Field extends Model
 
     public function getRelationLoader(): callable
     {
-        function (Material $that): BelongsTo|BelongsToMany
-        {
+        return function (Material $that): BelongsTo|BelongsToMany {
             $relatedModel = (new ($this->related_class));
             return match (true) {
 
@@ -191,7 +190,7 @@ class Field extends Model
                 ),
                 default => throw new Exception('Unknown relation type'),
             };
-        }
+        };
     }
 
     public function usingInCard(): bool
