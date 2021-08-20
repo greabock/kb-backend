@@ -17,6 +17,7 @@ class Request extends ApiRequest
             'sort.direction' => 'in:asc,desc',
             'extensions' => 'sometimes|array',
             'extensions.*' => 'string',
+            'materials' => 'sometimes|boolean',
         ];
     }
 }
