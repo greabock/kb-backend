@@ -109,5 +109,6 @@ Artisan::command('elastic:clear', function () {
     DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS pivots"));
 
     \Artisan::call('migrate:fresh', [], $this->getOutput());
+    \Artisan::call('elastic:clear', [], $this->getOutput());
     \Artisan::call('db:seed', [], $this->getOutput());
 });
