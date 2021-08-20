@@ -32,7 +32,7 @@ class Action
                 [],
                 $fields->nonFileFields(),
                 $index,
-            ) : collect();
+            ) : collect()
         ]);
     }
 }
