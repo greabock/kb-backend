@@ -99,3 +99,15 @@ Artisan::command('elastic:clear', function () {
     }
 });
 
+
+\Artisan::command('kb:fresh', function () {
+
+    /** @var ClosureCommand $this */
+    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS pivots cascade"));
+    DB::statement(\DB::raw("DROP SCHEMA IF EXISTS sections cascade"));
+    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS sections"));
+    DB::statement(\DB::raw("CREATE SCHEMA IF NOT EXISTS pivots"));
+
+    \Artisan::call('migrate:fresh', [], $this->getOutput());
+    \Artisan::call('db:seed', [], $this->getOutput());
+});
