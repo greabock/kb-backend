@@ -182,10 +182,9 @@ class FilterTest extends ActionTestCase
                 'name' => 'List',
                 'of' => ['name' => 'File']
             ]
-        ]), 'fields')->make();
+        ]), 'fields')->create();
 
         $section->refresh();
-
 
         File::create([
             'id' => $fileId = Uuid::uuid4()->toString(),
@@ -288,7 +287,7 @@ class FilterTest extends ActionTestCase
             ->assertJsonPath('data.materials.0.material.id', $material2->id)
             ->assertJsonPath('data.materials.0.material.' . $section->fields->first()->id, $material2->{$section->fields->first()->id})
             ->assertJsonPath('data.materials.1', null);
-        
+
         $this->callRouteAction(
             [
                 'search' => 'Laravel',
