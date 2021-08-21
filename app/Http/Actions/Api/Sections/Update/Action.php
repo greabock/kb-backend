@@ -15,12 +15,13 @@ class Action
     public function __invoke(Section $section, Request $request, Populator $populator, Dispatcher $events): SectionResource
     {
         $section->load('fields');
-        $old = $section->toArray();
+        $old = $section;
 
-        $populator->populate($section, $request->getStruct());
+        /** @var Section $new */
+        $new = $populator->populate(Section::with('fields')->findOrFail($section->id), $request->getStruct());
         $populator->flush();
 
-        $events->dispatch(new SectionUpdated($section->id, $old, $section->toArray()));
+        $events->dispatch(new SectionUpdated($section->id, $old, $new));
 
         return new SectionResource($section);
     }

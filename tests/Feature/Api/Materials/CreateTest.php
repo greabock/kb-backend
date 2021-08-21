@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Materials;
 
-use App\Events\Handlers\UpdateDatabaseOnSectionUpdated;
+use App\Events\Handlers\UpdateTableOnSectionUpdated;
 use App\Events\SectionUpdated;
 use App\Jobs\UpdateMaterialClass;
 use App\Jobs\UpdateSectionIndex;

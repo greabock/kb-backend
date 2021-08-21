@@ -16,7 +16,6 @@ class ColumnBuilder
     {
         if ($field->type['name'] === FieldType::T_LIST) {
             if ($field->type['of']['name'] === FieldType::T_SELECT) {
-                
                 Schema::table($field->section->table_name, function (Blueprint $table) use ($field) {
                     $table->jsonb($field->id)->nullable();
                 });

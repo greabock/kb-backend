@@ -235,4 +235,34 @@ class Field extends Model
     {
         return new Field\Collection($models);
     }
+
+    public function sameType(Field $field): bool
+    {
+        return $this->sameTypeArray($this->type, $field->type);
+    }
+
+    private function sameTypeArray(array $a, array $b): bool
+    {
+        if ($a['name'] !== $b['name']) {
+            return false;
+        }
+
+        if (!empty($a['of']) && !empty($b['of'])) {
+            if (gettype($a['of']) !== gettype($b['of'])) {
+                return false;
+            }
+
+            if (is_array($a['of'])) {
+                return $this->sameTypeArray($a['of'], $b['of']);
+            }
+
+            return $a['of'] === $b['of'];
+        }
+
+        if (isset($a['of']) xor isset($b['of'])) {
+            return false;
+        }
+
+        return true;
+    }
 }
