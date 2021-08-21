@@ -6,6 +6,7 @@ namespace Tests\Unit\Models\Section;
 
 use App\Models\Section\Field;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -63,5 +64,21 @@ class FieldTest extends TestCase
         $this->assertFalse($select->isBelongsTo());
         $this->assertFalse($select->isBelongsToMany());
         $this->assertTrue($select->isPlainField());
+    }
+
+    public function testIsSameType()
+    {
+        $select = new Field(['type' => ['name' => 'Select', 'of' => ['test']]]);
+        $this->assertTrue($select->isSameType(new Field(['type' => ['name' => 'Select', 'of' => ['test']]])));
+        $this->assertFalse($select->isSameType(new Field(['type' => ['name' => 'Select', 'of' => ['test', 'test2']]])));
+
+        $select = new Field(['type' => ['name' => 'String']]);
+        $this->assertFalse($select->isSameType(new Field(['type' => ['name' => 'Text']])));
+        $this->assertTrue($select->isSameType(new Field(['type' => ['name' => 'String', 'max:255']])));
+
+        $list = new Field(['type' => ['name' => 'List', 'of' => ['name' => 'Enum', 'of' => 123]]]);
+
+        $this->assertFalse($list->isSameType(new Field(['type' => ['name' => 'List', 'of' => ['name' => 'Enum', 'of' => 321]]])));
+        $this->assertFalse($list->isSameType(new Field(['type' => ['name' => 'Enum', 'of' => 123]])));
     }
 }

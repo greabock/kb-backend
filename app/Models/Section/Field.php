@@ -20,8 +20,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
-use ScoutElastic\Builders\SearchBuilder;
 
 /**
  * App\Models\SectionField
@@ -253,6 +251,14 @@ class Field extends Model
             }
 
             if (is_array($a['of'])) {
+
+                if ($a['name'] === FieldType::T_SELECT) {
+                    return empty(array_merge(
+                        array_diff($a['of'], $b['of']),
+                        array_diff($b['of'], $a['of'])
+                    ));
+                }
+
                 return $this->sameTypeArray($a['of'], $b['of']);
             }
 
