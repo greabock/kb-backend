@@ -236,7 +236,7 @@ class Field extends Model
         return new Field\Collection($models);
     }
 
-    public function sameType(Field $field): bool
+    public function isSameType(Field $field): bool
     {
         return $this->sameTypeArray($this->type, $field->type);
     }
