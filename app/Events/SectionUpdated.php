@@ -20,6 +20,8 @@ class SectionUpdated
         assert($this->sectionId === $this->oldState->id);
         assert($this->sectionId === $this->newState->id);
         assert($this->oldState !== $this->newState);
+        assert($this->oldState->relationLoaded('fields'));
+        assert($this->newState->relationLoaded('fields'));
     }
 
     public function updatedFields(): Collection
