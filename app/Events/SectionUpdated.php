@@ -29,7 +29,7 @@ class SectionUpdated
         return $this->newState->fields->map(fn(Field $newField) => [
             $newField,
             $this->oldState->fields->where($newField->getKeyName(), $newField->getKey())->first()
-        ])->filter(fn(array $fields): bool => !$fields[1]?->isSameType($fields[0]));
+        ])->filter(fn(array $fields): bool => !empty($fields[1]) && !$fields[1]->isSameType($fields[0]));
     }
 
     public function removedFields(): Field\Collection
