@@ -13,7 +13,7 @@ class Action
     public function __invoke(): AnonymousResourceCollection
     {
         return SectionResource::collection(
-            Section::orderBy('sort_index')->get(),
+            Section::with('fields')->orderBy('sort_index')->get(),
         );
     }
 }
