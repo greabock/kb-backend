@@ -41,7 +41,7 @@ class Action
             $request->get('filter', []),
             $fields->nonFileFields(),
             $index,
-        ) :  collect();
+        ) : collect();
 
         $files = $search->searchFiles(
             $request->get('search') ?? '',

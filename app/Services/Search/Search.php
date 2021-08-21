@@ -32,7 +32,6 @@ class Search
             '_source' => ['includes' => ['id', 'name']],
         ];
 
-
         foreach ($fields as $field) {
 
             $extensionMatches = [];
@@ -121,7 +120,7 @@ class Search
             'query' => ['bool' => ['must' => [['bool' => ['should' => []]]]]],
             'sort' => [[$sort['field'] => $sort['direction']]],
             'highlight' => ['fields' => $highlightFields],
-            '_source' => ['id', 'name', ...$fields->presentInCard()->pluck('id')],
+            '_source' => ['id', 'name', 'created_at', ...$fields->presentInCard()->pluck('id')],
         ];
 
         if (!empty($queryString)) {
