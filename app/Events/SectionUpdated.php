@@ -29,20 +29,20 @@ class SectionUpdated
         return $this->newState->fields->map(fn(Field $newField) => [
             $newField,
             $this->oldState->fields->where($newField->getKeyName(), $newField->getKey())->first()
-        ])->filter(fn(array $fields) => (bool)$fields[1]?->isSameType($fields[0]));
+        ])->filter(fn(array $fields): bool => !$fields[1]?->isSameType($fields[0]));
     }
 
     public function removedFields(): Field\Collection
     {
         return $this->oldState->fields->filter(function (Field $field) {
-            return !$this->newState->fields->where($field->getKeyName(), $field->getKey())->first();
+            return $this->newState->fields->where($field->getKeyName(), $field->getKey())->isEmpty();
         });
     }
 
     public function createdFields(): Field\Collection
     {
         return $this->newState->fields->filter(function (Field $field) {
-            return !$this->oldState->fields->where($field->getKeyName(), $field->getKey())->first();
+            return $this->oldState->fields->where($field->getKeyName(), $field->getKey())->isEmpty();
         });
     }
 }
