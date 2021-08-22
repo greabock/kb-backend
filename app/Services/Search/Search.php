@@ -27,6 +27,10 @@ class Search
             return collect();
         }
 
+        if ($sort['field'] === 'name') {
+            $sort['field'] = 'name.keyword';
+        }
+
         $body = [
             'query' => ['bool' => ['should' => []]],
             '_source' => ['includes' => ['id', 'name']],
