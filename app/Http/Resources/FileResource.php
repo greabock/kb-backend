@@ -12,6 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *    @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
  *    @OA\Property(property="url", type="string", example="some.jpg"),
  * )
+ * @property File $resource
  */
 class FileResource extends JsonResource
 {
@@ -20,6 +21,7 @@ class FileResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'url' => $this->resource->url,
+            'name' => $this->resource->name,
         ];
     }
 }
