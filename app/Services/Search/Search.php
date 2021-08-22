@@ -123,7 +123,14 @@ class Search
 
         $body = [
             'query' => ['bool' => ['must' => [['bool' => ['should' => []]]]]],
-            'sort' => [[$sort['field'] => $sort['direction']]],
+            'sort' => [
+                [
+                    $sort['field'] => [
+                        'order' => $sort['direction'],
+                        'unmapped_type' => 'keyword',
+                    ]
+                ]
+            ],
             'highlight' => ['fields' => $highlightFields],
             '_source' => ['id', 'name', 'created_at', ...$fields->presentInCard()->pluck('id')],
         ];
