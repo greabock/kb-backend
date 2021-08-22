@@ -214,7 +214,20 @@ class SearchTest extends ActionTestCase
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
         $this->callAuthorizedRouteAction(['search' => 'трактат'])
-            ->assertOk();
+            ->assertOk()
+            ->assertJsonPath('data.files.0.file.id', $fileId2)
+            ->assertJsonPath('data.files.1.file.id', $fileId);
+
+        $this->callRouteAction(['search' => 'трактат', 'sort' => ['field' => 'name', 'direction' => 'asc']])
+            ->assertOk()
+            ->assertJsonPath('data.files.0.file.id', $fileId2)
+            ->assertJsonPath('data.files.1.file.id', $fileId);
+
+        // TODO: что-то тут не так
+        $this->callRouteAction(['search' => 'трактат', 'sort' => ['field' => 'name', 'direction' => 'desc']])
+            ->assertOk()
+            ->assertJsonPath('data.files.0.file.id', $fileId)
+            ->assertJsonPath('data.files.1.file.id', $fileId2);
     }
 
     public function testUserCanSearchWithFilterExtensions(): void

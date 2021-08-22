@@ -28,7 +28,7 @@ Artisan::command('user:create', function () {
 
 Artisan::command('elastic:clear', function () {
     foreach (config('scout_elastic.client.hosts') as $host) {
-        (new \GuzzleHttp\Client())->delete(env('SCOUT_ELASTIC_HOST') . '/*');
+        (new \GuzzleHttp\Client())->delete(env('SCOUT_ELASTIC_HOST') . ':9200/*');
         $this->info('Host ' . $host . ' cleared.');
     }
 });
