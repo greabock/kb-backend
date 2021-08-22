@@ -76,7 +76,14 @@ class Section extends Model
 
     protected array $defaultMapping = [
         'id' => ['type' => 'keyword'],
-        'name' => ['type' => 'text', 'analyzer' => 'ru'],
+        'name' => [
+            'type' => 'text',
+            'analyzer' => 'ru',
+            'fields' => [
+                'type' => 'keyword',
+                'ignore_above' => 256,
+            ]
+        ],
         'created_at' => ['type' => 'date'],
         'updated_at' => ['type' => 'date'],
     ];

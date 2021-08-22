@@ -58,7 +58,6 @@ class Search
                     'sort' => [[$field->id . '.' . $sort['field'] => $sort['direction']]],
                 ],
             ]];
-
         }
 
         $response = $this->client->search(compact('body', 'index'));
@@ -104,12 +103,16 @@ class Search
 
     public function searchMaterials(
         ?string $queryString,
-        array $sort,
+        ?array $sort,
         array $filter,
         Section\Field\Collection $fields,
         string $index,
     ): Collection
     {
+        if ($sort['field'] === 'name') {
+            $sort['field'] = 'name.keyword';
+        }
+
         $highlightFields = ['name' => (object)[]];
 
         foreach ($fields as $field) {

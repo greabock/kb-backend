@@ -384,7 +384,11 @@ class FieldType
                     ],
                     'name' => [
                         'type' => 'text',
-                        'analyzer' => 'ru'
+                        'analyzer' => 'ru',
+                        'fields' => [
+                            'type' => 'keyword',
+                            'ignore_above' => 256,
+                        ]
                     ],
                     'extension' => [
                         'type' => 'keyword',
