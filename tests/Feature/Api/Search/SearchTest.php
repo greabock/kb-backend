@@ -50,7 +50,7 @@ class SearchTest extends ActionTestCase
         $this->populator()->flush();
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
 
-        $this->callAuthorizedRouteAction(['search' => '', 'materials' =>  true])
+        $this->callAuthorizedRouteAction(['search' => '', 'materials' => true])
             ->assertOk()
             ->dump()
             ->assertJsonPath('data.materials.0.section.id', $section->id)
@@ -290,5 +290,44 @@ class SearchTest extends ActionTestCase
             ->assertJsonPath('data.files.0.material.name', $material->name)
             ->assertJsonPath('data.files.1', null)
             ->assertJsonPath('data.materials', []);
+    }
+
+
+    public function testSortByName()
+    {
+        /** @var Section $section */
+        $section = Section::factory()
+            ->has(Section\Field::factory(['type' => ['name' => 'Text']]), 'fields')
+            ->create();
+
+        $section->refresh();
+
+        $data = ['name' => 'Об особенностях Laravel'];
+
+        foreach ($section->fields as $field) {
+            $data[$field->id] = <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT;
+        }
+
+        /** @var Material $material */
+        $material = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['search' => '', 'materials' => true, 'sort' => ['field' => 'name', 'direction' => 'asc']])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.section.id', $section->id)
+            ->assertJsonPath('data.materials.0.material.id', $material->id)
+            ->assertJsonPath('data.materials.0.material.name', $material->name)
+            ->assertJsonPath('data.materials.1', null)
+            ->assertJsonPath('data.files', []);
     }
 }
