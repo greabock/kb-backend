@@ -54,6 +54,7 @@ class Search
             }
 
             $body['query']['bool']['should'][] = ['nested' => [
+                'ignore_unmapped' => true,
                 'path' => $field->id,
                 'query' => ['bool' => ['must' => $must]],
                 'inner_hits' => [
