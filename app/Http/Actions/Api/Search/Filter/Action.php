@@ -39,7 +39,7 @@ class Action
             $request->get('search') ?? '',
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $request->get('filter', []),
-            $fields->nonFileFields(),
+            $fields->searchableFields(),
             $index,
         ) : collect();
 
