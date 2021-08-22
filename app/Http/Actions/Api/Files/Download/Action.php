@@ -11,6 +11,6 @@ class Action
 {
     public function __invoke(File $file): BinaryFileResponse
     {
-        return response()->download($file->realpath);
+        return response()->download($file->realpath, $file->name);
     }
 }

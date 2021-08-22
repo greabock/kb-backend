@@ -345,6 +345,44 @@
                 "security": []
             }
         },
+        "/files/{file}": {
+            "patch": {
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Обновление перечисления",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "Обновленное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/FileResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
         "/search": {
             "get": {
                 "tags": [
