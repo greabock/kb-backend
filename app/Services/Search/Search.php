@@ -27,10 +27,6 @@ class Search
             return collect();
         }
 
-        if ($sort['field'] === 'name') {
-            $sort['field'] = 'name.keyword';
-        }
-
         $body = [
             'query' => ['bool' => ['should' => []]],
             '_source' => ['includes' => ['id', 'name']],
@@ -60,7 +56,6 @@ class Search
                 'inner_hits' => [
                     '_source' => [$field->id . '.id', $field->id . '.name', $field->id . '.extension', $field->id . '.created_at'],
                     'highlight' => ['fields' => [$field->id . '.name' => (object)[], $field->id . '.content' => (object)[]]],
-                    'sort' => [[$field->id . '.' . $sort['field'] => $sort['direction']]],
                 ],
             ]];
         }
@@ -103,7 +98,9 @@ class Search
             }
         }
 
-        return collect($files);
+        return collect($files)->sortBy(function ($result) use ($sort) {
+            return $result['file'][$sort['field']];
+        }, SORT_NATURAL, $sort['direction'] === 'desc');
     }
 
     public function searchMaterials(
