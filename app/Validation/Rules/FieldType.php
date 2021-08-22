@@ -378,6 +378,9 @@ class FieldType
                     'id' => [
                         'type' => 'keyword',
                     ],
+                    'size' => [
+                        'type' => 'integer'
+                    ],
                     'content' => [
                         'type' => 'text',
                         'analyzer' => 'ru',
@@ -439,6 +442,7 @@ class FieldType
                 'content' => strip_tags($value->content),
                 'name' => strip_tags($value->name),
                 'extension' => $value->extension,
+                'size' => $value->size,
                 'created_at' => $value?->created_at->format(DATE_W3C),
             ] : null,
             self::T_DATE => $value?->format(DATE_W3C),
