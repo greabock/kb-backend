@@ -1753,6 +1753,10 @@
                     },
                     "url": {
                         "type": "string",
+                        "example": "http://api.knowledge.msharks.ru/api/files/430e758e-453f-4184-9459-7bd82da0cba4"
+                    },
+                    "name": {
+                        "type": "string",
                         "example": "some.jpg"
                     }
                 },
