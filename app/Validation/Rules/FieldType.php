@@ -395,6 +395,9 @@ class FieldType
                             ]
                         ]
                     ],
+                    'url' => [
+                        'type' => 'keyword',
+                    ],
                     'extension' => [
                         'type' => 'keyword',
                     ],
@@ -443,7 +446,8 @@ class FieldType
                 'name' => strip_tags($value->name),
                 'extension' => $value->extension,
                 'size' => $value->size,
-                'created_at' => $value?->created_at->format(DATE_W3C),
+                'created_at' => $value->created_at->format(DATE_W3C),
+                'url' => $value->url,
             ] : null,
             self::T_DATE => $value?->format(DATE_W3C),
             self::T_WIKI,
