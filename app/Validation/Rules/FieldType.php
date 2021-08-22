@@ -435,13 +435,20 @@ class FieldType
         return match ($type['name']) {
             self::T_ENUM, self::T_DICTIONARY => $value?->id,
             self::T_FILE => $value ? [
-                'id' => $value?->id,
-                'content' => $value?->content,
-                'name' => $value?->name,
-                'extension' => $value?->extension,
+                'id' => $value->id,
+                'content' => strip_tags($value->content),
+                'name' => strip_tags($value->name),
+                'extension' => $value->extension,
                 'created_at' => $value?->created_at->format(DATE_W3C),
             ] : null,
             self::T_DATE => $value?->format(DATE_W3C),
+            self::T_WIKI,
+            self::T_STRING,
+            self::T_SELECT,
+            self::T_TEXT => $value ? strip_tags($value) : null,
+            self::T_INTEGER => isset($value) ? (int)$value : null,
+            self::T_FLOAT => isset($value) ? (float)$value : null,
+            self::T_BOOLEAN => isset($value) ? (boolean)$value : null,
             default => $value,
         };
     }
