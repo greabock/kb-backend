@@ -80,8 +80,10 @@ class Section extends Model
             'type' => 'text',
             'analyzer' => 'ru',
             'fields' => [
-                'type' => 'keyword',
-                'ignore_above' => 256,
+                'keyword' => [
+                    'type' => 'keyword',
+                    'ignore_above' => 256,
+                ]
             ]
         ],
         'created_at' => ['type' => 'date'],
