@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string $url
  * @property string $realpath
  * @property string $name
+ * @property int $size
  * @property bool $indexed
  * @property string|null $content
  * @property string|null $extension
@@ -52,5 +53,6 @@ class File extends Model
         'content',
         'name',
         'extension',
+        'size',
     ];
 }

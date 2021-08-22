@@ -1758,6 +1758,10 @@
                     "name": {
                         "type": "string",
                         "example": "some.jpg"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "example": "1024"
                     }
                 },
                 "type": "object"

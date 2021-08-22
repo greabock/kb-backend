@@ -22,6 +22,7 @@ class Action
 
             $name = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
+            $size = $file->getSize();
 
             return File::create(compact(
                 'id',
@@ -31,6 +32,7 @@ class Action
                 'content',
                 'name',
                 'extension',
+                'size',
             ));
 
         }, $request->file('files')));
