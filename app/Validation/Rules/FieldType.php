@@ -449,8 +449,8 @@ class FieldType
             self::T_ENUM, self::T_DICTIONARY => $value?->id,
             self::T_FILE => $value ? [
                 'id' => $value->id,
-                'content' => strip_tags($value->content),
-                'name' => strip_tags($value->name),
+                'content' => $value->content ? strip_tags($value->content) : null,
+                'name' => $value->name ? strip_tags($value->name) : null,
                 'extension' => $value->extension,
                 'size' => $value->size,
                 'created_at' => $value->created_at->format(DATE_W3C),
