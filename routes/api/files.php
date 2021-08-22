@@ -40,7 +40,8 @@ Route::prefix('files')->name('files')->group(function () {
         ->uses(Files\Upload\Action::class);
 
     Route::get('/{file}')->name('.download')
-        ->uses(Files\Download\Action::class);
+        ->uses(Files\Download\Action::class)
+        ->withoutMiddleware(['auth:sanctum']);
 
     /**
      * @OA\Patch (
