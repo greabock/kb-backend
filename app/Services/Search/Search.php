@@ -29,7 +29,7 @@ class Search
 
         $body = [
             'query' => ['bool' => ['should' => []]],
-            '_source' => ['includes' => ['id', 'name']],
+            '_source' => ['includes' => ['id', 'name', 'size']],
         ];
 
         foreach ($fields as $field) {
