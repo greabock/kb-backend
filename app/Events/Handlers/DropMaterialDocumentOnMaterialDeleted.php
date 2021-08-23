@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Events\Handlers;
 
-use App\Events\MaterialCreated;
+use App\Events\MaterialDeleted;
 use App\Jobs\DropMaterialDocument;
 use Illuminate\Bus\Dispatcher;
 
@@ -16,7 +16,7 @@ class DropMaterialDocumentOnMaterialDeleted
     {
     }
 
-    public function handle(MaterialCreated $event)
+    public function handle(MaterialDeleted $event)
     {
         $this->jobs->dispatch(new DropMaterialDocument(
             $event->materialClass,
