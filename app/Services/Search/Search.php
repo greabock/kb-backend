@@ -122,7 +122,7 @@ class Search
         }
 
         $body = [
-            'query' => ['bool' => ['must' => []]],
+            'query' => ['bool' => ['must' => [], 'should' => []]],
             'sort' => [
                 [
                     $sort['field'] => [
@@ -143,14 +143,25 @@ class Search
         }
 
         foreach ($filter as $fieldId => $value) {
+
+            if (!empty($value)) {
+                $body['query']['bool']['must'][] = ['exists' => ['field' => $fieldId]];
+            }
+
+            $should = [];
+
             if ($field = $fields->where('id', $fieldId)->first()) {
                 /** @var Section\Field $field */
-                $body['query']['bool']['must'][] = [
-                    'bool' => [
-                        'should' => $field->getFilter($value)
-                    ]
-                ];
+
+                $should = [...$should, ... $field->getFilter($value)];
+
             }
+
+            $body['query']['bool']['must'][] = [
+                'bool' => [
+                    'should' => $should
+                ]
+            ];
         }
 
         $response = $this->client->search(compact('body', 'index'));
