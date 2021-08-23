@@ -7,7 +7,7 @@ namespace App\Http\Actions\Api\Materials\Delete;
 use App\Models\Material;
 use App\Models\Section;
 use Illuminate\Http\Response;
-use App\Events\MaterialCreated;
+use App\Events\MaterialDeleted;
 use Illuminate\Events\Dispatcher;
 
 class Action
@@ -18,7 +18,7 @@ class Action
         $material = ($section->class_name)::findOrFail($material);
         $material->delete();
 
-        $events->dispatch(new MaterialCreated($section->class_name, $material->id));
+        $events->dispatch(new MaterialDeleted($section->class_name, $material->id));
 
         return response()->noContent();
     }
