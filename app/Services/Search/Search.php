@@ -152,7 +152,6 @@ class Search
                 ];
             }
         }
-        dd($body);
 
         $response = $this->client->search(compact('body', 'index'));
 
