@@ -9,10 +9,8 @@ use App\Models\File;
 use App\Models\Material;
 use DateTime;
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
-use JetBrains\PhpStorm\Pure;
 use OpenApi\Annotations as OA;
 
 /**
@@ -97,6 +95,12 @@ class FieldType
     public const T_WIKI = 'Wiki';
     public const T_DATE = 'Date';
     public const T_SELECT = 'Select';
+
+    public const ELASTIC_NULL_KEYWORD = 'NULL';
+    public const ELASTIC_NULL_DATE = '0000-00-00T00:00:00+00:00';
+    public const ELASTIC_NULL_INTEGER = PHP_INT_MIN;
+    public const ELASTIC_NULL_FLOAT = -PHP_FLOAT_MAX;
+    public const ELASTIC_NULL_BOOLEAN = false;
 
     private const AVAILABLE_TYPES = [
         self::T_STRING,
@@ -415,18 +419,23 @@ class FieldType
             ]],
             self::T_DATE => [$field => [
                 'type' => 'date',
+                'null_value' => self::ELASTIC_NULL_DATE,
             ]],
             self::T_INTEGER => [$field => [
-                'type' => 'integer'
+                'type' => 'integer',
+                'null_value' => self::ELASTIC_NULL_INTEGER,
             ]],
             self::T_FLOAT => [$field => [
-                'type' => 'float'
+                'type' => 'float',
+                'null_value' => self::ELASTIC_NULL_FLOAT,
             ]],
             self::T_BOOLEAN => [$field => [
-                'type' => 'boolean'
+                'type' => 'boolean',
+                'null_value' => self::ELASTIC_NULL_BOOLEAN,
             ]],
             self::T_ENUM, self::T_DICTIONARY, self::T_SELECT => [$field => [
-                'type' => 'keyword'
+                'type' => 'keyword',
+                'null_value' => self::ELASTIC_NULL_KEYWORD,
             ]],
         };
     }
@@ -446,7 +455,7 @@ class FieldType
         }
 
         return match ($type['name']) {
-            self::T_ENUM, self::T_DICTIONARY => $value?->id,
+            self::T_ENUM, self::T_DICTIONARY => $value?->id ?? self::ELASTIC_NULL_KEYWORD,
             self::T_FILE => $value ? [
                 'id' => $value->id,
                 'content' => $value->content ? strip_tags($value->content) : null,
@@ -455,16 +464,16 @@ class FieldType
                 'size' => $value->size,
                 'created_at' => $value->created_at->format(DATE_W3C),
                 'url' => $value->url,
-            ] : null,
+            ] : 'NULL',
             self::T_DATE => $value?->format(DATE_W3C),
             self::T_WIKI,
             self::T_STRING,
             self::T_SELECT,
-            self::T_TEXT => $value ? strip_tags($value) : null,
-            self::T_INTEGER => isset($value) ? (int)$value : null,
-            self::T_FLOAT => isset($value) ? (float)$value : null,
-            self::T_BOOLEAN => isset($value) ? (boolean)$value : null,
-            default => $value,
+            self::T_TEXT => $value ? strip_tags($value) : self::ELASTIC_NULL_KEYWORD,
+            self::T_INTEGER => isset($value) ? (int)$value : self::ELASTIC_NULL_INTEGER,
+            self::T_FLOAT => isset($value) ? (float)$value : self::ELASTIC_NULL_FLOAT,
+            self::T_BOOLEAN => isset($value) && $value,
+            default => $value ?? self::ELASTIC_NULL_KEYWORD,
         };
     }
 

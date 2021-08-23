@@ -223,7 +223,7 @@ class Field extends Model
                 FieldType::T_ENUM,
                 FieldType::T_FILE,
                 FieldType::T_SELECT,
-                FieldType::T_BOOLEAN => ['match' => [$this->id => $value]],
+                FieldType::T_BOOLEAN => ['term' => [$this->id => $value]],
                 default => throw new Exception("Unknown base type [{$this->base_type['name']}]")
             };
         }, $values);
