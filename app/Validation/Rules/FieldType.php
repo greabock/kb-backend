@@ -97,7 +97,6 @@ class FieldType
     public const T_SELECT = 'Select';
 
     public const ELASTIC_NULL_KEYWORD = 'NULL';
-    public const ELASTIC_NULL_DATE = '0000-00-00T00:00:00+00:00';
     public const ELASTIC_NULL_INTEGER = PHP_INT_MIN;
     public const ELASTIC_NULL_FLOAT = -PHP_FLOAT_MAX;
     public const ELASTIC_NULL_BOOLEAN = false;
@@ -419,7 +418,6 @@ class FieldType
             ]],
             self::T_DATE => [$field => [
                 'type' => 'date',
-                'null_value' => self::ELASTIC_NULL_DATE,
             ]],
             self::T_INTEGER => [$field => [
                 'type' => 'integer',
