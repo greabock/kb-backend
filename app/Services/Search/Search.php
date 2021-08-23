@@ -145,7 +145,11 @@ class Search
         foreach ($filter as $fieldId => $value) {
             if ($field = $fields->where('id', $fieldId)->first()) {
                 /** @var Section\Field $field */
-                $body['query']['bool']['must'][0]['bool']['should'][] = $field->getFilter($value);
+                $body['query']['bool']['must'][] = [
+                    'bool' => [
+                        'should' => $field->getFilter($value)
+                    ]
+                ];
             }
         }
 
