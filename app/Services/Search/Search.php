@@ -117,7 +117,7 @@ class Search
 
         $highlightFields = ['name' => (object)[]];
 
-        foreach ($fields as $field) {
+        foreach ($fields->searchableFields() as $field) {
             $highlightFields[$field->id] = (object)[];
         }
 

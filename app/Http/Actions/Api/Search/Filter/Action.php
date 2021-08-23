@@ -39,7 +39,7 @@ class Action
             $request->get('search') ?? '',
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $request->get('filter', []),
-            $fields->searchableFields(),
+            $fields->nonFileFields(),
             $index,
         ) : collect();
 
@@ -59,6 +59,7 @@ class Action
         $rules = [];
 
         foreach ($section->fields as $field) {
+            dump($field->base_type);
             foreach (FieldType::filterRules($field->base_type, $field->id) as $key => $rule) {
                 $rules['filter.' . $key . '.*'] = $rule;
             }

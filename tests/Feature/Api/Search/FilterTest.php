@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Search;
 
 use App\Jobs\CreateMaterialDocument;
+use App\Models\Enum;
 use App\Models\File;
 use App\Models\Material;
 use App\Models\Section;
@@ -260,7 +261,6 @@ class FilterTest extends ActionTestCase
         $this->populator()->flush();
         $this->app->call([(new CreateMaterialDocument($section->class_name, $material1->id)), 'handle']);
 
-
         $data = [
             'name' => 'Об особенностях Laravel',
             $section->fields->first()->id => 'one',
@@ -302,4 +302,73 @@ class FilterTest extends ActionTestCase
             ->assertJsonPath('data.materials.1.material.' . $section->fields->first()->id, $material1->{$section->fields->first()->id});
     }
 
+
+    public function testUserCanFilterEnum()
+    {
+        /** @var Enum $enum */
+        $enum = Enum::factory()->has(Enum\Value::factory()->count(2), 'values')->create();
+        $enum->refresh();
+
+        /** @var Section $section */
+        $section = Section::factory()
+            ->has(Section\Field::factory(['type' => ['name' => 'List', 'of' => [
+                'name' => 'Enum',
+                'of' => $enum->id,
+            ]]]), 'fields')
+            ->create();
+
+        $section->refresh();
+
+        $data = [
+            'name' => 'Об особенностях Laravel',
+            $section->fields->first()->id => [
+                ['id' => $enum->values->first()->id],
+            ],
+        ];
+
+        /** @var Material $material1 */
+        $material1 = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material1->id)), 'handle']);
+
+        sleep(1);
+
+        $data = [
+            'name' => 'Об особенностях Laravel',
+            $section->fields->first()->id => [
+                ['id' => $enum->values->last()->id],
+            ]
+        ];
+
+        /** @var Material $material2 */
+        $material2 = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material2->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['search' => 'Laravel', 'filter' => [
+            $section->fields->first()->id => [$enum->values->last()->id],
+        ]], ['section' => $section->id])
+            ->dump()
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material2->id)
+            ->assertJsonPath('data.materials.1', null);
+
+        $this->callRouteAction(['search' => 'Laravel', 'filter' => [
+            $section->fields->first()->id => [$enum->values->first()->id],
+        ]], ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material1->id)
+            ->assertJsonPath('data.materials.1', null);
+
+        $this->callRouteAction(
+            [
+                'search' => 'Laravel',
+                'filter' => [$section->fields->first()->id => [$enum->values->first()->id, $enum->values->last()->id]],
+                'sort' => ['field' => 'created_at', 'direction' => 'desc']
+            ]
+            , ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material2->id)
+            ->assertJsonPath('data.materials.1.material.id', $material1->id);
+    }
 }
