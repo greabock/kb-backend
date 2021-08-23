@@ -59,7 +59,6 @@ class Action
         $rules = [];
 
         foreach ($section->fields as $field) {
-            dump($field->base_type);
             foreach (FieldType::filterRules($field->base_type, $field->id) as $key => $rule) {
                 $rules['filter.' . $key . '.*'] = $rule;
             }
