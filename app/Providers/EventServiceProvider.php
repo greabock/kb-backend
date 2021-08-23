@@ -33,6 +33,9 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\MaterialCreated::class => [
             \App\Events\Handlers\CreateMaterialDocumentOnMaterialCreated::class,
         ],
+        \App\Events\MaterialUpdated::class => [
+            \App\Events\Handlers\UpdateMaterialDocumentOnMaterialUpdated::class,
+        ],
     ];
 
     /**

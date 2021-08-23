@@ -122,7 +122,7 @@ class Search
         }
 
         $body = [
-            'query' => ['bool' => ['must' => [['bool' => ['should' => []]]]]],
+            'query' => ['bool' => ['must' => []]],
             'sort' => [
                 [
                     $sort['field'] => [
@@ -152,6 +152,7 @@ class Search
                 ];
             }
         }
+        dd($body);
 
         $response = $this->client->search(compact('body', 'index'));
 
