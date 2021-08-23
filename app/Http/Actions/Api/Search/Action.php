@@ -17,16 +17,15 @@ class Action
         $fields = $sections->fields();
         $index = $sections->index('_write');
 
-
         return new SearchResultResource([
-            'files' => $search->searchFiles(
+            'files' => (!$request->get('materials', false) || !empty($request->get('extensions', []))) ? $search->searchFiles(
                 $request->get('search'),
                 $request->get('extensions', []),
                 $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
                 $fields->fileFields(),
                 $index,
-            ),
-            'materials' => $request->get('materials', false) ?  $search->searchMaterials(
+            ) : collect(),
+            'materials' => ($request->get('materials', false) || empty($request->get('extensions', []))) ? $search->searchMaterials(
                 $request->get('search'),
                 $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
                 [],

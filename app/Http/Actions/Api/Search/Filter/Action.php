@@ -35,7 +35,7 @@ class Action
 
         $index = $section->id . '_write';
 
-        $materials = $request->get('materials', false) ? $search->searchMaterials(
+        $materials = ($request->get('materials', false) || empty($request->get('extensions', []))) ? $search->searchMaterials(
             $request->get('search') ?? '',
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $request->get('filter', []),
@@ -43,13 +43,13 @@ class Action
             $index,
         ) : collect();
 
-        $files = $search->searchFiles(
+        $files = (!$request->get('materials', false) || !empty($request->get('extensions', []))) ? $search->searchFiles(
             $request->get('search') ?? '',
             $request->get('extensions', []),
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
             $fields->fileFields(),
             $index,
-        );
+        ) : collect();
 
         return new SearchResultResource(compact('materials', 'files'));
     }
