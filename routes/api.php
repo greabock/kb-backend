@@ -21,4 +21,11 @@ if (config('app.debug')) {
     Route::get('pivot/{pivot}', function ($pivot) {
         dump(Schema::getColumnListing("pivots.$pivot"));
     });
+
+    Route::post('elastic/{index}', function ($index, Elasticsearch\Client; $esClient, Illuminate\Http\Request $request) {
+        return $esClient->search([
+            'body' => $request->all(),
+            'index' => $index,
+        ]);
+    });
 }
