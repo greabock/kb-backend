@@ -8,14 +8,14 @@ before_script:
   - chmod 700 ~/.ssh
   - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
 
-deploy:
+deploy_dev:
   script:
     # Deploy
     - ssh -o StrictHostKeyChecking=no knowledge@knowledge.msharks.ru "cd ~/knowledge.msharks.ru/code/ && git pull && git checkout dev && docker-compose stop php-http && docker-compose up -d php-http && docker-compose restart web && docker exec -i kb_php_http composer install && docker exec -i kb_php_http php artisan migrate"
   only:
     - dev
 
-deploy:
+deploy_release:
   script:
     # Deploy release branch
     - ssh -o StrictHostKeyChecking=no kb_admin@knowledge.oktadi.ru "cd /var/www/knowledge/backend/ && git fetch --all && git reset --hard origin/release && composer install && php artisan migrate"
