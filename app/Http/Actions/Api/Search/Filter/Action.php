@@ -43,7 +43,8 @@ class Action
             $index,
         ) : collect();
 
-        $files = (!$request->get('materials', false) || !empty($request->get('extensions', []))) ? $search->searchFiles(
+
+        $files = (!$request->get('materials', false) || !empty($request->get('extensions', []))) && $this->filtersIsEmpty($request->get('filters', [])) ? $search->searchFiles(
             $request->get('search') ?? '',
             $request->get('extensions', []),
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
@@ -65,5 +66,20 @@ class Action
         }
 
         return $rules;
+    }
+
+    private function filtersIsEmpty(array $filters): bool
+    {
+        if (empty($filters)) {
+            return true;
+        }
+
+        foreach ($filters as $filter) {
+            if (!empty($filter)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
