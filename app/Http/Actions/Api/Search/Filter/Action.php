@@ -44,7 +44,7 @@ class Action
         ) : collect();
 
 
-        $files = (!$request->get('materials', false) || !empty($request->get('extensions', []))) && $this->filtersIsEmpty($request->get('filters', [])) ? $search->searchFiles(
+        $files = (!$request->get('materials', false) || !empty($request->get('extensions', []))) && $this->filtersIsEmpty($request->get('filter', [])) ? $search->searchFiles(
             $request->get('search') ?? '',
             $request->get('extensions', []),
             $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),

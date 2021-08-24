@@ -485,4 +485,74 @@ class FilterTest extends ActionTestCase
             ->assertOk()
             ->assertJsonPath('data.materials', []);
     }
+
+
+    public function testWhenFiltersSelectedFilesIsEmpty()
+    {
+        /** @var Section $section */
+        $section = Section::factory()->has(Section\Field::factory([
+            'title' => 'My file',
+            'type' => [
+                'name' => 'List',
+                'of' => ['name' => 'File']
+            ]
+        ]), 'fields')->create();
+
+        $section->refresh();
+
+        File::create([
+            'id' => $fileId = Uuid::uuid4()->toString(),
+            'realpath' => '_',
+            'url' => route('files.download', [$fileId]),
+            'indexed' => true,
+            'content' => <<<TEXT
+            Laravel невероятно масштабируем.
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT,
+            'name' => 'Трактат о Laravel',
+            'extension' => 'doc',
+        ]);
+
+
+        File::create([
+            'id' => $fileId2 = Uuid::uuid4()->toString(),
+            'realpath' => '_',
+            'url' => route('files.download', [$fileId2]),
+            'indexed' => true,
+            'content' => <<<TEXT
+            Laravel невероятно масштабируем. Трактат
+            Благодаря удобному для масштабирования характеру PHP и встроенной
+            поддержке быстрых распределенных систем кеширования, таких как Redis,
+            горизонтальное масштабирование с Laravel очень просто. Фактически, приложения
+            Laravel легко масштабируются для обработки сотен миллионов запросов в месяц.
+            Требуется экстремальное масштабирование? Такие платформы, как Laravel Vapor, позволяют запускать
+             приложение Laravel в практически неограниченном масштабе
+            с использованием новейшей бессерверной технологии AWS.
+            TEXT,
+            'name' => 'Об особенностях Laravel',
+            'extension' => 'docx',
+        ]);
+
+        $data = [
+            'name' => 'zzz',
+            $section->fields->first()->id => [['id' => $fileId], ['id' => $fileId2]],
+        ];
+
+        /** @var Material $material */
+        $material = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['filter' => [
+            'test' => 'test'
+        ]], ['section' => $section->id])
+            ->assertJsonCount(0, 'data.files')
+            ->assertOk();
+    }
 }
