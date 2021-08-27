@@ -11,7 +11,7 @@ class UserRole
 {
     public function handle(Request $request, Closure $next, string ...$roles)
     {
-        if (in_array(auth('sanctum')->user()->role, $roles, true)) {
+        if (auth()->user()->super || in_array(auth('sanctum')->user()->role, $roles, true)) {
 
             return $next($request);
         }
