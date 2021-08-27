@@ -12,8 +12,6 @@ class Action
 {
     public function __invoke(): AnonymousResourceCollection
     {
-        return UserResource::collection(
-            User::whereNotIn('role', [User::ROLE_ADMIN])->get()
-        );
+        return UserResource::collection(User::where('super', false)->get());
     }
 }

@@ -16,7 +16,7 @@ class IndexTest extends ActionTestCase
 
     public function testAdminIsHidden(): void
     {
-        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN, 'super' => true]);
         User::factory()->create(['role' => User::ROLE_USER]);
         User::factory()->create(['role' => User::ROLE_MODERATOR]);
 

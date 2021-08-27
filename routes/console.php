@@ -22,7 +22,8 @@ Artisan::command('user:create', function () {
     $user->login = $this->ask('Логин пользователя');
     $user->name = $this->ask('Имя пользователя');
     $user->password = $this->ask('Пароль пользователя');
-    $user->role = $this->askWithCompletion('Роль пользователя', User::ROLES, 'user');
+    $user->super = $this->confirm('Суперпользователь?', false);
+    $user->role = $user->super ? User::ROLE_ADMIN : $this->askWithCompletion('Роль пользователя', User::ROLES, 'user');
     $user->save();
 })->purpose('Создать нового пользователя');
 
