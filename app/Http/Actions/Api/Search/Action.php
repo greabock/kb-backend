@@ -22,14 +22,14 @@ class Action
                 $request->get('search'),
                 $request->get('extensions', []),
                 $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
-                $fields->fileFields(),
+                $fields,
                 $index,
             ) : collect(),
             'materials' => ($request->get('materials', false) || empty($request->get('extensions', []))) ? $search->searchMaterials(
                 $request->get('search'),
                 $request->get('sort', ['field' => 'created_at', 'direction' => 'desc']),
                 [],
-                $fields->nonFileFields(),
+                $fields,
                 $index,
             ) : collect()
         ]);

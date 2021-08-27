@@ -153,6 +153,7 @@ class SearchTest extends ActionTestCase
         /** @var Section $section */
         $section = Section::factory()
             ->has(Section\Field::factory([
+                'is_present_in_card' => false,
                 'title' => 'My file', 'type' => [
                     'name' => 'List',
                     'of' => [
@@ -204,7 +205,7 @@ class SearchTest extends ActionTestCase
         ]);
 
         $data = [
-            'name' => 'zzz',
+            'name' => 'трактат',
             $section->fields->first()->id => [['id' => $fileId], ['id' => $fileId2]],
         ];
 
@@ -223,9 +224,9 @@ class SearchTest extends ActionTestCase
             ->assertJsonPath('data.files.0.file.id', $fileId2)
             ->assertJsonPath('data.files.1.file.id', $fileId);
 
-        // TODO: что-то тут не так
         $this->callRouteAction(['search' => 'трактат', 'sort' => ['field' => 'name', 'direction' => 'desc']])
             ->assertOk()
+            ->dump()
             ->assertJsonPath('data.files.0.file.id', $fileId)
             ->assertJsonPath('data.files.1.file.id', $fileId2);
     }

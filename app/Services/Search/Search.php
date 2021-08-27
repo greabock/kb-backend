@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Search;
 
 use App\Models\Section;
+use App\Validation\Rules\FieldType;
 use Elasticsearch\Client;
 use Illuminate\Support\Collection;
 use Str;
@@ -23,7 +24,7 @@ class Search
         string $index,
     ): Collection
     {
-        if ($fields->isEmpty()) {
+        if ($fields->fileFields()->isEmpty()) {
             return collect();
         }
 
@@ -32,7 +33,7 @@ class Search
             '_source' => ['includes' => ['id', 'name', 'size', 'url']],
         ];
 
-        foreach ($fields as $field) {
+        foreach ($fields->fileFields() as $field) {
 
             $extensionMatches = [];
 
@@ -132,8 +133,17 @@ class Search
                 ]
             ],
             'highlight' => ['fields' => $highlightFields],
-            '_source' => ['id', 'name', 'created_at', ...$fields->presentInCard()->pluck('id')],
+            '_source' => [
+                'includes' => ['id', 'name', 'created_at', ...$fields->presentInCard()->pluck('id')],
+            ],
         ];
+//
+        foreach ($fields->fileFields() as $fileField) {
+            $body['_source']['includes'][] = $fileField->id . '.id';
+            $body['_source']['includes'][] = $fileField->id . '.extension';
+            $body['_source']['includes'][] = $fileField->id . '.name';
+            $body['_source']['includes'][] = $fileField->id . '.created_at';
+        }
 
         if (!empty($queryString)) {
             $body['query']['bool']['must'][] = [['query_string' => [
@@ -168,14 +178,36 @@ class Search
 
         $materials = [];
 
-        foreach ($response['hits']['hits'] as $hit) {
-            $materials[] = [
+        foreach ($response['hits']['hits'] as $i => $hit) {
+            $materials[$i] = [
                 'section' => ['id' => $hit['_index']],
                 'material' => $hit['_source'],
                 'highlight' => $hit['highlight'] ?? (object)[],
             ];
+
+            $materials[$i]['material']['files_count'] = $this->countDocs($fields->fileFields(), $hit['_source']);
         }
 
         return collect($materials);
+    }
+
+    private function countDocs(Section\Field\Collection $fileFields, mixed $_source): int
+    {
+        $count = 0;
+
+        foreach ($fileFields as $fileField) {
+            if (isset($_source[$fileField->id])) {
+                if ($fileField->type['name'] === FieldType::T_LIST) {
+                    $count += count($_source[$fileField->id]);
+                    continue;
+                }
+
+                $count++;
+            }
+
+        }
+
+
+        return $count;
     }
 }
