@@ -12,6 +12,7 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__ . '/api/files.php';
 });
 
+Route::get('settings')->uses(\App\Http\Actions\Api\Settings\Index\Action::class);
 
 if (config('app.debug')) {
     Route::get('console/{type}:{command}', function (string $type, string $command) {
