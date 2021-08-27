@@ -34,4 +34,15 @@ class ShowTest extends ActionTestCase
             ->assertJsonStructure(['data' => ['title', 'id', 'values' => [['id', 'title']]]])
             ->assertJsonCount(2, 'data.values');
     }
+
+    public function testUserCanSeeDeletedEnum(): void
+    {
+        /** @var Enum $enum */
+        $enum = Enum::factory()->create();
+        $enum->delete();
+
+        $this->callAuthorizedRouteAction([], ['enum' => $enum->id])
+            ->assertStatus(200)
+            ->assertJsonStructure(['data' => ['title', 'id', 'values']]);
+    }
 }

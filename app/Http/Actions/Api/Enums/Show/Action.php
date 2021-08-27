@@ -9,10 +9,8 @@ use App\Models\Enum;
 
 class Action
 {
-    public function __invoke(Enum $enum)
+    public function __invoke($enum)
     {
-        $enum->load('values');
-
-        return new EnumResource($enum);
+        return new EnumResource(Enum::withTrashed()->with('values')->findOrFail($enum));
     }
 }
