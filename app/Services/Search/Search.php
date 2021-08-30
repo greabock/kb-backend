@@ -210,4 +210,29 @@ class Search
 
         return $count;
     }
+
+    public function searchMaterialsByName(string $index, ?string $name)
+    {
+        $body = [
+            'size' => 15,
+            'query' => [],
+            '_source' => ['includes' => ['id']],
+        ];
+
+        if ($name) {
+            $body['query']['wildcard'] = [
+                'name' => [
+                    'value' => "*$name*",
+                    'boost' => 1.0,
+                ]
+            ];
+        }
+
+        $result = $this->client->search([
+            'index' => $index,
+            'body' => $body
+        ]);
+
+        return \Arr::pluck($result['hits']['hits'], '_source.id');
+    }
 }

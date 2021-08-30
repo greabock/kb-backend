@@ -6,16 +6,18 @@ namespace App\Http\Actions\Api\Materials\Index;
 
 use App\Http\Resources\MaterialResource;
 use App\Models\Section;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Services\Search\Search;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class Action
 {
-    public function __invoke(Section $section): AnonymousResourceCollection
+    public function __invoke(Section $section, Request $request, Search $search): AnonymousResourceCollection
     {
-        /** @var LengthAwarePaginator $materials */
-        $materials = ($section->class_name)::select(...$section->cardFields())->paginate();
+        $res = $search->searchMaterialsByName($section->id . '_write', $request->get('search'));
 
-        return MaterialResource::collection($materials);
+        $query = ($section->class_name)::whereIn('id', $res)->select(...$section->cardFields());
+
+        return MaterialResource::collection($query->paginate());
     }
 }
