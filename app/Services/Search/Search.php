@@ -101,7 +101,7 @@ class Search
 
         return collect($files)->sortBy(function ($result) use ($sort) {
             return $result['file'][$sort['field']];
-        }, SORT_NATURAL, $sort['direction'] === 'desc')->values();
+        }, SORT_NATURAL, $sort['direction'] === 'desc')->forPage(1, 5)->values();
     }
 
     public function searchMaterials(
@@ -123,6 +123,7 @@ class Search
         }
 
         $body = [
+            'size' => 5,
             'query' => ['bool' => ['must' => [], 'should' => []]],
             'sort' => [
                 [

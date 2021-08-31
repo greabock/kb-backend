@@ -348,7 +348,6 @@ class FilterTest extends ActionTestCase
         $this->callAuthorizedRouteAction(['search' => 'Laravel', 'filter' => [
             $section->fields->first()->id => [$enum->values->last()->id],
         ]], ['section' => $section->id])
-            ->dump()
             ->assertOk()
             ->assertJsonPath('data.materials.0.material.id', $material2->id)
             ->assertJsonPath('data.materials.1', null);

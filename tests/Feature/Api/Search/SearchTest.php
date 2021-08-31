@@ -52,7 +52,6 @@ class SearchTest extends ActionTestCase
 
         $this->callAuthorizedRouteAction(['search' => '', 'materials' => true])
             ->assertOk()
-            ->dump()
             ->assertJsonPath('data.materials.0.section.id', $section->id)
             ->assertJsonPath('data.materials.0.material.id', $material->id)
             ->assertJsonPath('data.materials.0.material.name', $material->name)
@@ -226,7 +225,6 @@ class SearchTest extends ActionTestCase
 
         $this->callRouteAction(['search' => 'трактат', 'sort' => ['field' => 'name', 'direction' => 'desc']])
             ->assertOk()
-            ->dump()
             ->assertJsonPath('data.files.0.file.id', $fileId)
             ->assertJsonPath('data.files.1.file.id', $fileId2);
     }
