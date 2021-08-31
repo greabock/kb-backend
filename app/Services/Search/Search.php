@@ -216,18 +216,15 @@ class Search
     {
         $body = [
             'size' => 15,
-            'query' => [],
             '_source' => ['includes' => ['id']],
         ];
 
-        if ($name) {
-            $body['query']['wildcard'] = [
-                'name' => [
-                    'value' => "*$name*",
-                    'boost' => 1.0,
-                ]
-            ];
-        }
+        $body['query']['wildcard'] = [
+            'name' => [
+                'value' => "*$name*",
+                'boost' => 1.0,
+            ]
+        ];
 
         $result = $this->client->search([
             'index' => $index,
