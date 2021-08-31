@@ -451,11 +451,12 @@ class FieldType
             return $value->map(fn($el) => self::toIndex($type['of'], $el))->filter()->toArray();
         }
 
+
         return match ($type['name']) {
             self::T_ENUM, self::T_DICTIONARY => $value?->id ?? self::ELASTIC_NULL_KEYWORD,
             self::T_FILE => $value ? [
                 'id' => $value->id,
-                'content' => $value->content ? strip_tags($value->content) : null,
+                'content' => $value->content ? strip_tags(str_replace('><', '> <', $value->content)) : null,
                 'name' => $value->name ? strip_tags($value->name) : null,
                 'extension' => $value->extension,
                 'size' => $value->size,
@@ -466,7 +467,7 @@ class FieldType
             self::T_WIKI,
             self::T_STRING,
             self::T_SELECT,
-            self::T_TEXT => $value ? strip_tags($value) : self::ELASTIC_NULL_KEYWORD,
+            self::T_TEXT => $value ? strip_tags(str_replace('><', '> <', $value)) : self::ELASTIC_NULL_KEYWORD,
             self::T_INTEGER => isset($value) ? (int)$value : self::ELASTIC_NULL_INTEGER,
             self::T_FLOAT => isset($value) ? (float)$value : self::ELASTIC_NULL_FLOAT,
             self::T_BOOLEAN => isset($value) && $value,
