@@ -123,7 +123,7 @@ class Search
         }
 
         $body = [
-            'size' => 5,
+            'size' => 30,
             'query' => ['bool' => ['must' => [], 'should' => []]],
             'sort' => [
                 [
