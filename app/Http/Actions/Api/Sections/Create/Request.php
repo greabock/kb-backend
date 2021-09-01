@@ -58,7 +58,7 @@ class Request extends ApiRequest
             [
                 'id' => 'sometimes|uuid|unique:sections,id',
                 'title' => 'required|string|max:255',
-                'image' => 'sometimes|string|max:255',
+                'image' => 'nullable|string|max:255',
                 'is_dictionary' => 'required|boolean',
                 'is_navigation' => 'required|boolean',
                 'fields' => 'sometimes|array|index_array',
