@@ -46,7 +46,7 @@ class Action
             new LengthAwarePaginator(
                 $page,
                 $results->count(),
-                $request->get('per_page', 1),
+                $request->get('per_page', 15),
                 $request->get('page', 1),
             ),
         );
