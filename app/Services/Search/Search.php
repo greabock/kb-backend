@@ -10,6 +10,7 @@ use Elasticsearch\Client;
 use Illuminate\Support\Collection;
 use Str;
 
+// TODO: подумать над результатами для больших объемов поиска
 class Search
 {
     public function __construct(private Client $client)
@@ -123,16 +124,11 @@ class Search
         }
 
         $body = [
-            'size' => 30,
             'query' => ['bool' => ['must' => [], 'should' => []]],
-            'sort' => [
-                [
-                    $sort['field'] => [
-                        'order' => $sort['direction'],
-                        'unmapped_type' => 'keyword',
-                    ]
-                ]
-            ],
+            'sort' => [[$sort['field'] => [
+                'order' => $sort['direction'],
+                'unmapped_type' => 'keyword',
+            ]]],
             'highlight' => ['fields' => $highlightFields],
             '_source' => [
                 'includes' => ['id', 'name', 'created_at', ...$fields->presentInCard()->pluck('id')],
@@ -215,7 +211,6 @@ class Search
     public function searchMaterialsByName(string $index, ?string $name)
     {
         $body = [
-            'size' => 30,
             '_source' => ['includes' => ['id']],
         ];
 

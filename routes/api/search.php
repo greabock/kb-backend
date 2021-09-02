@@ -21,11 +21,20 @@ use OpenApi\Annotations as OA;
  *            @OA\Items(type="string", example="docx")
  *         )
  *     ),
+ *     @OA\Parameter(name="page", in="query",
+ *         @OA\Schema(type="integer", example="1", default="1"),
+ *     ),
+ *     @OA\Parameter(name="per_page", in="query",
+ *         @OA\Schema(type="integer", example="15", default="15"),
+ *     ),
  *     @OA\Response(
  *          response="200",
  *          description="Списки материалов и файлов",
  *          @OA\JsonContent(type="object",
- *             @OA\Property(property="data", ref="#components/schemas/SearchResultResource")
+ *             @OA\Property(property="data", ref="#components/schemas/SearchResultResource"),
+ *             @OA\Property(property="page", type="integer", example="1"),
+ *             @OA\Property(property="per_page", type="integer", example="1"),
+ *             @OA\Property(property="total", type="integer", example="1"),
  *          )
  *     ),
  *     @OA\Response(
@@ -67,11 +76,20 @@ Route::post('search')->name('search')->uses(Search\Action::class);
  *           })
  *         )
  *     ),
+ *     @OA\Parameter(name="page", in="query",
+ *         @OA\Schema(type="integer", example="1", default="1"),
+ *     ),
+ *     @OA\Parameter(name="per_page", in="query",
+ *         @OA\Schema(type="integer", example="15", default="15"),
+ *     ),
  *     @OA\Response(
  *          response="200",
  *          description="Списки материалов и файлов",
  *          @OA\JsonContent(type="object",
- *             @OA\Property(property="data", ref="#components/schemas/SearchResultResource")
+ *             @OA\Property(property="data", ref="#components/schemas/SearchResultResource"),
+ *             @OA\Property(property="page", type="integer", example="1"),
+ *             @OA\Property(property="per_page", type="integer", example="1"),
+ *             @OA\Property(property="total", type="integer", example="1"),
  *          )
  *     ),
  *     @OA\Response(

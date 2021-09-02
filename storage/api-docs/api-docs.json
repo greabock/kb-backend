@@ -427,6 +427,24 @@
                                 "example": "docx"
                             }
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": "1",
+                            "example": "1"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": "15",
+                            "example": "15"
+                        }
                     }
                 ],
                 "responses": {
@@ -438,6 +456,18 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#components/schemas/SearchResultResource"
+                                        },
+                                        "page": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": "1"
                                         }
                                     },
                                     "type": "object"
@@ -527,6 +557,24 @@
                                 ]
                             }
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": "1",
+                            "example": "1"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": "15",
+                            "example": "15"
+                        }
                     }
                 ],
                 "responses": {
@@ -538,6 +586,18 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#components/schemas/SearchResultResource"
+                                        },
+                                        "page": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": "1"
                                         }
                                     },
                                     "type": "object"

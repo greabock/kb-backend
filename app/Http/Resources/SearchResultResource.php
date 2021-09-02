@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Annotations as OA;
 
 /**
@@ -53,8 +54,4 @@ use OpenApi\Annotations as OA;
  */
 class SearchResultResource extends JsonResource
 {
-    public function toArray($request)
-    {
-        return $this->resource;
-    }
 }
