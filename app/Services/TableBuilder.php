@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Models\Section;
+use Illuminate\Database\Schema\Blueprint;
+use Schema;
+
+class TableBuilder
+{
+    public function __construct(
+        private ColumnBuilder $columnBuilder
+    )
+    {
+    }
+
+    public function create(Section $section): void
+    {
+        Schema::create($section->table_name, function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->softDeletes();
+            $table->timestamps();
+        });
+    }
+
+    public function buildColumns(Section $section): void
+    {
+        $section->fields->each([$this, 'addField']);
+    }
+
+    public function drop(Section $section): void
+    {
+        $section->fields->each(function (Section\Field $field) {
+            if ($field->isRelationField()) {
+                $this->columnBuilder->drop($field);
+            }
+        });
+
+        Schema::dropIfExists($section->table_name);
+    }
+
+    public function addField(Section\Field $field): void
+    {
+        $this->columnBuilder->build($field);
+    }
+
+    public function dropField(Section\Field $field): void
+    {
+        $this->columnBuilder->drop($field);
+    }
+}
