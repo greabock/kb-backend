@@ -35,4 +35,7 @@ return [
         'redirect' => env('AZURE_REDIRECT_URI'),
         'tenant' => env('AZURE_TENANT_ID')
     ],
+    'tika' => [
+        'path' => env('TIKA_PATH')
+    ]
 ];

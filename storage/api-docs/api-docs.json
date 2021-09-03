@@ -11,9 +11,91 @@
         }
     ],
     "paths": {
-        "/user": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение токена по логину и паролю",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Токен аутентификации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiTokenResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/auth/azure/redirect": {
             "get": {
-                "description": "Получение данных текущего пользователя",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение редиректа для перенаправления",
+                "responses": {
+                    "200": {
+                        "description": "Адрес перенаправления для внешней утентификации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RedirectResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": []
+            }
+        },
+        "/auth/azure/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение токена после перенаправления",
+                "description": "Нужно пробросить в тело все параметры с query string редиректа 'как есть'",
+                "responses": {
+                    "200": {
+                        "description": "Токен аутентификации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiTokenResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Получение данных текущего пользователя",
                 "responses": {
                     "200": {
                         "description": "Данные текущего пользователя",
@@ -30,13 +112,1970 @@
                     }
                 },
                 "security": {
-                    "session": {}
+                    "apiKey": {}
+                }
+            }
+        },
+        "/enums": {
+            "get": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Получение списка перечислений",
+                "responses": {
+                    "200": {
+                        "description": "Список перечислений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/EnumResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Создание перечисления",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnumCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/enums/{enum}": {
+            "get": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Получение перечисления с его значениями",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Конкретное перечисление с его значениями",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Удаление перечисления",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Enums"
+                ],
+                "summary": "Обновление перечисления",
+                "parameters": [
+                    {
+                        "name": "enum",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EnumUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/files": {
+            "post": {
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Загрузка файла",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "files"
+                                ],
+                                "properties": {
+                                    "files": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FileResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/files/{file}": {
+            "patch": {
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Обновление перечисления",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "Обновленное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/FileResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/search": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Поиск по файлам и материалам всех разделов",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "properties": {
+                                "direction": {
+                                    "type": "string",
+                                    "enum": [
+                                        "asc",
+                                        "desc"
+                                    ]
+                                },
+                                "field": {
+                                    "type": "string",
+                                    "enum": [
+                                        "created_at",
+                                        "name"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    {
+                        "name": "extensions",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "docx"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Списки материалов и файлов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SearchResultResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/search/{section}": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Поиск и фильтрация по файлам и материалам конкретного раздела",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "properties": {
+                                "direction": {
+                                    "type": "string",
+                                    "enum": [
+                                        "asc",
+                                        "desc"
+                                    ]
+                                },
+                                "field": {
+                                    "type": "string",
+                                    "enum": [
+                                        "created_at",
+                                        "name"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    {
+                        "name": "extensions",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "docx"
+                            }
+                        }
+                    },
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "oneOf": [
+                                    {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "date"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Списки материалов и файлов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SearchResultResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/sections": {
+            "get": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Получение списка разделов",
+                "responses": {
+                    "200": {
+                        "description": "Список разделов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/SectionResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Создание раздела (admin)",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SectionCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданный раздел",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Получение списка разделов",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserMassUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Список разделов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/SectionResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/sections/{section}": {
+            "get": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Получение раздела с его полями",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Раздел с его значениями",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Удаление раздела (admin)",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/sections/{sections}": {
+            "patch": {
+                "tags": [
+                    "Sections"
+                ],
+                "summary": "Обновление раздела (admin)",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SectionUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленный раздел",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/sections/{section}/materials": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Получение постранично разбитого списка материалов секции",
+                "description": "> Стоит обратить внимание, что для материала в списке, будут отображаться только те дополнительные поля,\n    для которых установлен флаг `is_present_in_card: true`. Кроме того, хотя в примере и указаны ключи вида `additionalPropN`,\n    на самом деле это всегда будет uuid свойства, для которого представлено значение. К сожалению, спецификация **OpenApi** не позволяет выразить это явным образом",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Страница материалов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#components/schemas/PageOfMaterialResources"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Создание материала (admin, moderator)",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MaterialCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданный материал",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/MaterialDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/sections/{section}/materials/{material}": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Получение материала",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    },
+                    {
+                        "name": "material",
+                        "in": "path",
+                        "description": "Идентификатор материала"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Материал",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/MaterialDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Удаление материала (admin, modrator)",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    },
+                    {
+                        "name": "material",
+                        "in": "path",
+                        "description": "Идентификатор удаляемого материала"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Обновление материала (admin, modrator)",
+                "parameters": [
+                    {
+                        "name": "section",
+                        "in": "path",
+                        "description": "Идентификатор раздела материалов"
+                    },
+                    {
+                        "name": "material",
+                        "in": "path",
+                        "description": "Идентификатор обновляемого материала"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MaterialUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленный материал",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/MaterialDetailedResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Получение списка пользователей (admin)",
+                "responses": {
+                    "200": {
+                        "description": "Список пользователей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/UserResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    },
+                    "403": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Создание пользователя (admin)",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Созданный пользователь",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    },
+                    "403": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Обновление пользователей",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserMassUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Список обновленных пользователей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#components/schemas/UserResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    },
+                    "403": {
+                        "description": "Неавторизован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/users/{user}": {
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Удаление пользователя (admin)",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "Идентификатор пользователя"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Удалено"
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Обновление пользователя (admin)",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "Идентификатор пользователя"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновленный пользователь",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#components/schemas/SectionWithFieldsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
                 }
             }
         }
     },
     "components": {
         "schemas": {
+            "LoginRequest": {
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "user@some.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "123123"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumCreateRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "title"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "example": "Канада"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "EnumUpdateRequest": {
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "title"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "Канада"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "example": "Канада"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "MaterialCreateRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Название материала"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "anyOf": [
+                        {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "MaterialUpdateRequest": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Название материала"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "anyOf": [
+                        {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "SectionCreateRequest": {
+                "required": [
+                    "title",
+                    "is_dictionary",
+                    "is_navigation",
+                    "sort_index"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "image": {
+                        "nullable": true,
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "title",
+                                "type",
+                                "required",
+                                "is_present_in_card",
+                                "sort_index",
+                                "filter_sort_index"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "sort_index": {
+                                    "type": "integer"
+                                },
+                                "required": {
+                                    "type": "boolean"
+                                },
+                                "is_present_in_card": {
+                                    "type": "boolean"
+                                },
+                                "filter_sort_index": {
+                                    "type": "integer"
+                                },
+                                "type": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#components/schemas/TypeString"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeInteger"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeText"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeWiki"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFloat"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeBoolean"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeEnum"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFile"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeList"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeSelect"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeDate"
+                                        }
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SectionMassUpdateRequest": {
+                "type": "array",
+                "items": {
+                    "required": [
+                        "id",
+                        "role"
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "example": "123e4567-e89b-12d3-a456-426655440000"
+                        },
+                        "sort_index": {
+                            "type": "integer"
+                        },
+                        "is_dictionary": {
+                            "type": "boolean"
+                        },
+                        "is_navigation": {
+                            "type": "boolean"
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "SectionUpdateRequest": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "image": {
+                        "nullable": true,
+                        "type": "string",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "Имя раздела"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "description": {
+                                    "type": "string"
+                                },
+                                "sort_index": {
+                                    "type": "integer"
+                                },
+                                "required": {
+                                    "type": "boolean"
+                                },
+                                "is_present_in_card": {
+                                    "type": "boolean"
+                                },
+                                "filter_sort_index": {
+                                    "type": "integer"
+                                },
+                                "type": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#components/schemas/TypeString"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeInteger"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeText"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeWiki"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFloat"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeBoolean"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeEnum"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeFile"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeList"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeSelect"
+                                        },
+                                        {
+                                            "$ref": "#components/schemas/TypeDate"
+                                        }
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UserCreateRequest": {
+                "required": [
+                    "login",
+                    "email",
+                    "name",
+                    "password",
+                    "role"
+                ],
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "ninja24"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "some@domain.com"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иванов Иван"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "qwerty12345"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "moderator",
+                            "admin"
+                        ]
+                    },
+                    "photo": {
+                        "type": "string",
+                        "example": "some.com/123.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "UserMassUpdateRequest": {
+                "type": "array",
+                "items": {
+                    "required": [
+                        "id",
+                        "role"
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "example": "123e4567-e89b-12d3-a456-426655440000"
+                        },
+                        "role": {
+                            "type": "string",
+                            "enum": [
+                                "user",
+                                "moderator",
+                                "admin"
+                            ]
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "UserUpdateRequest": {
+                "properties": {
+                    "login": {
+                        "type": "string",
+                        "example": "ninja24"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "some@domain.com"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иванов Иван"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "qwerty12345"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "user",
+                            "moderator",
+                            "admin"
+                        ]
+                    },
+                    "photo": {
+                        "type": "string",
+                        "example": "some.com/123.jpg"
+                    }
+                },
+                "type": "object"
+            },
+            "ApiTokenResource": {
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "access_token"
+                    }
+                },
+                "type": "object"
+            },
+            "RedirectResource": {
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "https://account.microsoft.com"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumValueResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Пример названия значения перечисления"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Пример названия списка перечислений"
+                    }
+                },
+                "type": "object"
+            },
+            "EnumDetailedResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Пример названия списка перечислений"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EnumValueResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FileResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://api.knowledge.msharks.ru/api/files/430e758e-453f-4184-9459-7bd82da0cba4"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "some.jpg"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "example": "1024"
+                    }
+                },
+                "type": "object"
+            },
+            "PageOfMaterialResources": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MaterialDetailedResource"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "MaterialResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Пример названия материала"
+                    }
+                },
+                "type": "object"
+            },
+            "MaterialDetailedResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Канада"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "anyOf": [
+                        {
+                            "$ref": "#/components/schemas/EnumValueResource"
+                        },
+                        {
+                            "$ref": "#/components/schemas/MaterialResource"
+                        },
+                        {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                },
+                                {
+                                    "type": "boolean"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/EnumValueResource"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/MaterialResource"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "SearchResultResource": {
+                "properties": {
+                    "materials": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MaterialSearchResult"
+                        }
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FileSearchResult"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FileSearchResult": {
+                "properties": {
+                    "section": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "material": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            },
+                            "name": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "Имя материала"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "highlight": {
+                        "properties": {
+                            "content": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Благодаря <em>удобному</em> для масштабирования характеру PHP и встроенной"
+                                }
+                            },
+                            "name": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Имя <em>удобного</em> файла"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "MaterialSearchResult": {
+                "properties": {
+                    "section": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "material": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "ddb0b1e7-89e1-318b-ad0e-4dc7e2829db2"
+                            },
+                            "name": {
+                                "type": "string",
+                                "format": "uuid",
+                                "example": "Имя материала"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "highlight": {
+                        "properties": {
+                            "name": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "example": "Название <em>удобного</em> материала"
+                                }
+                            }
+                        },
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "Благодаря <em>удобному</em> для масштабирования характеру PHP и встроенной"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SectionFieldResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Название"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Это пример описания поля..."
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "is_present_in_card": {
+                        "type": "boolean"
+                    },
+                    "filter_sort_index": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "oneOf": [
+                            {
+                                "$ref": "#components/schemas/TypeString"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeInteger"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeText"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeWiki"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFloat"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeBoolean"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeEnum"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFile"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeList"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "SectionResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Агенты"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "SectionWithFieldsResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Страны"
+                    },
+                    "image": {
+                        "type": "string",
+                        "example": "absolute://path.to/image.jpg"
+                    },
+                    "is_dictionary": {
+                        "type": "boolean"
+                    },
+                    "is_navigation": {
+                        "type": "boolean"
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SectionFieldResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "UserResource": {
                 "properties": {
                     "id": {
@@ -72,20 +2111,351 @@
                     }
                 },
                 "type": "object"
+            },
+            "TypeString": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "String"
+                        ],
+                        "example": "String"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "255",
+                        "minimum": "1",
+                        "example": "255"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeInteger": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Integer"
+                        ],
+                        "example": "Integer"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeText": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Text"
+                        ],
+                        "example": "Text"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeWiki": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Wiki"
+                        ],
+                        "example": "Wiki"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": "21845",
+                        "minimum": "1",
+                        "example": "0"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeFloat": {
+                "required": [
+                    "name",
+                    "step"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Float"
+                        ],
+                        "example": "Float"
+                    },
+                    "min": {
+                        "type": "number",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0.1"
+                    },
+                    "max": {
+                        "type": "number",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "255.5"
+                    },
+                    "step": {
+                        "type": "number",
+                        "maximum": "2147483647",
+                        "minimum": "-2147483647",
+                        "example": "0.1"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeBoolean": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Boolean"
+                        ],
+                        "example": "Boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeDate": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Date"
+                        ],
+                        "example": "Date"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeDictionary": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Dictionary"
+                        ],
+                        "example": "Dictionary"
+                    },
+                    "of": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeEnum": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "Enum"
+                        ],
+                        "example": "Enum"
+                    },
+                    "of": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    }
+                },
+                "type": "object"
+            },
+            "TypeFile": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "File"
+                        ],
+                        "example": "File"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": "1",
+                        "example": "1"
+                    },
+                    "extensions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TypeSelect": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "String"
+                        ],
+                        "example": "Select"
+                    },
+                    "of": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "TypeList": {
+                "required": [
+                    "name",
+                    "of"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "enum": [
+                            "List"
+                        ],
+                        "example": "List"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": "1",
+                        "example": "1"
+                    },
+                    "max": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": "1",
+                        "example": "1"
+                    },
+                    "of": {
+                        "oneOf": [
+                            {
+                                "$ref": "#components/schemas/TypeEnum"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeDictionary"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFile"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeSelect"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer"
+                    },
+                    "from": {
+                        "type": "integer"
+                    },
+                    "last_page": {
+                        "type": "integer"
+                    },
+                    "per_page": {
+                        "type": "integer"
+                    },
+                    "to": {
+                        "type": "integer"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "path": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
-            "session": {
+            "apiKey": {
                 "type": "apiKey",
-                "description": "A short description for security scheme",
-                "name": "laravel_session",
-                "in": "cookie"
+                "description": "Api key",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     },
     "security": [
         {
-            "session": []
+            "apiKey": []
         }
     ]
 }

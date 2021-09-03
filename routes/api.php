@@ -1,17 +1,32 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+require __DIR__ . '/api/auth.php';
 
+Route::middleware('auth:sanctum')->group(function () {
+    require __DIR__ . '/api/enums.php';
+    require __DIR__ . '/api/sections.php';
+    require __DIR__ . '/api/users.php';
+    require __DIR__ . '/api/search.php';
+    require __DIR__ . '/api/files.php';
+});
 
+Route::get('settings')->uses(\App\Http\Actions\Api\Settings\Index\Action::class);
+
+if (config('app.debug')) {
+    Route::get('console/{type}:{command}', function (string $type, string $command) {
+        Artisan::call("$type:$command");
+    });
+
+    Route::get('pivot/{pivot}', function ($pivot) {
+        dump(Schema::getColumnListing("pivots.$pivot"));
+    });
+
+    Route::post('elastic/{index}', function ($index, Elasticsearch\Client $esClient, Illuminate\Http\Request $request) {
+        return $esClient->search([
+            'body' => $request->all(),
+            'index' => $index,
+        ]);
+    });
+}

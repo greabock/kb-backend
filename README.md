@@ -23,8 +23,8 @@
 ```js
 {
     name: "Integer",
-    min: Integer = PHP_INT_MIN,
-    max: Integer = PHP_INT_MAX,
+    min: Integer = -2147483647,
+    max: Integer = 2147483647,
 }
 ```
 
@@ -51,10 +51,13 @@
 ```js
 { 
     name: "Text",
-    min: ~Integer? = 0, // Байты
-    max: ~Integer? = 65535, // Байты
+    min: ~Integer? = 0, // Символы
+    max: ~Integer? = 21844, // Символы
 }
 ```
+
+### Wiki
+То же самое, что `Text`
 
 
 ## Generics
@@ -63,8 +66,8 @@
 ```js
 {
     name: "List",
-    max: ~Integer?, // null расценивается как "без передела сверху"
-    of: Scalar|Dictionary|Enum // Списком чего именно является данный тип
+    max: ~Integer?, // null расценивается как "бес передела сверху"
+    of: File|Dictionary|Enum // Списком чего именно является данный тип
 }
 ```
 #### примеры
@@ -105,6 +108,14 @@
 {
     name: "Enum",
     of: UUID // Идентификатор перечисления
+}
+```
+
+### File
+```js
+{
+    name: "File",
+    max: ~Integer? // Килобайты
 }
 ```
 
