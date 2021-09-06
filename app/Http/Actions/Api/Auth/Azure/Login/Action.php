@@ -65,7 +65,9 @@ class Action
 
         $user->save();
 
-        return response()->json(['data' => $user->createToken('web')->plainTextToken]);
+        return response()->json(['data' => [
+            'token' => $user->createToken('web')->plainTextToken
+        ]]);
     }
 
 }
