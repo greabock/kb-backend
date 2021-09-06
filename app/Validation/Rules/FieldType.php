@@ -144,6 +144,7 @@ class FieldType
         self::T_STRING,
         self::T_TEXT,
         self::T_WIKI,
+        self::T_SELECT,
     ];
 
     public static function resolveRules($attribute, array $value): array
