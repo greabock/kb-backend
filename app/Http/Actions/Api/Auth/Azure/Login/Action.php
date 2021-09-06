@@ -33,8 +33,8 @@ class Action
                 'password' => Str::random(10),
             ]);
 
+            $user->role = User::ROLE_USER;
             $user->save();
-            $user->role = 'user';
         }
 
         if (!$user->photo) {
@@ -62,7 +62,6 @@ class Action
         $user->name = sprintf('%s %s', $azureUser->getRaw()['givenName'], $azureUser->getRaw()['surname']);
         $user->email = $azureUser->getEmail();
         $user->login = $azureUser->getEmail();
-        $user->role = User::ROLE_USER;
 
         $user->save();
 
