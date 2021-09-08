@@ -31,7 +31,7 @@ class UserResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-            'avatar' => $this->resource->photo,
+            'avatar' => route('files.download', $this->resource->photo),
             'role' => $this->resource->role,
             'login' => $this->resource->login,
             'email' => $this->resource->email,
