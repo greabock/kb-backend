@@ -12,7 +12,7 @@ use OpenApi\Annotations as OA;
  * @OA\Schema(schema="UserResource",
  *    @OA\Property(property="id", type="integer", example="123"),
  *    @OA\Property(property="name", type="string", example="Ульянов Владимир Ильич", nullable=true),
- *    @OA\Property(property="avatar", type="string", example="absolute/path/to/image.jpg", nullable=true),
+ *    @OA\Property(property="photo", type="string", example="absolute/path/to/image.jpg", nullable=true),
  *    @OA\Property(property="role", type="string", enum={"admin", "moderator", "user"}),
  *    @OA\Property(property="login", type="string", example="john15"),
  *    @OA\Property(property="email", type="string", example="user@mail.com", nullable=true),
@@ -31,7 +31,7 @@ class UserResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-            'avatar' => $this->resource->avatar,
+            'photo' => $this->resource->photo,
             'role' => $this->resource->role,
             'login' => $this->resource->login,
             'email' => $this->resource->email,
