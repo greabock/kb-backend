@@ -11,7 +11,7 @@ before_script:
 deploy_dev:
   script:
     # Deploy
-    - ssh -o StrictHostKeyChecking=no knowledge@knowledge.msharks.ru "cd ~/knowledge.msharks.ru/code/ && git pull && git checkout dev && docker-compose stop php-http && docker-compose up -d php-http && docker-compose restart web && docker exec -i kb_php_http composer install && docker exec -i kb_php_http php artisan migrate"
+    - ssh -o StrictHostKeyChecking=no knowledge@knowledge.msharks.ru "cd ~/knowledge.msharks.ru/code/ && git fetch --all && git reset --hard origin/dev && docker-compose stop php-http && docker-compose up -d php-http && docker-compose restart web && docker exec -i kb_php_http composer install && docker exec -i kb_php_http php artisan migrate"
   only:
     - dev
 
@@ -22,3 +22,9 @@ deploy_release:
   only:
     - release
 
+deploy_master:
+  script:
+    # Deploy master branch
+    - ssh -o StrictHostKeyChecking=no knowledge@doxcase-demo.oktadi.ru "cd ~/doxcase-demo.oktadi.ru/data/php-fpm && git fetch --all && git reset --hard origin/master && docker-compose stop php-fpm && docker-compose up -d php-fpm && docker-compose restart nginx && docker exec -i php-fpm composer install && docker exec -i php-fpm php artisan migrate"
+  only:
+    - master
