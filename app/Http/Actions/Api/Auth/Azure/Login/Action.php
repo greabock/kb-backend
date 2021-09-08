@@ -37,25 +37,23 @@ class Action
             $user->save();
         }
 
-        if (!$user->photo) {
-            $http = new HttpClient();
+        $http = new HttpClient();
 
-            $tenant = config('services.azure.tenant');
+        $tenant = config('services.azure.tenant');
 
-            try {
-                $result = $http->request('get', "https://graph.windows.net/$tenant/me/thumbnailPhoto?api-version=1.5", [
-                    'headers' => ['Authorization' => 'Bearer ' . $azureUser->token]
-                ]);
+        try {
+            $result = $http->request('get', "https://graph.windows.net/$tenant/me/thumbnailPhoto?api-version=1.5", [
+                'headers' => ['Authorization' => 'Bearer ' . $azureUser->token]
+            ]);
 
-                $file = $user->id . '.' . explode('/', $result->getHeader('content-type')[0])[1];
+            $file = $user->id . '.' . explode('/', $result->getHeader('content-type')[0])[1];
 
-                Storage::disk('local')->put('users/' . $file, $result->getBody());
-                $user->photo = 'users/' . $file;
+            Storage::disk('public')->put('users/' . $file, $result->getBody());
+            $user->photo = 'users/' . $file;
 
-            } catch (ClientException $e) {
-                if ($e->getResponse()->getStatusCode() !== 404) {
-                    throw $e;
-                }
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() !== 404) {
+                throw $e;
             }
         }
 
