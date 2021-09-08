@@ -48,7 +48,7 @@ class Action
 
                 $file = $user->id . '.' . explode('/', $result->getHeader('content-type')[0])[1];
 
-                Storage::disk('local')->put('users/' . $file, $result->getBody());
+                Storage::disk('public')->put('public/users/' . $file, $result->getBody());
                 $user->photo = 'users/' . $file;
 
             } catch (ClientException $e) {
