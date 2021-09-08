@@ -49,7 +49,7 @@ class Action
             $file = $user->id . '.' . explode('/', $result->getHeader('content-type')[0])[1];
 
             Storage::disk('public')->put('users/' . $file, $result->getBody());
-            $user->photo = 'users/' . $file;
+            $user->photo = url('storage/users' . $file);
 
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() !== 404) {
