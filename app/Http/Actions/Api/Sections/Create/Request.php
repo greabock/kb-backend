@@ -59,6 +59,7 @@ class Request extends ApiRequest
                 'id' => 'sometimes|uuid|unique:sections,id',
                 'title' => 'required|string|max:255',
                 'image' => 'nullable|string|max:255',
+                'description' => 'nullable',
                 'is_dictionary' => 'required|boolean',
                 'is_navigation' => 'required|boolean',
                 'fields' => 'sometimes|array|index_array',
@@ -84,6 +85,7 @@ class Request extends ApiRequest
             'is_dictionary',
             'is_navigation',
             'sort_index',
+            'config' => ['name', 'description'],
             'fields' => [[
                 'id',
                 'title',

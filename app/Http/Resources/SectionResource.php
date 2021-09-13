@@ -17,6 +17,10 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="is_dictionary", type="boolean"),
  *    @OA\Property(property="is_navigation", type="boolean"),
  *    @OA\Property(property="sort_index", type="integer"),
+ *    @OA\Property(property="config", type="object", 
+ *       @OA\Property(property="name", type="string", example="Название"),
+ *       @OA\Property(property="description", type="string", example="Описание"),
+ *    ),
  * )
  *
  * @OA\Schema(schema="SectionWithFieldsResource",
@@ -26,6 +30,10 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="is_dictionary", type="boolean"),
  *    @OA\Property(property="is_navigation", type="boolean"),
  *    @OA\Property(property="sort_index", type="integer"),
+ *    @OA\Property(property="config", type="object", 
+ *       @OA\Property(property="name", type="string", example="Название"),
+ *       @OA\Property(property="description", type="string", example="Описание"),
+ *    ),
  *    @OA\Property(property="fields", type="array",
  *      @OA\Items(ref="#/components/schemas/SectionFieldResource")
  *    )
@@ -48,6 +56,7 @@ class SectionResource extends JsonResource
             'is_dictionary' => $this->resource->is_dictionary,
             'is_navigation' => $this->resource->is_navigation,
             'sort_index' => $this->resource->sort_index,
+            'config' => $this->resource->config,
             'fields' => FieldResource::collection($this->whenLoaded('fields')),
         ];
     }
