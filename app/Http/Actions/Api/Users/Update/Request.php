@@ -29,7 +29,7 @@ class Request extends ApiRequest
             'name' => ['sometimes', 'string'],
             'password' => ['sometimes', 'string'],
             'role' => ['sometimes', Rule::in(User::ROLES)],
-            'photo' => ['sometimes', 'string'],
+            'photo' => ['nullable', 'string'],
         ];
     }
 
