@@ -480,7 +480,7 @@ class FieldType
     {
         return match ($basType['name']) {
             self::T_DATE => [
-                $fieldId => ['array', 'max:2', 'min:2'],
+                $fieldId => [],
                 $fieldId . '.*' => ['date']
             ],
             self::T_FLOAT => [
