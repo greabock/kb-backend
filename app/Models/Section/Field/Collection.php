@@ -28,6 +28,11 @@ class Collection extends EloquentCollection
         ));
     }
 
+    public function dateFields(): Collection
+    {
+        return $this->filter(fn(Field $field) => $field->type['name'] === FieldType::T_DATE);
+    }
+
     public function presentInCard(): self
     {
         return $this->filter(fn(Field $f) => $f->is_present_in_card);

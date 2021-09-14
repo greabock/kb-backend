@@ -554,4 +554,31 @@ class FilterTest extends ActionTestCase
             ->assertJsonCount(0, 'data.files')
             ->assertOk();
     }
+
+    public function testUserCanFilterByDate()
+    {
+        /** @var Section $section */
+        $section = Section::factory()
+            ->has(Section\Field::factory(['type' => ['name' => 'Date']]), 'fields')
+            ->create();
+
+        $section->refresh();
+
+        $data = ['name' => 'Об особенностях Laravel'];
+
+        foreach ($section->fields as $field) {
+            $data[$field->id] = now();
+        }
+
+        /** @var Material $material */
+        $material = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['filter' => [
+            $field->id => [now()->subDay()->format(DATE_W3C), now()->addDay()->format(DATE_W3C)]
+        ]], ['section' => $section->id])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.material.id', $material->id);
+    }
 }

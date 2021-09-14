@@ -212,11 +212,16 @@ class Field extends Model
     public function getFilter($values): array
     {
         if (is_array($values)) {
-            return array_map(function ($value) {
+            return array_map(function ($value) use ($values) {
                 return match ($this->base_type['name']) {
                     FieldType::T_DATE,
                     FieldType::T_FLOAT,
-                    FieldType::T_INTEGER => ['range' => [$this->id => ['gte' => $value[0], 'lte' => $value[1]]]],
+                    FieldType::T_INTEGER => ['range' => [
+                        $this->id => [
+                            'gte' => $values[0],
+                            'lte' => $values[1],
+                        ]
+                    ]],
                     FieldType::T_STRING,
                     FieldType::T_WIKI,
                     FieldType::T_TEXT,
