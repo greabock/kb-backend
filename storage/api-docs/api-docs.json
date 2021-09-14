@@ -458,7 +458,7 @@
         "/groups/{group}": {
             "get": {
                 "tags": [
-                    "Enums"
+                    "Groups"
                 ],
                 "summary": "Получение группы с пользователями",
                 "parameters": [
@@ -493,7 +493,7 @@
             },
             "patch": {
                 "tags": [
-                    "Enums"
+                    "Groups"
                 ],
                 "summary": "Обновление группы",
                 "parameters": [
@@ -2133,6 +2133,19 @@
                     },
                     "sort_index": {
                         "type": "integer"
+                    },
+                    "config": {
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Название"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Описание"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -2159,6 +2172,19 @@
                     },
                     "sort_index": {
                         "type": "integer"
+                    },
+                    "config": {
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Название"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Описание"
+                            }
+                        },
+                        "type": "object"
                     },
                     "fields": {
                         "type": "array",

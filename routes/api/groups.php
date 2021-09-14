@@ -57,7 +57,7 @@ Route::prefix('groups')->name('groups')->group(function () {
      * @OA\Get (
      *     path="/groups/{group}",
      *     security={"apiKey":{}},
-     *     tags={"Enums"},
+     *     tags={"Groups"},
      *     summary="Получение группы с пользователями",
      *     @OA\Parameter(name="enum", in="path"),
      *     @OA\Response(
@@ -83,7 +83,7 @@ Route::prefix('groups')->name('groups')->group(function () {
      * @OA\Patch (
      *     path="/groups/{group}",
      *     security={"apiKey":{}},
-     *     tags={"Enums"},
+     *     tags={"Groups"},
      *     summary="Обновление группы",
      *     @OA\Parameter(name="enum", in="path"),
      *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/EnumUpdateRequest")),
