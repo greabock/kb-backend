@@ -61,6 +61,7 @@ class Request extends ApiRequest
                 'image' => 'nullable|string|max:255',
                 'is_dictionary' => 'sometimes|boolean',
                 'is_navigation' => 'sometimes|boolean',
+                'config' => 'nullable',
                 'fields' => 'sometimes|array|index_array',
                 'fields.*.id' => 'sometimes|uuid|distinct',
                 'fields.*.title' => 'sometimes|string|max:255',
@@ -83,6 +84,7 @@ class Request extends ApiRequest
             'is_dictionary',
             'is_navigation',
             'sort_index',
+            'config' => ['name', 'description'],
             'fields' => [[
                 'id',
                 'title',

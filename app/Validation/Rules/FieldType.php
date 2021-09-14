@@ -144,6 +144,7 @@ class FieldType
         self::T_STRING,
         self::T_TEXT,
         self::T_WIKI,
+        self::T_SELECT,
     ];
 
     public static function resolveRules($attribute, array $value): array
@@ -479,7 +480,7 @@ class FieldType
     {
         return match ($basType['name']) {
             self::T_DATE => [
-                $fieldId => ['array', 'max:2', 'min:2'],
+                $fieldId => [],
                 $fieldId . '.*' => ['date']
             ],
             self::T_FLOAT => [

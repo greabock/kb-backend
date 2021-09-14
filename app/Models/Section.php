@@ -72,6 +72,11 @@ class Section extends Model
         'is_dictionary',
         'is_navigation',
         'sort_index',
+        'config',
+    ];
+
+    protected $casts = [
+        'config' => 'array'
     ];
 
     protected array $defaultMapping = [
