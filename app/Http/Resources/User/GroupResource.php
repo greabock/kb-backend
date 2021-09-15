@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\User;
 
-
 use App\Http\Resources\UserResource;
 use App\Models\User\Group;
 use Illuminate\Http\Resources\Json\JsonResource;
