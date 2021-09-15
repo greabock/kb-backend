@@ -155,7 +155,7 @@ class Field extends Model
             FieldType::T_LIST => $this->getRelatedClassAttribute($type['of']),
             FieldType::T_ENUM => Enum\Value::class,
             FieldType::T_FILE => File::class,
-            FieldType::T_DICTIONARY => Section::find($type['of'])->class_name,
+            FieldType::T_DICTIONARY => Section::withTrashed()->find($type['of'])->class_name,
             default => throw new Exception("Type [{$type['name']}] is not relation type.")
         };
     }
