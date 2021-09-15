@@ -91,7 +91,7 @@ Artisan::command('elastic:clear', function () {
 });
 
 \Artisan::command('index:refresh', function () {
-    foreach (Section::cursor() as $section) {
+    foreach (Section::withoutTrashed()->cursor() as $section) {
         app()->call([(new \App\Jobs\DropSectionIndex($section->id)), 'handle']);
         app()->call([(new \App\Jobs\CreateSectionIndex($section->id)), 'handle']);
         foreach ($section->class_name::cursor() as $material) {
