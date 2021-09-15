@@ -12,6 +12,6 @@ class Action
 {
     public function __invoke(): AnonymousResourceCollection
     {
-        return GroupResource::collection(Group::with('users')->all());
+        return GroupResource::collection(Group::with('users')->get());
     }
 }
