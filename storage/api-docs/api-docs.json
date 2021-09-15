@@ -391,7 +391,7 @@
                 "summary": "Получение списка групп",
                 "responses": {
                     "200": {
-                        "description": "Список перечислений",
+                        "description": "Список групп",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -399,7 +399,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#components/schemas/EnumResource"
+                                                "$ref": "#components/schemas/GroupResource"
                                             }
                                         }
                                     },
@@ -425,7 +425,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EnumCreateRequest"
+                                "$ref": "#/components/schemas/GroupCreateRequest"
                             }
                         }
                     }
@@ -438,7 +438,7 @@
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#components/schemas/EnumDetailedResource"
+                                            "$ref": "#components/schemas/GroupResource"
                                         }
                                     },
                                     "type": "object"
@@ -456,32 +456,20 @@
             }
         },
         "/groups/{group}": {
-            "get": {
+            "delete": {
                 "tags": [
                     "Groups"
                 ],
-                "summary": "Получение группы с пользователями",
+                "summary": "Удаление группы",
                 "parameters": [
                     {
-                        "name": "enum",
+                        "name": "group",
                         "in": "path"
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Конкретная группа со списком пользователей",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#components/schemas/EnumDetailedResource"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Удалено"
                     },
                     "401": {
                         "description": "Неаутентифицирован"
@@ -498,7 +486,7 @@
                 "summary": "Обновление группы",
                 "parameters": [
                     {
-                        "name": "enum",
+                        "name": "group",
                         "in": "path"
                     }
                 ],
@@ -506,7 +494,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EnumUpdateRequest"
+                                "$ref": "#/components/schemas/GroupCreateRequest"
                             }
                         }
                     }
@@ -519,7 +507,7 @@
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                            "$ref": "#components/schemas/GroupResource"
                                         }
                                     },
                                     "type": "object"
@@ -1402,6 +1390,37 @@
                 },
                 "type": "object"
             },
+            "GroupCreateRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Имя группы"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "MaterialCreateRequest": {
                 "required": [
                     "title"
@@ -1853,6 +1872,19 @@
                 },
                 "type": "object"
             },
+            "EnumValueResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Пример названия значения перечисления"
+                    }
+                },
+                "type": "object"
+            },
             "EnumResource": {
                 "properties": {
                     "id": {
@@ -1881,19 +1913,6 @@
                         "items": {
                             "$ref": "#/components/schemas/EnumValueResource"
                         }
-                    }
-                },
-                "type": "object"
-            },
-            "EnumValueResource": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Пример названия значения перечисления"
                     }
                 },
                 "type": "object"
@@ -2111,6 +2130,66 @@
                 },
                 "type": "object"
             },
+            "SectionFieldResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Название"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Это пример описания поля..."
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "is_present_in_card": {
+                        "type": "boolean"
+                    },
+                    "filter_sort_index": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "oneOf": [
+                            {
+                                "$ref": "#components/schemas/TypeString"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeInteger"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeText"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeWiki"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFloat"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeBoolean"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeEnum"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFile"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeList"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "SectionResource": {
                 "properties": {
                     "id": {
@@ -2195,62 +2274,22 @@
                 },
                 "type": "object"
             },
-            "SectionFieldResource": {
+            "GroupResource": {
                 "properties": {
                     "id": {
+                        "type": "integer",
+                        "example": "123"
+                    },
+                    "name": {
+                        "nullable": true,
                         "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                        "example": "Ульянов Владимир Ильич"
                     },
-                    "title": {
-                        "type": "string",
-                        "example": "Название"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Это пример описания поля..."
-                    },
-                    "sort_index": {
-                        "type": "integer"
-                    },
-                    "required": {
-                        "type": "boolean"
-                    },
-                    "is_present_in_card": {
-                        "type": "boolean"
-                    },
-                    "filter_sort_index": {
-                        "type": "integer"
-                    },
-                    "type": {
-                        "oneOf": [
-                            {
-                                "$ref": "#components/schemas/TypeString"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeInteger"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeText"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeWiki"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeFloat"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeBoolean"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeEnum"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeFile"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeList"
-                            }
-                        ]
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
                     }
                 },
                 "type": "object"

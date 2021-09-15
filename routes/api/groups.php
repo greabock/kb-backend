@@ -13,10 +13,10 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     summary="Получение списка групп",
      *     @OA\Response(
      *          response="200",
-     *          description="Список перечислений",
+     *          description="Список групп",
      *          @OA\JsonContent(type="object",
      *             @OA\Property(property="data", type="array",
-     *                @OA\Items(ref="#components/schemas/EnumResource")
+     *                @OA\Items(ref="#components/schemas/GroupResource")
      *             )
      *          )
      *     ),
@@ -35,12 +35,12 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     security={"apiKey":{}},
      *     tags={"Groups"},
      *     summary="Создание группы",
-     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/EnumCreateRequest")),
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/GroupCreateRequest")),
      *     @OA\Response(
      *          response="201",
      *          description="Созданная группа",
      *          @OA\JsonContent(type="object",
-     *             @OA\Property(property="data", ref="#components/schemas/EnumDetailedResource")
+     *             @OA\Property(property="data", ref="#components/schemas/GroupResource")
      *          )
      *     ),
      *     @OA\Response(
@@ -49,23 +49,19 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     )
      * )
      */
-    Route::post('/')->uses(Groups\Index\Action::class)->name('.create');
-
+    Route::post('/')->uses(Groups\Create\Action::class)->name('.create');
 
 
     /**
-     * @OA\Get (
+     * @OA\Delete  (
      *     path="/groups/{group}",
      *     security={"apiKey":{}},
      *     tags={"Groups"},
-     *     summary="Получение группы с пользователями",
-     *     @OA\Parameter(name="enum", in="path"),
+     *     summary="Удаление группы",
+     *     @OA\Parameter(name="group", in="path"),
      *     @OA\Response(
-     *          response="200",
-     *          description="Конкретная группа со списком пользователей",
-     *          @OA\JsonContent(type="object",
-     *             @OA\Property(property="data", ref="#components/schemas/EnumDetailedResource")
-     *          )
+     *          response="204",
+     *          description="Удалено",
      *     ),
      *     @OA\Response(
      *          response="401",
@@ -73,10 +69,7 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     )
      * )
      */
-    Route::get('{group}')->uses(Groups\Index\Action::class)->name('.show');
-
-    Route::delete('{group}')->uses(Groups\Index\Action::class)->name('.delete');
-
+    Route::delete('{group}')->uses(Groups\Delete\Action::class)->name('.delete');
 
 
     /**
@@ -85,13 +78,13 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     security={"apiKey":{}},
      *     tags={"Groups"},
      *     summary="Обновление группы",
-     *     @OA\Parameter(name="enum", in="path"),
-     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/EnumUpdateRequest")),
+     *     @OA\Parameter(name="group", in="path"),
+     *     @OA\RequestBody(@OA\JsonContent(ref="#/components/schemas/GroupCreateRequest")),
      *     @OA\Response(
      *          response="200",
      *          description="Обновленная группа",
      *          @OA\JsonContent(type="object",
-     *             @OA\Property(property="data", ref="#components/schemas/EnumWithValuesResource")
+     *             @OA\Property(property="data", ref="#components/schemas/GroupResource")
      *          )
      *     ),
      *     @OA\Response(
@@ -100,5 +93,5 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     )
      * )
      */
-    Route::patch('{group}')->uses(Groups\Index\Action::class)->name('.update');
+    Route::patch('{group}')->uses(Groups\Update\Action::class)->name('.update');
 });

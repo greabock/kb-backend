@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Actions\Api\Groups\Index;
 
+use App\Http\Resources\User\GroupResource;
+use App\Models\User\Group;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
 class Action
 {
-    public function __invoke()
+    public function __invoke(): AnonymousResourceCollection
     {
-        // TODO: Implement __invoke() method.
+        return GroupResource::collection(Group::with('users')->all());
     }
 }
