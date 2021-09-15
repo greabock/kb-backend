@@ -119,7 +119,7 @@ class Search
         $highlightFields = ['name' => (object)[]];
 
         foreach ($fields->searchableFields() as $field) {
-            $highlightFields[$field->id] = (object)[];
+            $highlightFields[$field->searchableKey()] = (object)[];
         }
 
         $body = [
@@ -165,7 +165,6 @@ class Search
                 /** @var Section\Field $field */
 
                 $should = [...$should, ... $field->getFilter($value)];
-
             }
 
             $body['query']['bool']['must'][] = [

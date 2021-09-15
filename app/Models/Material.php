@@ -53,7 +53,9 @@ abstract class Material extends Model
         ];
 
         foreach ($this->section->fields as $field) {
-            $data[$field->id] = $field->toIndex($this->getAttribute($field->id));
+            foreach ($field->toIndex($this->getAttribute($field->id)) as $key => $value) {
+                $data[$key] = $value;
+            }
         }
 
         return $data;
