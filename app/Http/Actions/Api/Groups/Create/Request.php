@@ -32,7 +32,7 @@ class Request extends ApiRequest
     {
         return [
             'name',
-            'users' => ['id']
+            'users' => [['id']]
         ];
     }
 }
