@@ -480,16 +480,13 @@ class FieldType
     {
         return match ($basType['name']) {
             self::T_DATE => [
-                $fieldId => [],
-                $fieldId . '.*' => ['date']
+                $fieldId . '.*' => ['nullable', 'date']
             ],
             self::T_FLOAT => [
-                $fieldId => ['array', 'max:2', 'min:2'],
-                $fieldId . '.*' => ['number']
+                $fieldId . '.*' => ['nullable', 'number']
             ],
             self::T_INTEGER => [
-                $fieldId => ['array', 'max:2', 'min:2'],
-                $fieldId . '.*' => ['integer']
+                $fieldId . '.*' => ['nullable', 'integer'],
             ],
             self::T_STRING,
             self::T_WIKI,
