@@ -1559,6 +1559,58 @@
                         "minimum": "1",
                         "example": "Имя раздела"
                     },
+                    "access": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "only",
+                            "except"
+                        ]
+                    },
+                    "config": {
+                        "nullable": true,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Наименование"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Что-то тоам про поле 'name'"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
                     "fields": {
                         "type": "array",
                         "items": {
@@ -1687,6 +1739,58 @@
                         "minimum": "1",
                         "example": "Имя раздела"
                     },
+                    "access": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "only",
+                            "except"
+                        ]
+                    },
+                    "config": {
+                        "nullable": true,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Наименование"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Что-то тоам про поле 'name'"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
                     "fields": {
                         "type": "array",
                         "items": {
@@ -1766,10 +1870,6 @@
                     "role"
                 ],
                 "properties": {
-                    "login": {
-                        "type": "string",
-                        "example": "ninja24"
-                    },
                     "email": {
                         "type": "string",
                         "example": "some@domain.com"
@@ -1823,10 +1923,6 @@
             },
             "UserUpdateRequest": {
                 "properties": {
-                    "login": {
-                        "type": "string",
-                        "example": "ninja24"
-                    },
                     "email": {
                         "type": "string",
                         "example": "some@domain.com"
@@ -2317,10 +2413,6 @@
                             "moderator",
                             "user"
                         ]
-                    },
-                    "login": {
-                        "type": "string",
-                        "example": "john15"
                     },
                     "email": {
                         "nullable": true,
