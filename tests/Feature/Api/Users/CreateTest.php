@@ -17,7 +17,6 @@ class CreateTest extends ActionTestCase
     public function testAdminCanCreateUser()
     {
         $this->callAuthorizedByAdminRouteAction([
-            'login' => 'user',
             'email' => 'user@not.admin',
             'name' => 'user',
             'password' => 'user',

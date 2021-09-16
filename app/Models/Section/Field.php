@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Models\Section;
 
+use Eloquent;
+use Exception;
 use App\Models\Enum;
 use App\Models\File;
 use App\Models\Material;
 use App\Models\Section;
 use App\Validation\Rules\FieldType;
-use Database\Factories\Section\FieldFactory;
-use Eloquent;
-use Exception;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Database\Factories\Section\FieldFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -65,6 +65,8 @@ use Illuminate\Support\Carbon;
  * @method static QueryBuilder|Field withoutTrashed()
  * @method static Builder|Field whereFilterSortIndex($value)
  * @method static FieldFactory factory(...$parameters)
+ * @method static Field\Collection|static[] all($columns = ['*'])
+ * @method static Field\Collection|static[] get($columns = ['*'])
  */
 class Field extends Model
 {

@@ -11,7 +11,6 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(schema="UserUpdateRequest",
- *     @OA\Property(property="login", type="string", example="ninja24"),
  *     @OA\Property(property="email", type="string", example="some@domain.com"),
  *     @OA\Property(property="name", type="string", example="Иванов Иван"),
  *     @OA\Property(property="password", type="string", example="qwerty12345"),
@@ -24,7 +23,6 @@ class Request extends ApiRequest
     public function rules(): array
     {
         return [
-            'login' => ['sometimes', 'string', Rule::unique('users', 'login')->ignore($this->user->id, 'id')],
             'email' => ['sometimes', 'string', Rule::unique('users', 'email')->ignore($this->user->id, 'id')],
             'name' => ['sometimes', 'string'],
             'password' => ['sometimes', 'string'],
@@ -36,7 +34,7 @@ class Request extends ApiRequest
     public function struct(): array
     {
         return [
-            'login', 'email', 'name', 'photo', 'password', 'role'
+            'email', 'name', 'photo', 'password', 'role'
         ];
     }
 }

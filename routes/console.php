@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('user:create', function () {
     /** @var ClosureCommand $this */
     $user = new User();
-    $user->login = $this->ask('Логин пользователя');
     $user->name = $this->ask('Имя пользователя');
     $user->password = $this->ask('Пароль пользователя');
     $user->super = $this->confirm('Суперпользователь?', false);

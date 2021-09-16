@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\User\Group;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection as SupportCollection;
 use JetBrains\PhpStorm\ArrayShape;
 use Str;
@@ -56,6 +58,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static QueryBuilder|Section onlyTrashed()
  * @method static SectionFactory factory(...$parameters)
  * @mixin Eloquent
+ * @property array|null $config
+ * @property string $access
+ * @property-read Collection|Group[] $groups
+ * @property-read int|null $groups_count
+ * @property-read Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
+ * @method static Section\Collection|static[] all($columns = ['*'])
+ * @method static Section\Collection|static[] get($columns = ['*'])
+ * @method static Builder|Section whereAccess($value)
+ * @method static Builder|Section whereConfig($value)
  */
 class Section extends Model
 {
@@ -184,5 +196,15 @@ class Section extends Model
     public function newCollection(array $models = []): Section\Collection
     {
         return new Section\Collection($models);
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 }

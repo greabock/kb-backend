@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models\Enum;
 
+use Database\Factories\Enum\ValueFactory;
 use Eloquent;
 use App\Models\Enum;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder as BuilderAlias;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,28 +17,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\Enum\Value
- *
- * @method static Builder|Value newModelQuery()
- * @method static Builder|Value newQuery()
- * @method static Builder|Value query()
- * @mixin Eloquent
  * @property int $id
  * @property string $title
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property string $enum_id
+ * @property Carbon|null $deleted_at
+ * @property-read Enum $of
+ * @method static Builder|Value newModelQuery()
+ * @method static Builder|Value newQuery()
+ * @method static Builder|Value query()
  * @method static Builder|Value whereCreatedAt($value)
  * @method static Builder|Value whereId($value)
  * @method static Builder|Value whereTitle($value)
  * @method static Builder|Value whereUpdatedAt($value)
- * @property string $enum_id
- * @property-read Enum $of
  * @method static Builder|Value whereEnumId($value)
- * @property Carbon|null $deleted_at
- * @method static \Database\Factories\Enum\ValueFactory factory(...$parameters)
- * @method static \Illuminate\Database\Query\Builder|Value onlyTrashed()
+ * @method static ValueFactory factory(...$parameters)
+ * @method static BuilderAlias|Value onlyTrashed()
  * @method static Builder|Value whereDeletedAt($value)
- * @method static \Illuminate\Database\Query\Builder|Value withTrashed()
- * @method static \Illuminate\Database\Query\Builder|Value withoutTrashed()
+ * @method static BuilderAlias|Value withTrashed()
+ * @method static BuilderAlias|Value withoutTrashed()
+ * @mixin Eloquent
  */
 class Value extends Model
 {

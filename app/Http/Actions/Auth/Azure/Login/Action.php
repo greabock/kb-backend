@@ -60,7 +60,6 @@ class Action
 
         $user->name = sprintf('%s %s', $azureUser->getRaw()['givenName'], $azureUser->getRaw()['surname']);
         $user->email = $azureUser->getEmail();
-        $user->login = $azureUser->getEmail();
 
         $user->save();
 

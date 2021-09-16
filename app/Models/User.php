@@ -29,6 +29,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property bool $super
  * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection|PersonalAccessToken[] $tokens
@@ -47,6 +48,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereRole($value)
  * @method static Builder|User whereUpdatedAt($value)
+ * @method static Builder|User whereSuper($value)
  * @mixin Eloquent
  */
 class User extends Authenticatable
@@ -71,7 +73,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'login',
         'password',
         'role',
         'photo',
