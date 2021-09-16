@@ -197,12 +197,9 @@ class Field extends Model
         return $this->getAttribute('is_present_in_card');
     }
 
-    public function toIndex($value): array
+    public function toIndex($value): mixed
     {
-        return array_filter([
-            $this->id => FieldType::toIndex($this->type, $value),
-            $this->id . '_name' => empty($s = FieldType::toIndexName($this->type, $value)) ? null : $s,
-        ]);
+        return FieldType::toIndex($this->type, $value);
     }
 
     public function getBaseTypeAttribute(): array
@@ -283,15 +280,5 @@ class Field extends Model
         }
 
         return true;
-    }
-
-    public function searchableKey(): string
-    {
-        return match ($this->base_type['name']) {
-            FieldType::T_DICTIONARY,
-            FieldType::T_SELECT,
-            FieldType::T_ENUM => $this->id . '_name',
-            default => $this->id
-        };
     }
 }

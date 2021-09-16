@@ -43,6 +43,7 @@ class Action
             $index,
         ) : collect();
 
+
         $files = (!$request->get('materials', false) || !empty($request->get('extensions', []))) && $this->filtersIsEmpty($request->get('filter', [])) ? $search->searchFiles(
             $request->get('search') ?? '',
             $request->get('extensions', []),
