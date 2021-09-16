@@ -9,7 +9,7 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(schema="LoginRequest",
- *    @OA\Property(property="login", type="string", example="user@some.com"),
+ *    @OA\Property(property="email", type="string", example="user@some.com"),
  *    @OA\Property(property="password", type="string", example="123123"),
  * )
  */
@@ -18,7 +18,7 @@ class Request extends FormRequest
     public function rules(): array
     {
         return [
-            'login' => 'required',
+            'email' => 'required',
             'password' => 'required',
         ];
     }

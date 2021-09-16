@@ -15,16 +15,16 @@ class Action
 {
     public function __invoke(Request $request, Guard $guard): JsonResponse|ApiTokenResource
     {
-        if ($guard->validate($request->only(['login', 'password']))) {
+        if ($guard->validate($request->only(['email', 'password']))) {
 
-            $user = User::where('login', $request->get('login'))->firstOrFail();
+            $user = User::where('email', $request->get('email'))->firstOrFail();
 
             return new ApiTokenResource($user->createToken('web'));
         }
 
         $errors = new MessageBag();
 
-        $errors->add('login', 'Неверное имя пользователя или пароль');
+        $errors->add('email', 'Неверный Email или пароль');
 
         return response()->json(compact('errors'), Response::HTTP_UNAUTHORIZED);
     }
