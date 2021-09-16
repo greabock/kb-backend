@@ -1316,7 +1316,7 @@
         "schemas": {
             "LoginRequest": {
                 "properties": {
-                    "login": {
+                    "email": {
                         "type": "string",
                         "example": "user@some.com"
                     },
