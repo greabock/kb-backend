@@ -580,17 +580,5 @@ class FilterTest extends ActionTestCase
         ]], ['section' => $section->id])
             ->assertOk()
             ->assertJsonPath('data.materials.0.material.id', $material->id);
-
-        $this->callRouteAction(['filter' => [
-            $field->id => [null, now()->addDay()->format(DATE_W3C)]
-        ]], ['section' => $section->id])
-            ->assertOk()
-            ->assertJsonPath('data.materials.0.material.id', $material->id);
-
-        $this->callRouteAction(['filter' => [
-            $field->id => [now()->subDay()->format(DATE_W3C), null]
-        ]], ['section' => $section->id])
-            ->assertOk()
-            ->assertJsonPath('data.materials.0.material.id', $material->id);
     }
 }
