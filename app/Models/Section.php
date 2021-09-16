@@ -82,6 +82,7 @@ class Section extends Model
         'title',
         'image',
         'is_dictionary',
+        'access',
         'is_navigation',
         'sort_index',
         'config',
