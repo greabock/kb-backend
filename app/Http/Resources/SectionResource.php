@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources;
 
 use App\Http\Resources\Section\FieldResource;
+use App\Http\Resources\User\GroupResource;
 use App\Models\Section;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
@@ -17,7 +18,7 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="is_dictionary", type="boolean"),
  *    @OA\Property(property="is_navigation", type="boolean"),
  *    @OA\Property(property="sort_index", type="integer"),
- *    @OA\Property(property="config", type="object", 
+ *    @OA\Property(property="config", type="object",
  *       @OA\Property(property="name", type="string", example="Название"),
  *       @OA\Property(property="description", type="string", example="Описание"),
  *    ),
@@ -30,7 +31,7 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="is_dictionary", type="boolean"),
  *    @OA\Property(property="is_navigation", type="boolean"),
  *    @OA\Property(property="sort_index", type="integer"),
- *    @OA\Property(property="config", type="object", 
+ *    @OA\Property(property="config", type="object",
  *       @OA\Property(property="name", type="string", example="Название"),
  *       @OA\Property(property="description", type="string", example="Описание"),
  *    ),
@@ -58,6 +59,8 @@ class SectionResource extends JsonResource
             'sort_index' => $this->resource->sort_index,
             'config' => $this->resource->config,
             'fields' => FieldResource::collection($this->whenLoaded('fields')),
+            'users' => UserResource::collection($this->whenLoaded('users')),
+            'groups' => GroupResource::collection($this->whenLoaded('groups')),
         ];
     }
 }

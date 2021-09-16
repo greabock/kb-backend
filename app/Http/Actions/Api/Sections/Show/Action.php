@@ -12,6 +12,8 @@ class Action
     public function __invoke(Section $section): SectionResource
     {
         $section->load('fields');
+        $section->load('groups');
+        $section->load('users');
 
         return new SectionResource($section);
     }
