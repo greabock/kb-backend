@@ -117,7 +117,6 @@ class UpdateTest extends ActionTestCase
             ->assertOk();
     }
 
-
     public function testUserCanAddListOfEnum()
     {
         /** @var Section $section */

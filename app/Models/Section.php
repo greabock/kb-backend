@@ -147,6 +147,14 @@ class Section extends Model
             $this->load('fields');
         }
 
+        if (!$this->relationLoaded('users')) {
+            $this->load('users');
+        }
+
+        if (!$this->relationLoaded('groups')) {
+            $this->load('groups');
+        }
+
         return $this->fields->relations();
     }
 
@@ -207,5 +215,25 @@ class Section extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'access_section_user');
+    }
+
+    public function hasAccess(User $user): bool
+    {
+        if ($user->role === User::ROLE_ADMIN || $user->super) {
+            return true;
+        }
+
+        return match ($this->access) {
+            'all' => true,
+            'only' => $this->users->some(fn(User $u) => $u->is($user))
+                || $this->groups->some(function (Group $group) use ($user) {
+                    return $user->groups->some(fn(Group $g) => $g->is($group));
+                }),
+            'except' => $this->users->every(fn(User $u) => !$u->is($user))
+                && $this->groups->every(function (Group $group) use ($user) {
+                    return !$user->groups->some(fn(Group $g) => $g->is($group));
+                }),
+            default => throw new \Exception("Unknown access mode [$this->access]"),
+        };
     }
 }

@@ -18,7 +18,7 @@ class Action
                 static fn(Section $section) => $section->fill($struct)->save()
             );
         }
-        
+
         return SectionResource::collection($sections ?? []);
     }
 }

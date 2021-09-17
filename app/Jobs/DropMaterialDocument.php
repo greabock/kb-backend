@@ -35,10 +35,15 @@ class DropMaterialDocument implements ShouldQueue, ShouldBeUnique
         /** @var Material $material */
         $material = $this->materialClass::withTrashed()->find($this->materialId);
 
-        $esClient->delete([
+        if($esClient->exists([
             'index' => $material->sectionId . '_write',
             'id' => $material->id,
-        ]);
+        ])) {
+            $esClient->delete([
+                'index' => $material->sectionId . '_write',
+                'id' => $material->id,
+            ]);
+        }
     }
 
     public function uniqueId(): string

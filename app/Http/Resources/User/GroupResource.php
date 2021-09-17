@@ -24,10 +24,9 @@ class GroupResource extends JsonResource
     public function toArray($request)
     {
         return [
-            
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-            'users' => UserResource::collection($this->whenLoaded('users')),
+            'users' => $this->whenLoaded('users', fn() => UserResource::collection($this->resource->users)),
         ];
     }
 }

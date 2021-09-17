@@ -20,11 +20,6 @@ use OpenApi\Annotations as OA;
  */
 class UserResource extends JsonResource
 {
-    public function __construct(User $resource)
-    {
-        parent::__construct($resource);
-    }
-
     public function toArray($request)
     {
         return [

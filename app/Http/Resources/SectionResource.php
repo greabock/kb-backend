@@ -44,11 +44,6 @@ use OpenApi\Annotations as OA;
  */
 class SectionResource extends JsonResource
 {
-    public function __construct(Section $resource)
-    {
-        parent::__construct($resource);
-    }
-
     public function toArray($request)
     {
         return [
@@ -60,9 +55,9 @@ class SectionResource extends JsonResource
             'sort_index' => $this->resource->sort_index,
             'config' => $this->resource->config,
             'access' => $this->resource->access,
-            'fields' => FieldResource::collection($this->whenLoaded('fields')),
-            'users' => UserResource::collection($this->whenLoaded('users')),
-            'groups' => GroupResource::collection($this->whenLoaded('groups')),
+            'fields' => $this->whenLoaded('fields', fn() => FieldResource::collection($this->resource->fields)),
+            'users' => $this->whenLoaded('users', fn() => UserResource::collection($this->resource->users)),
+            'groups' => $this->whenLoaded('groups', fn() => GroupResource::collection($this->resource->groups)),
         ];
     }
 }
