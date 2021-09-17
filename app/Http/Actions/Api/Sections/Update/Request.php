@@ -61,10 +61,6 @@ use OpenApi\Annotations as OA;
  */
 class Request extends ApiRequest
 {
-    public function authorize()
-    {
-        return $this->section->hasAccess($this->user());
-    }
 
     public function rules(BaseRequest $request): array
     {
