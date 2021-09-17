@@ -57,9 +57,15 @@ use OpenApi\Annotations as OA;
  *       )
  *    )
  * )
+ * @property Section $section
  */
 class Request extends ApiRequest
 {
+    public function authorize()
+    {
+        return $this->section->hasAccess($this->user());
+    }
+
     public function rules(BaseRequest $request): array
     {
         $data = $request->all();
@@ -81,7 +87,7 @@ class Request extends ApiRequest
                 'access' => 'sometimes|nullable|in:all,only,except',
                 'config' => 'nullable',
                 'users' => 'sometimes|array|index_array',
-                'users.*.id' => 'sometimes|id|distinct',
+                'users.*.id' => 'sometimes|integer|distinct',
                 'groups' => 'sometimes|array|index_array',
                 'groups.*.id' => 'sometimes|uuid|distinct',
                 'fields' => 'sometimes|array|index_array',
