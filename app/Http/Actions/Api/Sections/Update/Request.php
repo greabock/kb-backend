@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Actions\Api\Sections\Update;
 
 use App\Http\Actions\Api\ApiRequest;
+use App\Models\Section;
 use App\Validation\Rules\FieldType;
 use Illuminate\Http\Request as BaseRequest;
 use OpenApi\Annotations as OA;
@@ -23,7 +24,7 @@ use OpenApi\Annotations as OA;
  *     ),
  *     @OA\Property(property="users", type="array",
  *       @OA\Items(type="object", required={"id"},
- *          @OA\Property(property="id", type="string", example="123e4567-e89b-12d3-a456-426655440000"),
+ *          @OA\Property(property="id", type="integer", example="123"),
  *       )
  *     ),
  *     @OA\Property(property="groups", type="array",
@@ -80,7 +81,7 @@ class Request extends ApiRequest
                 'access' => 'sometimes|nullable|in:all,only,except',
                 'config' => 'nullable',
                 'users' => 'sometimes|array|index_array',
-                'users.*.id' => 'sometimes|uuid|distinct',
+                'users.*.id' => 'sometimes|id|distinct',
                 'groups' => 'sometimes|array|index_array',
                 'groups.*.id' => 'sometimes|uuid|distinct',
                 'fields' => 'sometimes|array|index_array',
