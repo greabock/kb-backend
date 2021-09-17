@@ -1589,8 +1589,8 @@
                             ],
                             "properties": {
                                 "id": {
-                                    "type": "string",
-                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                    "type": "integer",
+                                    "example": "123"
                                 }
                             },
                             "type": "object"
@@ -1769,8 +1769,8 @@
                             ],
                             "properties": {
                                 "id": {
-                                    "type": "string",
-                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                    "type": "integer",
+                                    "example": "123"
                                 }
                             },
                             "type": "object"
@@ -2308,6 +2308,14 @@
                     },
                     "sort_index": {
                         "type": "integer"
+                    },
+                    "access": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "only",
+                            "except"
+                        ]
                     },
                     "config": {
                         "properties": {
