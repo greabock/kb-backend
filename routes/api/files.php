@@ -39,9 +39,14 @@ Route::prefix('files')->name('files')->group(function () {
     Route::post('/')->name('.upload')
         ->uses(Files\Upload\Action::class);
 
-    Route::get('/{file}')->name('.download')
+    Route::get('/{file}')->name('.sign')
         ->uses(Files\Download\Action::class)
+        ->middleware('signed')
         ->withoutMiddleware(['auth:sanctum']);
+
+    Route::get('/{file}/sign')->name('.download')
+        ->uses(Files\Sign\Action::class)
+        ->middleware('signed');
 
     /**
      * @OA\Patch (
