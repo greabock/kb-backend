@@ -12,7 +12,7 @@ class Action
     public function __invoke(File $file)
     {
         return [
-            'data' => return \URL::temporarySignedRoute(
+            'data' => \URL::temporarySignedRoute(
                 'files.download', now()->addMinutes(5), ['user' => $file->id]
             ),
         ];
