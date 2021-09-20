@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Actions\Api\Files\Sgin;
+namespace App\Http\Actions\Api\Files\Sign;
 
 use App\Models\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
