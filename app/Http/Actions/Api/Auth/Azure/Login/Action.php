@@ -21,14 +21,12 @@ class Action
         /** @var \SocialiteProviders\Manager\OAuth2\User $azureUser */
         $azureUser = Socialite::driver('azure')->stateless()->user();
 
-        $user = User::where('login', $azureUser->getEmail())
-            ->orWhere('login', $azureUser->getName())
-            ->first();
+        $user = User::where('email', $azureUser->getEmail())->first();
 
         if (!$user) {
             /** @var User $user */
             $user = User::make([
-                'login' => $azureUser->getEmail(),
+                'email' => $azureUser->getEmail(),
                 'name' => sprintf('%s %s', $azureUser->getRaw()['givenName'], $azureUser->getRaw()['surname']),
                 'password' => Str::random(10),
             ]);
