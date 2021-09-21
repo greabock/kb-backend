@@ -53,9 +53,8 @@ Route::prefix('files')->name('files')->group(function () {
      *     @OA\Parameter(name="file", in="path"),
      *     @OA\Response(
      *          response="200",
-     *          description="Обновленное перечисление",
      *          @OA\JsonContent(type="object",
-     *             @OA\Property(property="data", type="string")
+     *             @OA\Property(property="data", type="string", description="Подписанная ссылка")
      *          )
      *     ),
      *     @OA\Response(
@@ -73,14 +72,14 @@ Route::prefix('files')->name('files')->group(function () {
      *     path="/files/{file}",
      *     security={"apiKey":{}},
      *     tags={"Files"},
-     *     summary="Обновление перечисления",
+     *     summary="Обновление файла",
      *     @OA\Parameter(name="file", in="path"),
      *     @OA\RequestBody(@OA\Schema(type="object", required={"name"},
      *          @OA\Property(property="name", type="string")
      *     )),
      *     @OA\Response(
      *          response="200",
-     *          description="Обновленное перечисление",
+     *          description="Обновленный файл",
      *          @OA\JsonContent(type="object",
      *             @OA\Property(property="data", ref="#components/schemas/FileResource")
      *          )
