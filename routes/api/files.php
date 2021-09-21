@@ -64,8 +64,7 @@ Route::prefix('files')->name('files')->group(function () {
      * )
      */
     Route::get('/{file}/sign')->name('.sign')
-        ->uses(Files\Sign\Action::class)
-        ->middleware('signed');
+        ->uses(Files\Sign\Action::class);
 
     /**
      * @OA\Patch (
