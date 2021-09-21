@@ -39,12 +39,32 @@ Route::prefix('files')->name('files')->group(function () {
     Route::post('/')->name('.upload')
         ->uses(Files\Upload\Action::class);
 
-    Route::get('/{file}')->name('.sign')
+    Route::get('/{file}')->name('.download')
         ->uses(Files\Download\Action::class)
         ->middleware('signed')
         ->withoutMiddleware(['auth:sanctum']);
 
-    Route::get('/{file}/sign')->name('.download')
+    /**
+     * @OA\Get (
+     *     path="/files/{file}/sign",
+     *     security={"apiKey":{}},
+     *     tags={"Files"},
+     *     summary="Получение подписанной ссылки на файл",
+     *     @OA\Parameter(name="file", in="path"),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Обновленное перечисление",
+     *          @OA\JsonContent(type="object",
+     *             @OA\Property(property="data", type="string")
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неаутентифицирован",
+     *     )
+     * )
+     */
+    Route::get('/{file}/sign')->name('.sign')
         ->uses(Files\Sign\Action::class)
         ->middleware('signed');
 

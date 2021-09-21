@@ -345,6 +345,43 @@
                 "security": []
             }
         },
+        "/files/{file}/sign": {
+            "get": {
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Получение подписанной ссылки на файл",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
         "/files/{file}": {
             "patch": {
                 "tags": [
@@ -1968,19 +2005,6 @@
                 },
                 "type": "object"
             },
-            "EnumValueResource": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Пример названия значения перечисления"
-                    }
-                },
-                "type": "object"
-            },
             "EnumResource": {
                 "properties": {
                     "id": {
@@ -2009,6 +2033,19 @@
                         "items": {
                             "$ref": "#/components/schemas/EnumValueResource"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "EnumValueResource": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Пример названия значения перечисления"
                     }
                 },
                 "type": "object"
@@ -2226,66 +2263,6 @@
                 },
                 "type": "object"
             },
-            "SectionFieldResource": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "example": "123e4567-e89b-12d3-a456-426655440000"
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Название"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Это пример описания поля..."
-                    },
-                    "sort_index": {
-                        "type": "integer"
-                    },
-                    "required": {
-                        "type": "boolean"
-                    },
-                    "is_present_in_card": {
-                        "type": "boolean"
-                    },
-                    "filter_sort_index": {
-                        "type": "integer"
-                    },
-                    "type": {
-                        "oneOf": [
-                            {
-                                "$ref": "#components/schemas/TypeString"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeInteger"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeText"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeWiki"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeFloat"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeBoolean"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeEnum"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeFile"
-                            },
-                            {
-                                "$ref": "#components/schemas/TypeList"
-                            }
-                        ]
-                    }
-                },
-                "type": "object"
-            },
             "SectionResource": {
                 "properties": {
                     "id": {
@@ -2378,22 +2355,62 @@
                 },
                 "type": "object"
             },
-            "GroupResource": {
+            "SectionFieldResource": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "example": "123"
-                    },
-                    "name": {
-                        "nullable": true,
                         "type": "string",
-                        "example": "Ульянов Владимир Ильич"
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
                     },
-                    "users": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/UserResource"
-                        }
+                    "title": {
+                        "type": "string",
+                        "example": "Название"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Это пример описания поля..."
+                    },
+                    "sort_index": {
+                        "type": "integer"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "is_present_in_card": {
+                        "type": "boolean"
+                    },
+                    "filter_sort_index": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "oneOf": [
+                            {
+                                "$ref": "#components/schemas/TypeString"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeInteger"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeText"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeWiki"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFloat"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeBoolean"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeEnum"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeFile"
+                            },
+                            {
+                                "$ref": "#components/schemas/TypeList"
+                            }
+                        ]
                     }
                 },
                 "type": "object"
@@ -2426,6 +2443,26 @@
                         "nullable": true,
                         "type": "string",
                         "example": "user@mail.com"
+                    }
+                },
+                "type": "object"
+            },
+            "GroupResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "123"
+                    },
+                    "name": {
+                        "nullable": true,
+                        "type": "string",
+                        "example": "Ульянов Владимир Ильич"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
                     }
                 },
                 "type": "object"
