@@ -13,7 +13,7 @@ class Action
     {
         return [
             'data' => \URL::temporarySignedRoute(
-                'files.download', now()->addMinutes(5), ['user' => $file->id]
+                'files.download', now()->addMinutes(5), ['file' => $file->id]
             ),
         ];
     }
