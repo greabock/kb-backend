@@ -6,6 +6,7 @@ namespace App\Http\Actions\Api\Users\Index;
 
 use App\Models\User;
 use App\Http\Resources\UserResource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -15,8 +16,9 @@ class Action
     {
         return UserResource::collection(
             User::where('super', false)
-                ->where('id', '!=', $request->user()->id)
-                ->get()
+                ->orWhere(function (Builder $query) use ($request) {
+                    $query->where('super', true)->where('id', $request->user()->id);
+                })->get()
         );
     }
 }
