@@ -22,6 +22,6 @@ class MeTest extends ActionTestCase
     {
         $this->callAuthorizedRouteAction()
             ->assertStatus(200)
-            ->assertJsonStructure(['data' => ['id', 'name', 'avatar', 'role', 'login', 'email']]);
+            ->assertJsonStructure(['data' => ['id', 'name', 'photo', 'role', 'email']]);
     }
 }

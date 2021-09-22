@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Sections;
 
 use App\Models\Enum;
-use App\Models\User;
 use Tests\Feature\Api\ActionTestCase;
 
 class CreateTest extends ActionTestCase

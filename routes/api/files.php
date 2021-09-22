@@ -41,21 +41,44 @@ Route::prefix('files')->name('files')->group(function () {
 
     Route::get('/{file}')->name('.download')
         ->uses(Files\Download\Action::class)
+        ->middleware('signed')
         ->withoutMiddleware(['auth:sanctum']);
+
+    /**
+     * @OA\Get (
+     *     path="/files/{file}/sign",
+     *     security={"apiKey":{}},
+     *     tags={"Files"},
+     *     summary="Получение подписанной ссылки на файл",
+     *     @OA\Parameter(name="file", in="path"),
+     *     @OA\Response(
+     *          response="200",
+     *          @OA\JsonContent(type="object",
+     *             @OA\Property(property="data", type="string", description="Подписанная ссылка")
+     *          )
+     *     ),
+     *     @OA\Response(
+     *          response="401",
+     *          description="Неаутентифицирован",
+     *     )
+     * )
+     */
+    Route::get('/{file}/sign')->name('.sign')
+        ->uses(Files\Sign\Action::class);
 
     /**
      * @OA\Patch (
      *     path="/files/{file}",
      *     security={"apiKey":{}},
      *     tags={"Files"},
-     *     summary="Обновление перечисления",
+     *     summary="Обновление файла",
      *     @OA\Parameter(name="file", in="path"),
      *     @OA\RequestBody(@OA\Schema(type="object", required={"name"},
      *          @OA\Property(property="name", type="string")
      *     )),
      *     @OA\Response(
      *          response="200",
-     *          description="Обновленное перечисление",
+     *          description="Обновленный файл",
      *          @OA\JsonContent(type="object",
      *             @OA\Property(property="data", ref="#components/schemas/FileResource")
      *          )

@@ -56,7 +56,7 @@ class ColumnBuilder
 
                     $table->foreign($field->foreign_key)
                         ->references('id')
-                        ->on(Section::findOrFail($field->type['of']['of'])->table_name);
+                        ->on(Section::find($field->type['of']['of'])->table_name);
                 });
 
                 return;

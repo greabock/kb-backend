@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\User\Group;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection as SupportCollection;
 use JetBrains\PhpStorm\ArrayShape;
 use Str;
@@ -56,6 +58,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static QueryBuilder|Section onlyTrashed()
  * @method static SectionFactory factory(...$parameters)
  * @mixin Eloquent
+ * @property array|null $config
+ * @property string $access
+ * @property-read Collection|Group[] $groups
+ * @property-read int|null $groups_count
+ * @property-read Collection|\App\Models\User[] $users
+ * @property-read int|null $users_count
+ * @method static Section\Collection|static[] all($columns = ['*'])
+ * @method static Section\Collection|static[] get($columns = ['*'])
+ * @method static Builder|Section whereAccess($value)
+ * @method static Builder|Section whereConfig($value)
  */
 class Section extends Model
 {
@@ -70,6 +82,7 @@ class Section extends Model
         'title',
         'image',
         'is_dictionary',
+        'access',
         'is_navigation',
         'sort_index',
         'config',
@@ -134,6 +147,14 @@ class Section extends Model
             $this->load('fields');
         }
 
+        if (!$this->relationLoaded('users')) {
+            $this->load('users');
+        }
+
+        if (!$this->relationLoaded('groups')) {
+            $this->load('groups');
+        }
+
         return $this->fields->relations();
     }
 
@@ -184,5 +205,35 @@ class Section extends Model
     public function newCollection(array $models = []): Section\Collection
     {
         return new Section\Collection($models);
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'access_section_group');
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'access_section_user');
+    }
+
+    public function hasAccess(User $user): bool
+    {
+        if ($user->role === User::ROLE_ADMIN || $user->super) {
+            return true;
+        }
+
+        return match ($this->access) {
+            'all' => true,
+            'only' => $this->users->some(fn(User $u) => $u->is($user))
+                || $this->groups->some(function (Group $group) use ($user) {
+                    return $user->groups->some(fn(Group $g) => $g->is($group));
+                }),
+            'except' => $this->users->every(fn(User $u) => !$u->is($user))
+                && $this->groups->every(function (Group $group) use ($user) {
+                    return !$user->groups->some(fn(Group $g) => $g->is($group));
+                }),
+            default => throw new \Exception("Unknown access mode [$this->access]"),
+        };
     }
 }

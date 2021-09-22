@@ -12,17 +12,24 @@ use Illuminate\Contracts\Events\Dispatcher;
 
 class Action
 {
+
     public function __invoke(Section $section, Request $request, Populator $populator, Dispatcher $events): SectionResource
     {
-        $section->load('fields');
+        $section->load('fields', 'users', 'groups');
         $old = $section;
 
         /** @var Section $new */
-        $new = $populator->populate(Section::with('fields')->findOrFail($section->id), $request->getStruct());
+        $new = $populator->populate(
+            Section::with('fields', 'users', 'groups')
+                ->findOrFail($section->id), $request->getStruct()
+        );
+
         $populator->flush();
+
 
         $events->dispatch(new SectionUpdated($section->id, $old, $new));
 
-        return new SectionResource($section);
+
+        return new SectionResource($new);
     }
 }

@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static Builder|File whereRealpath($value)
  * @method static Builder|File whereName($value)
  * @mixin Eloquent
+ * @method static Builder|File whereSize($value)
  */
 class File extends Model
 {

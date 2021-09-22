@@ -38,7 +38,7 @@ class EnumResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'title' => $this->resource->title,
-            'values' => ValueResource::collection($this->whenLoaded('values')),
+            'values' => $this->whenLoaded('values', fn() => ValueResource::collection($this->resource->values)),
         ];
     }
 }

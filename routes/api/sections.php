@@ -147,7 +147,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      */
     Route::delete('{section}')->name('.destroy')
         ->middleware('user-role:admin')
-        ->uses(Sections\Destroy\Action::class);
+        ->uses(Sections\Delete\Action::class);
 
     require __DIR__ . '/sections/materials.php';
 });

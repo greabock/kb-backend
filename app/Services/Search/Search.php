@@ -183,7 +183,9 @@ class Search
             $materials[$i] = [
                 'section' => ['id' => $hit['_index']],
                 'material' => $hit['_source'],
-                'highlight' => $hit['highlight'] ?? (object)[],
+                'highlight' => isset($hit['highlight']) ? collect($hit['highlight'])->mapWithKeys(function ($value, $key) {
+                    return [str_replace('_name', '', $key) => $value];
+                }) : (object)[],
             ];
 
             $materials[$i]['material']['files_count'] = $this->countDocs($fields->fileFields(), $hit['_source']);

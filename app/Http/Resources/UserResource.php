@@ -14,18 +14,12 @@ use OpenApi\Annotations as OA;
  *    @OA\Property(property="name", type="string", example="Ульянов Владимир Ильич", nullable=true),
  *    @OA\Property(property="photo", type="string", example="absolute/path/to/image.jpg", nullable=true),
  *    @OA\Property(property="role", type="string", enum={"admin", "moderator", "user"}),
- *    @OA\Property(property="login", type="string", example="john15"),
  *    @OA\Property(property="email", type="string", example="user@mail.com", nullable=true),
  * )
  * @property User $resource
  */
 class UserResource extends JsonResource
 {
-    public function __construct(User $resource)
-    {
-        parent::__construct($resource);
-    }
-
     public function toArray($request)
     {
         return [
@@ -33,7 +27,6 @@ class UserResource extends JsonResource
             'name' => $this->resource->name,
             'photo' => $this->resource->photo,
             'role' => $this->resource->role,
-            'login' => $this->resource->login,
             'email' => $this->resource->email,
         ];
     }

@@ -345,6 +345,43 @@
                 "security": []
             }
         },
+        "/files/{file}/sign": {
+            "get": {
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Получение подписанной ссылки на файл",
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленное перечисление",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
         "/files/{file}": {
             "patch": {
                 "tags": [
@@ -391,7 +428,7 @@
                 "summary": "Получение списка групп",
                 "responses": {
                     "200": {
-                        "description": "Список перечислений",
+                        "description": "Список групп",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -399,7 +436,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#components/schemas/EnumResource"
+                                                "$ref": "#components/schemas/GroupResource"
                                             }
                                         }
                                     },
@@ -425,7 +462,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EnumCreateRequest"
+                                "$ref": "#/components/schemas/GroupCreateRequest"
                             }
                         }
                     }
@@ -438,7 +475,7 @@
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#components/schemas/EnumDetailedResource"
+                                            "$ref": "#components/schemas/GroupResource"
                                         }
                                     },
                                     "type": "object"
@@ -456,32 +493,20 @@
             }
         },
         "/groups/{group}": {
-            "get": {
+            "delete": {
                 "tags": [
                     "Groups"
                 ],
-                "summary": "Получение группы с пользователями",
+                "summary": "Удаление группы",
                 "parameters": [
                     {
-                        "name": "enum",
+                        "name": "group",
                         "in": "path"
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Конкретная группа со списком пользователей",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#components/schemas/EnumDetailedResource"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "Удалено"
                     },
                     "401": {
                         "description": "Неаутентифицирован"
@@ -498,7 +523,7 @@
                 "summary": "Обновление группы",
                 "parameters": [
                     {
-                        "name": "enum",
+                        "name": "group",
                         "in": "path"
                     }
                 ],
@@ -506,7 +531,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/EnumUpdateRequest"
+                                "$ref": "#/components/schemas/GroupCreateRequest"
                             }
                         }
                     }
@@ -519,7 +544,7 @@
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#components/schemas/EnumWithValuesResource"
+                                            "$ref": "#components/schemas/GroupResource"
                                         }
                                     },
                                     "type": "object"
@@ -1328,7 +1353,7 @@
         "schemas": {
             "LoginRequest": {
                 "properties": {
-                    "login": {
+                    "email": {
                         "type": "string",
                         "example": "user@some.com"
                     },
@@ -1394,6 +1419,37 @@
                                 "title": {
                                     "type": "string",
                                     "example": "Канада"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "GroupCreateRequest": {
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426655440000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Имя группы"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
                                 }
                             },
                             "type": "object"
@@ -1540,6 +1596,58 @@
                         "minimum": "1",
                         "example": "Имя раздела"
                     },
+                    "access": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "only",
+                            "except"
+                        ]
+                    },
+                    "config": {
+                        "nullable": true,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Наименование"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Что-то тоам про поле 'name'"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": "123"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
                     "fields": {
                         "type": "array",
                         "items": {
@@ -1668,6 +1776,58 @@
                         "minimum": "1",
                         "example": "Имя раздела"
                     },
+                    "access": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "only",
+                            "except"
+                        ]
+                    },
+                    "config": {
+                        "nullable": true,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Наименование"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "Что-то тоам про поле 'name'"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": "123"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426655440000"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
                     "fields": {
                         "type": "array",
                         "items": {
@@ -1747,10 +1907,6 @@
                     "role"
                 ],
                 "properties": {
-                    "login": {
-                        "type": "string",
-                        "example": "ninja24"
-                    },
                     "email": {
                         "type": "string",
                         "example": "some@domain.com"
@@ -1804,10 +1960,6 @@
             },
             "UserUpdateRequest": {
                 "properties": {
-                    "login": {
-                        "type": "string",
-                        "example": "ninja24"
-                    },
                     "email": {
                         "type": "string",
                         "example": "some@domain.com"
@@ -2134,6 +2286,14 @@
                     "sort_index": {
                         "type": "integer"
                     },
+                    "access": {
+                        "type": "string",
+                        "enum": [
+                            "all",
+                            "only",
+                            "except"
+                        ]
+                    },
                     "config": {
                         "properties": {
                             "name": {
@@ -2279,14 +2439,30 @@
                             "user"
                         ]
                     },
-                    "login": {
-                        "type": "string",
-                        "example": "john15"
-                    },
                     "email": {
                         "nullable": true,
                         "type": "string",
                         "example": "user@mail.com"
+                    }
+                },
+                "type": "object"
+            },
+            "GroupResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": "123"
+                    },
+                    "name": {
+                        "nullable": true,
+                        "type": "string",
+                        "example": "Ульянов Владимир Ильич"
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/UserResource"
+                        }
                     }
                 },
                 "type": "object"

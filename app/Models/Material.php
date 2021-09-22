@@ -39,7 +39,7 @@ abstract class Material extends Model
 
     protected static function booted()
     {
-        static::configure(Section::findOrFail(static::$sectionId));
+        static::configure(Section::withTrashed()->find(static::$sectionId));
         parent::booted();
     }
 

@@ -18,14 +18,14 @@ class LoginTest extends ActionTestCase
     {
         $this->callRouteAction([])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['login', 'password']);
+            ->assertJsonValidationErrors(['email', 'password']);
     }
 
 
     public function testRequestFailsWithWrongPasswordAndLogin(): void
     {
         $this->callRouteAction([
-            'login' => 'wrong_login',
+            'email' => 'wrong_email',
             'password' => 'wrong_password',
         ])->assertStatus(401);
     }
@@ -35,7 +35,7 @@ class LoginTest extends ActionTestCase
         $user = User::factory()->create();
 
         $this->callRouteAction([
-            'login' => $user->login,
+            'email' => $user->email,
             'password' => 'password',
         ])
             ->assertStatus(200)

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddConfigToSectionsTable extends Migration
+class CreateGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class AddConfigToSectionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('sections', function (Blueprint $table) {
-            $table->jsonb('config')->nullable();
+        Schema::create('groups', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -25,8 +28,6 @@ class AddConfigToSectionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('sections', function (Blueprint $table) {
-            $table->dropColumn('config');
-        });
+        Schema::dropIfExists('groups');
     }
 }

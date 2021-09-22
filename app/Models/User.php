@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\User\Group;
 use Database\Factories\UserFactory;
 use Eloquent;
 use Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -29,6 +32,8 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Collection|Group[] $groups
+ * @property bool $super
  * @property-read DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection|PersonalAccessToken[] $tokens
@@ -47,11 +52,12 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereRole($value)
  * @method static Builder|User whereUpdatedAt($value)
+ * @method static Builder|User whereSuper($value)
  * @mixin Eloquent
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
     public const ROLE_USER = 'user';
     public const ROLE_MODERATOR = 'moderator';
@@ -71,7 +77,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'login',
         'password',
         'role',
         'photo',
@@ -104,5 +109,10 @@ class User extends Authenticatable
     public function setPasswordAttribute(string $password): void
     {
         $this->attributes['password'] = Hash::make($password);
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class);
     }
 }

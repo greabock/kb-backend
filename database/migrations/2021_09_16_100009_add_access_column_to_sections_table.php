@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddConfigToSectionsTable extends Migration
+class AddAccessColumnToSectionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddConfigToSectionsTable extends Migration
     public function up()
     {
         Schema::table('sections', function (Blueprint $table) {
-            $table->jsonb('config')->nullable();
+            $table->enum('access', ['all', 'only', 'except'])->default('all');
         });
     }
 
@@ -26,7 +26,7 @@ class AddConfigToSectionsTable extends Migration
     public function down()
     {
         Schema::table('sections', function (Blueprint $table) {
-            $table->dropColumn('config');
+            $table->dropColumn('access');
         });
     }
 }

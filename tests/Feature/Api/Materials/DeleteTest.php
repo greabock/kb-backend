@@ -24,6 +24,8 @@ class DeleteTest extends ActionTestCase
         $material = $this->populator()->populate($section->class_name, ['name' => 'Name']);
         $this->populator()->flush();
 
+        sleep(1);
+
         $this->callAuthorizedByAdminRouteAction([], ['section' => $section->id, 'material' => $material->id])
             ->assertNoContent();
 
