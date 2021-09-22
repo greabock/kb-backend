@@ -41,7 +41,7 @@ Route::prefix('files')->name('files')->group(function () {
 
     Route::get('/{file}')->name('.download')
         ->uses(Files\Download\Action::class)
-        ->middleware('signed')
+        //->middleware('signed')
         ->withoutMiddleware(['auth:sanctum']);
 
     /**
