@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
+use phpDocumentor\Reflection\Types\Self_;
 
 /**
  * @OA\Schema(schema="TypeString", required={"name"},
@@ -145,6 +146,8 @@ class FieldType
         self::T_TEXT,
         self::T_WIKI,
         self::T_SELECT,
+        self::T_DICTIONARY,
+        self::T_ENUM,
     ];
 
     public static function resolveRules($attribute, array $value): array
@@ -431,10 +434,16 @@ class FieldType
                 'type' => 'boolean',
                 'null_value' => self::ELASTIC_NULL_BOOLEAN,
             ]],
-            self::T_ENUM, self::T_DICTIONARY, self::T_SELECT => [$field => [
-                'type' => 'keyword',
-                'null_value' => self::ELASTIC_NULL_KEYWORD,
-            ]],
+            self::T_ENUM, self::T_DICTIONARY, self::T_SELECT => [
+                $field => [
+                    'type' => 'keyword',
+                    'null_value' => self::ELASTIC_NULL_KEYWORD,
+                ],
+                $field . '_name' => [
+                    'type' => 'text',
+                    'analyzer' => 'ru'
+                ]
+            ],
         };
     }
 
