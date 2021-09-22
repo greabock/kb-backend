@@ -520,8 +520,8 @@ class FieldType
     public static function toIndexName(mixed $type, $value): array|string|null
     {
         return match ($type['name']) {
-            self::T_ENUM => $value->title,
-            self::T_DICTIONARY => $value->name,
+            self::T_ENUM => $value?->title,
+            self::T_DICTIONARY => $value?->name,
             self::T_SELECT => $value,
             self::T_LIST => collect($value)->map(fn($v) => self::toIndexName($type['of'], $v))->toArray(),
             default => null,
