@@ -219,10 +219,10 @@ class Field extends Model
                     FieldType::T_DATE,
                     FieldType::T_FLOAT,
                     FieldType::T_INTEGER => ['range' => [
-                        $this->id => [
-                            'gte' => $values[0],
-                            'lte' => $values[1],
-                        ]
+                        $this->id => array_filter([
+                            'gte' => $values[0] ?? null,
+                            'lte' => $values[1] ?? null,
+                        ])
                     ]],
                     FieldType::T_STRING,
                     FieldType::T_WIKI,
@@ -236,6 +236,7 @@ class Field extends Model
                 };
             }, $values);
         }
+
         // TODO выпилить
         return [['term' => [$this->id => (bool)$values]]];
     }
