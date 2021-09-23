@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Actions\Api\Search\Filter;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Validator;
 use App\Models\Section;
 use Illuminate\Http\Request;
@@ -43,7 +44,6 @@ class Action
             $index,
         ) : collect();
 
-
         $files = (!$request->get('materials', false) || !empty($request->get('extensions', []))) && $this->filtersIsEmpty($request->get('filter', [])) ? $search->searchFiles(
             $request->get('search') ?? '',
             $request->get('extensions', []),
@@ -52,7 +52,21 @@ class Action
             $index,
         ) : collect();
 
-        return new SearchResultResource(compact('materials', 'files'));
+        $results = collect()->concat($materials)->concat($files);
+        $page = $results
+            ->forPage($request->get('page', 1), $request->get('per_page', 15))
+            ->groupBy(fn(array $item) => array_key_exists('file', $item) ? 'files' : 'materials');
+        $page->put('materials', $page->get('materials', []));
+        $page->put('files', $page->get('files', []));
+
+        return new SearchResultResource(
+            new LengthAwarePaginator(
+                $page,
+                $results->count(),
+                $request->get('per_page', 15),
+                $request->get('page', 1),
+            ),
+        );
     }
 
     private function buildFilterRules(Section $section): array

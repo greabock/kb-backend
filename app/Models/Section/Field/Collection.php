@@ -20,6 +20,9 @@ class Collection extends EloquentCollection
         return $this->filter(fn(Field $field) => $field->base_type['name'] !== FieldType::T_FILE);
     }
 
+    /**
+     * @return Collection<integer, Field>|Field[]
+     */
     public function searchableFields(): Collection
     {
         return $this->filter(fn(Field $field) => in_array(

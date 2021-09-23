@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Search;
 
 use App\Jobs\CreateMaterialDocument;
+use App\Models\Enum;
 use App\Models\File;
 use App\Models\Material;
 use App\Models\Section;
@@ -341,5 +342,76 @@ class SearchTest extends ActionTestCase
             ->assertJsonPath('data.materials.0.material.name', $material->name)
             ->assertJsonPath('data.materials.1', null)
             ->assertJsonPath('data.files', []);
+    }
+
+    public function testCanSearchBySelectValue()
+    {
+
+        /** @var Section $section */
+        $section = Section::factory()
+            ->has(Section\Field::factory(['type' => ['name' => 'Select', 'of' => ['foo', 'bar']]]), 'fields')
+            ->create();
+
+        $section->refresh();
+
+        $data = ['name' => 'Об особенностях Laravel'];
+
+        foreach ($section->fields as $field) {
+            $data[$field->id] = 'foo';
+        }
+
+        /** @var Material $material */
+        $material = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['search' => 'foo', 'materials' => true])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.section.id', $section->id)
+            ->assertJsonPath('data.materials.0.material.id', $material->id)
+            ->assertJsonPath('data.materials.0.material.name', $material->name)
+            ->assertJsonPath('data.materials.1', null)
+            ->assertJsonPath('data.files', []);
+
+        $this->callRouteAction(['search' => 'bar', 'materials' => true])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.section.id', null);
+    }
+
+
+    public function testCanSearchByEnumValue()
+    {
+        $enum = Enum::factory()->has(Enum\Value::factory(['title' => 'foo']), 'values')->create();
+        $enum->refresh();
+
+        /** @var Section $section */
+        $section = Section::factory()
+            ->has(Section\Field::factory(['type' => ['name' => 'Enum', 'of' => $enum->id]]), 'fields')
+            ->create();
+
+        $section->refresh();
+
+        $data = ['name' => 'Об особенностях Laravel'];
+
+        foreach ($section->fields as $field) {
+            $data[$field->id] = ['id' => $enum->values()->first()->id];
+        }
+
+        /** @var Material $material */
+        $material = $this->populator()->populate($section->class_name, $data);
+        $this->populator()->flush();
+        $this->app->call([(new CreateMaterialDocument($section->class_name, $material->id)), 'handle']);
+
+        $this->callAuthorizedRouteAction(['search' => 'foo', 'materials' => true])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.section.id', $section->id)
+            ->assertJsonPath('data.materials.0.material.id', $material->id)
+            ->assertJsonPath('data.materials.0.material.name', $material->name)
+            ->assertJsonPath('data.materials.1', null)
+            ->assertJsonPath('data.files', []);
+
+        $this->callRouteAction(['search' => 'bar', 'materials' => true])
+            ->assertOk()
+            ->assertJsonPath('data.materials.0.section.id', null);
     }
 }
