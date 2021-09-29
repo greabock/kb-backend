@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Actions\Api\License\Index;
 
-use Carbon\Carbon;
 use JsonException;
 
 class Action
@@ -18,7 +17,7 @@ class Action
 
         if (!$key) {
             return [
-                'expires_at' => Carbon::now()->subDay()->format('Y-m-d'),
+                'expires_at' => null,
                 'key' => null,
             ];
         }
