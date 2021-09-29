@@ -114,20 +114,6 @@ Artisan::command('elastic:clear', function () {
     \Artisan::call('db:seed', [], $this->getOutput());
 });
 
-
-\Artisan::command('kb:key', function () {
-    $data = base64_encode(openssl_encrypt(
-        json_encode([
-            'expires_at' => '2021-12-31',
-            'key' => 'test',
-        ], JSON_THROW_ON_ERROR),
-        'AES-192-CBC',
-        'test',
-        0,
-        $vector = openssl_random_pseudo_bytes(16),
-    ));
-
-    $key = base64_encode($vector) . $data;
-
-    dump($key);
+\Artisan::command('kb:license-delete', function () {
+    unlink(storage_path('license.key'));
 });
