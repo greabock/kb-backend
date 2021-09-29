@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Actions\Api\License\Index;
 
+use Carbon\Carbon;
 use JsonException;
 
 class Action
@@ -13,7 +14,16 @@ class Action
      */
     public function __invoke()
     {
-        [$vi, $data] = explode('==', file_get_contents(storage_path('license.key')));
+        $key = file_get_contents(storage_path('license.key'));
+
+        if (!$key) {
+            return [
+                'expires_at' => Carbon::now()->subDay()->format('Y-m-d'),
+                'key' => null,
+            ];
+        }
+
+        [$vi, $data] = explode('==', $key);
 
         return json_decode(
             openssl_decrypt(
