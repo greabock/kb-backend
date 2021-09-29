@@ -14,7 +14,7 @@ class Action
      */
     public function __invoke()
     {
-        $key = file_get_contents(storage_path('license.key'));
+        $key = @file_get_contents(storage_path('license.key'));
 
         if (!$key) {
             return [
