@@ -28,7 +28,7 @@ class Action
             openssl_decrypt(
                 base64_decode($data),
                 'AES-192-CBC',
-                env('DOXCASE_CLIENT'),
+                env('DOXCASE_CLIENT', ''),
                 0,
                 base64_decode($vi),
             ), true, 512, JSON_THROW_ON_ERROR);
