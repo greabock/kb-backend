@@ -3,6 +3,7 @@
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Foundation\Console\ClosureCommand;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -111,4 +112,22 @@ Artisan::command('elastic:clear', function () {
     \Artisan::call('migrate:fresh', [], $this->getOutput());
     \Artisan::call('elastic:clear', [], $this->getOutput());
     \Artisan::call('db:seed', [], $this->getOutput());
+});
+
+
+\Artisan::command('kb:key', function () {
+    $data = base64_encode(openssl_encrypt(
+        json_encode([
+            'expires_at' => '2021-12-31',
+            'key' => 'test',
+        ], JSON_THROW_ON_ERROR),
+        'AES-192-CBC',
+        'test',
+        0,
+        $vector = openssl_random_pseudo_bytes(16),
+    ));
+
+    $key = base64_encode($vector) . $data;
+
+    dump($key);
 });
