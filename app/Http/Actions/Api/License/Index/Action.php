@@ -18,13 +18,14 @@ class Action
         if (!$key) {
             return [
                 'expires_at' => null,
+                'current_date' => now()->format('Y-m-d'),
                 'key' => null,
             ];
         }
 
         [$vi, $data] = explode('==', $key);
 
-        return json_decode(
+        $data = json_decode(
             openssl_decrypt(
                 base64_decode($data),
                 'AES-192-CBC',
@@ -32,5 +33,9 @@ class Action
                 0,
                 base64_decode($vi),
             ), true, 512, JSON_THROW_ON_ERROR);
+
+        $data['current_date'] = now()->format('Y-m-d');
+
+        return $data;
     }
 }
