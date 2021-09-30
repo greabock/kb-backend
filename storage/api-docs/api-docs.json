@@ -359,12 +359,13 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Обновленное перечисление",
+                        "description": "Подписанная ссылка",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "data": {
+                                            "description": "Подписанная ссылка",
                                             "type": "string"
                                         }
                                     },
@@ -387,7 +388,7 @@
                 "tags": [
                     "Files"
                 ],
-                "summary": "Обновление перечисления",
+                "summary": "Обновление файла",
                 "parameters": [
                     {
                         "name": "file",
@@ -397,7 +398,7 @@
                 "requestBody": {},
                 "responses": {
                     "200": {
-                        "description": "Обновленное перечисление",
+                        "description": "Обновленный файл",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -552,6 +553,53 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            }
+        },
+        "/license": {
+            "get": {
+                "tags": [
+                    "License"
+                ],
+                "summary": "Получение информации о лицензии",
+                "responses": {
+                    "200": {
+                        "description": "Информация о лицензии",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "expires_at": {
+                                            "type": "date",
+                                            "example": "2021-12-31"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неаутентифицирован"
+                    }
+                },
+                "security": {
+                    "apiKey": {}
+                }
+            },
+            "post": {
+                "tags": [
+                    "License"
+                ],
+                "summary": "Обновление лицензии",
+                "requestBody": {},
+                "responses": {
                     "401": {
                         "description": "Неаутентифицирован"
                     }
