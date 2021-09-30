@@ -53,6 +53,7 @@ Route::prefix('files')->name('files')->group(function () {
      *     @OA\Parameter(name="file", in="path"),
      *     @OA\Response(
      *          response="200",
+     *          description="Подписанная ссылка",
      *          @OA\JsonContent(type="object",
      *             @OA\Property(property="data", type="string", description="Подписанная ссылка")
      *          )

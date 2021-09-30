@@ -11,6 +11,7 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__ . '/api/search.php';
     require __DIR__ . '/api/files.php';
     require __DIR__ . '/api/groups.php';
+    require __DIR__ . '/api/license.php';
 });
 
 Route::get('settings')->uses(\App\Http\Actions\Api\Settings\Index\Action::class);
