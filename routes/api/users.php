@@ -32,7 +32,7 @@ Route::prefix('users')->name('users')->middleware('user-role:admin')->group(func
      * )
      */
     Route::get('/')->name('.index')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Users\Index\Action::class);
 
     /**
@@ -60,7 +60,7 @@ Route::prefix('users')->name('users')->middleware('user-role:admin')->group(func
      * )
      */
     Route::post('/')->name('.create')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Users\Create\Action::class);
 
 
@@ -91,7 +91,7 @@ Route::prefix('users')->name('users')->middleware('user-role:admin')->group(func
      * )
      */
     Route::patch('/')->name('.mass-update')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Users\MassUpdate\Action::class);
 
     /**
@@ -116,7 +116,7 @@ Route::prefix('users')->name('users')->middleware('user-role:admin')->group(func
      * )
      */
     Route::patch('{user}')->uses(Users\Update\Action::class)
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->name('.update');
 
     /**
@@ -137,6 +137,6 @@ Route::prefix('users')->name('users')->middleware('user-role:admin')->group(func
      * )
      */
     Route::delete('{user}')->name('.delete')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Users\Delete\Action::class);
 });

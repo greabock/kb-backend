@@ -50,6 +50,7 @@ Route::prefix('enums')->name('enums')->group(function () {
      * )
      */
     Route::post('/')->name('.create')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Enums\Create\Action::class);
 
     /**
@@ -97,6 +98,7 @@ Route::prefix('enums')->name('enums')->group(function () {
      * )
      */
     Route::patch('{enum}')->name('.update')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Enums\Update\Action::class);
 
     /**
@@ -117,5 +119,6 @@ Route::prefix('enums')->name('enums')->group(function () {
      * )
      */
     Route::delete('{enum}')->name('.destroy')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Enums\Destroy\Action::class);
 });

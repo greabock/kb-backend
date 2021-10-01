@@ -37,6 +37,7 @@ Route::prefix('files')->name('files')->group(function () {
      * )
      */
     Route::post('/')->name('.upload')
+        ->middleware('paid')
         ->uses(Files\Upload\Action::class);
 
     Route::get('/{file}')->name('.download')

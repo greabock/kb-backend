@@ -53,7 +53,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::patch('/')->name('.massUpdate')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Sections\MassUpdate\Action::class);
 
     /**
@@ -77,7 +77,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::post('/')->name('.create')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Sections\Create\Action::class);
 
     /**
@@ -125,7 +125,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::patch('{section}')->name('.update')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Sections\Update\Action::class);
 
     /**
@@ -146,7 +146,7 @@ Route::prefix('sections')->name('sections')->group(function () {
      * )
      */
     Route::delete('{section}')->name('.destroy')
-        ->middleware('user-role:admin')
+        ->middleware('paid', 'user-role:admin')
         ->uses(Sections\Delete\Action::class);
 
     require __DIR__ . '/sections/materials.php';
