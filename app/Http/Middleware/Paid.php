@@ -14,6 +14,10 @@ class Paid
     {
         $key = @file_get_contents(storage_path('license.key'));
 
+        if (!$key) {
+            return response('Payment required', 402);
+        }
+
         [$vi, $data] = explode('==', $key);
 
         $data = json_decode(
@@ -25,7 +29,7 @@ class Paid
                 base64_decode($vi),
             ), true, 512, JSON_THROW_ON_ERROR);
 
-        $date = Carbon::createFromFormat($data['expires_at'], 'Y-m-d')->endOfDay();
+        $date = Carbon::createFromFormat('Y-m-d', $data['expires_at'])->startOfDay();
 
         if ($date->isPast()) {
             return response('Payment required', 402);
