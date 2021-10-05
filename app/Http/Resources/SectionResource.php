@@ -49,7 +49,10 @@ class SectionResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'title' => $this->resource->title,
-            'image' => $this->resource->image,
+            'image' => $this->resource->image ? (static function (string $path) {
+                $segments = explode('/', $path);
+                return \URL::signedRoute('files.download', [end($segments)]);
+            })($this->resource->image) : null,
             'is_dictionary' => $this->resource->is_dictionary,
             'is_navigation' => $this->resource->is_navigation,
             'sort_index' => $this->resource->sort_index,
