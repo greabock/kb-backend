@@ -54,7 +54,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      * )
      */
     Route::post('/')->name('.create')
-        ->middleware('user-role:admin,moderator')
+        ->middleware('paid', 'user-role:admin,moderator')
         ->uses(Materials\Create\Action::class);
 
     /**
@@ -104,7 +104,7 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      * )
      */
     Route::patch('{material}')->name('.update')
-        ->middleware('user-role:admin,moderator')
+        ->middleware('paid', 'user-role:admin,moderator')
         ->uses(Materials\Update\Action::class);
 
 
@@ -127,6 +127,6 @@ Route::prefix('{section}/materials')->name('.materials')->group(function () {
      * )
      */
     Route::delete('{material}')->name('.destroy')
-        ->middleware('user-role:admin,moderator')
+        ->middleware('paid', 'user-role:admin,moderator')
         ->uses(Materials\Delete\Action::class);
 });
