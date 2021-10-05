@@ -49,7 +49,9 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     )
      * )
      */
-    Route::post('/')->uses(Groups\Create\Action::class)->name('.create');
+    Route::post('/')->uses(Groups\Create\Action::class)
+        ->middleware('paid', 'user-role:admin')
+        ->name('.create');
 
 
     /**
@@ -69,7 +71,9 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     )
      * )
      */
-    Route::delete('{group}')->uses(Groups\Delete\Action::class)->name('.delete');
+    Route::delete('{group}')->uses(Groups\Delete\Action::class)
+        ->middleware('paid', 'user-role:admin')
+        ->name('.delete');
 
 
     /**
@@ -93,5 +97,8 @@ Route::prefix('groups')->name('groups')->group(function () {
      *     )
      * )
      */
-    Route::patch('{group}')->uses(Groups\Update\Action::class)->name('.update');
+    Route::patch('{group}')
+        ->middleware('paid', 'user-role:admin')
+        ->uses(Groups\Update\Action::class)
+        ->name('.update');
 });
