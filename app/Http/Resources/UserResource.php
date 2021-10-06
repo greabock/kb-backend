@@ -25,7 +25,10 @@ class UserResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-            'photo' => $this->resource->photo,
+            'photo' => $this->resource->photo ? (static function (string $path) {
+                $segments = explode('/', $path);
+                return \URL::signedRoute('files.download', [end($segments)]);
+            })($this->resource->photo) : null,
             'role' => $this->resource->role,
             'email' => $this->resource->email,
         ];
