@@ -16,6 +16,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "greabock/populator": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "hedii/laravel-gelf-logger": "^6.0",
         "laravel/framework": "^8.40",
         "laravel/sanctum": "^2.11",
         "laravel/socialite": "^5.2",
