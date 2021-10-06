@@ -133,15 +133,15 @@ return [
 
             // This optional option determines if you want the UDP, TCP or HTTP
             // transport for the gelf log messages. Default is UDP
-            'transport' => 'tcp',
+            'transport' => env('GRAYLOG_TRANSPORT', 'tcp'),
 
             // This optional option determines the host that will receive the
             // gelf log messages. Default is 127.0.0.1
-            'host' => 'graylog.backservice.ru',
+            'host' => env('GRAYLOG_HOST', 'graylog.backservice.ru'),
 
             // This optional option determines the port on which the gelf
             // receiver host is listening. Default is 12201
-            'port' => 12201,
+            'port' => env('GRAYLOG_PORT', 12201),
 
             // This optional option determines the path used for the HTTP
             // transport. When forgotten or set to null, default path '/gelf'
