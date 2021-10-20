@@ -25,6 +25,7 @@ class FileResource extends JsonResource
             'url' => $this->resource->url,
             'name' => $this->resource->name,
             'size' => $this->resource->size,
+            'signed' => \URL::signedRoute('files.download', [$this->resource->id])
         ];
     }
 }
