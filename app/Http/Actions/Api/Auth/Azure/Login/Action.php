@@ -29,6 +29,7 @@ class Action
                 'email' => $azureUser->getEmail(),
                 'name' => sprintf('%s %s', $azureUser->getRaw()['givenName'], $azureUser->getRaw()['surname']),
                 'password' => Str::random(10),
+                'role' => User::ROLE_USER,
             ]);
 
             $user->save();
