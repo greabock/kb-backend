@@ -11,7 +11,7 @@ before_script:
 deploy_dev:
   script:
     # Deploy
-    - ssh -o StrictHostKeyChecking=no knowledge@knowledge.msharks.ru "cd ~/knowledge.msharks.ru/code/ && git fetch --all && git reset --hard origin/dev && docker-compose stop php-http && docker-compose up -d php-http && docker-compose restart web && docker exec -i kb_php_http composer install && docker exec -i kb_php_http php artisan migrate"
+    - ssh -o StrictHostKeyChecking=no knowledge@doxcase.msharks.ru "cd ~/knowledge.msharks.ru/code/ && git fetch --all && git reset --hard origin/dev && docker-compose stop php-http && docker-compose up -d php-http && docker-compose restart web && docker exec -i kb_php_http composer install && docker exec -i kb_php_http php artisan migrate"
   only:
     - dev
 
